@@ -206,7 +206,7 @@ if (isset($_POST["signup"])) {
                 $full_name[$iol] = $reg['nome_user'];
                 $data[$iol] = $reg['data'];
         ?>
-                <div class="recent-updates">
+                <div class="recent-updates" onclick="myhref('funcionarios.php');">
                 <div class="update">
                     <div class="profile-photo">
                         <img src="./img/profile-2.jpg">
@@ -218,6 +218,11 @@ if (isset($_POST["signup"])) {
                 </div>
                  <?php }} ?>
             </div>
+
+            <script type="text/javascript">
+                function myhref(funcionarios){
+                window.location.href = funcionarios;}
+            </script>
                
             </div>
         </div>
@@ -249,7 +254,7 @@ if (isset($_POST["signup"])) {
 
             ?>
 
-        <div class="item online">
+        <div class="item online" onclick="myhref('reuniao.php');">
             <div class="icon">
                 <span class="material-icons-sharp">video_camera_front</span>
             </div>
@@ -263,6 +268,11 @@ if (isset($_POST["signup"])) {
         </div>
 
         <?php }} ?>
+
+        <script type="text/javascript">
+            function myhref(reuniao){
+            window.location.href = reuniao;}
+        </script>
 
     <script src="js/index.js"></script>
 </body>

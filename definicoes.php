@@ -6,7 +6,6 @@ session_start();
 
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -146,7 +145,7 @@ session_start();
                 $full_name[$iol] = $reg['nome_user'];
                 $data[$iol] = $reg['data'];
         ?>
-                <div class="recent-updates">
+                <div class="recent-updates" onclick="myhref('funcionarios.php');">
                 <div class="update">
                     <div class="profile-photo">
                         <img src="./img/profile-2.jpg">
@@ -158,6 +157,11 @@ session_start();
                 </div>
                  <?php }} ?>
             </div>
+
+            <script type="text/javascript">
+                function myhref(funcionarios){
+                window.location.href = funcionarios;}
+            </script>
                
             </div>
         </div>
@@ -189,7 +193,7 @@ session_start();
 
             ?>
 
-        <div class="item online">
+        <div class="item online" onclick="myhref('reuniao.php');">
             <div class="icon">
                 <span class="material-icons-sharp">video_camera_front</span>
             </div>
@@ -203,6 +207,11 @@ session_start();
         </div>
 
         <?php }} ?>
+
+        <script type="text/javascript">
+            function myhref(reuniao){
+            window.location.href = reuniao;}
+        </script>
 
     <script src="js/index.js"></script>
 

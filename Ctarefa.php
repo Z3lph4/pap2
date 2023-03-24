@@ -29,7 +29,7 @@ session_start();
     <div class="container">
         <aside>
             <div class="top">
-            <a href="index.php">
+                <a href="index.php">
                 <div class="logo"> 
                     <img src="img/logo2.png">
                     <h2>Gest<span class="clogo">EMP</span></h2>
@@ -46,12 +46,12 @@ session_start();
                 <h3>Home</h3>    
             </a>
             
-            <a href="tarefas.php">
+            <a href="tarefas.php" class="active">
             <span class="material-icons-sharp">checklist</span>
                 <h3>Tarefas</h3>    
             </a>
 
-            <a href="funcionarios.php" class="active">
+            <a href="funcionarios.php">
             <span class="material-icons-sharp">group</span>
                 <h3>Funcionários</h3>    
             </a>
@@ -123,7 +123,6 @@ session_start();
             </div>
             </div>
         </div>
-
         <!-- END OF TOP -->
         <div class="recent-updates">  
             <h2>Utilizadores Recentes</h2>              
@@ -158,12 +157,12 @@ session_start();
                 </div>
                  <?php }} ?>
             </div>
-            
+
             <script type="text/javascript">
                 function myhref(funcionarios){
                 window.location.href = funcionarios;}
             </script>
-
+               
             </div>
         </div>
             </div>  
@@ -206,13 +205,13 @@ session_start();
                 <h3><?php echo $data_reuniao[$iol]; ?></h3>
             </div>
         </div>
-        
+
+        <?php }} ?>
+
         <script type="text/javascript">
             function myhref(reuniao){
             window.location.href = reuniao;}
         </script>
-
-        <?php }} ?>
 
     <script src="js/index.js"></script>
 

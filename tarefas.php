@@ -14,7 +14,6 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GestEMP</title>
     <!-- === MATERIAL ICON === -->
-   
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
     <link rel="stylesheet" href="css/style.css">
@@ -196,7 +195,7 @@ session_start();
                 $full_name[$iol] = $reg['nome_user'];
                 $data[$iol] = $reg['data'];
         ?>
-                <div class="recent-updates">
+                <div class="recent-updates" onclick="myhref('funcionarios.php');">
                 <div class="update">
                     <div class="profile-photo">
                         <img src="./img/profile-2.jpg">
@@ -208,7 +207,12 @@ session_start();
                 </div>
                  <?php }} ?>
             </div>
-               
+            
+            <script type="text/javascript">
+                function myhref(funcionarios){
+                window.location.href = funcionarios;}
+            </script>
+
             </div>
         </div>
             </div>  
@@ -239,7 +243,7 @@ session_start();
 
             ?>
 
-        <div class="item online">
+        <div class="item online" onclick="myhref('reuniao.php');">
             <div class="icon">
                 <span class="material-icons-sharp">video_camera_front</span>
             </div>
@@ -251,15 +255,25 @@ session_start();
                 <h3><?php echo $data_reuniao[$iol]; ?></h3>
             </div>
         </div>
+        
+        <script type="text/javascript">
+            function myhref(reuniao){
+            window.location.href = reuniao;}
+        </script>
 
         <?php }} ?>
 
-        <div class="item add-product">
+        <div class="item add-product" onclick="myhref('Ctarefa.php');">
                 <div>
                     <span class="material-icons-sharp">add</span>
                 <h3>Add Product</h3>
             </div>
         </div>
+
+        <script type="text/javascript">
+            function myhref(Ctarefa){
+            window.location.href = Ctarefa;}
+        </script>
 
     <script src="js/index.js"></script>
 

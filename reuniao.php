@@ -1,3 +1,11 @@
+<?php
+
+include 'config.php';
+
+session_start();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -115,95 +123,108 @@
             </div>
             </div>
         </div>
+
         <!-- END OF TOP -->
-        <div class="recent-updates">
-            <h2>Recent Updates</h2>
-            <div class="updates">
+        <div class="recent-updates">  
+            <h2>Utilizadores Recentes</h2>              
+            <div class="updates"> 
+
+        <?php
+
+            $sql ="SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users order by id_user desc LIMIT 2";
+
+            if($res=mysqli_query($conn,$sql)){
+
+            $id_user = array();
+            $full_name = array();
+            $data = array();
+
+            $iol= 0;
+            while($reg=mysqli_fetch_assoc($res)){
+
+                $id_user[$iol] = $reg['id_user'];
+                $full_name[$iol] = $reg['nome_user'];
+                $data[$iol] = $reg['data'];
+        ?>
+                <div class="recent-updates" onclick="myhref('funcionarios.php');">
                 <div class="update">
                     <div class="profile-photo">
                         <img src="./img/profile-2.jpg">
                     </div>
                 <div class="message">
-                    <p><b>Mike Tyson</b> received his order of
-                    Night lion tech GPS drone.</p>
-                    <small class="text-muted">2 Minutes Ago</small>
+                    <p><b><?php echo $full_name[$iol]; ?></b> acabou de se juntar á nossa empresa!</p>
+                    <small class="text-muted"> <?php echo $reg['data']; ?> dias atrás</small>
                 </div>
-            </div>
-            <div class="update">
-                    <div class="profile-photo">
-                        <img src="./img/profile-3.jpg">
-                    </div>
-                <div class="message">
-                    <p><b>Mike Tyson</b> received his order of
-                    Night lion tech GPS drone.</p>
-                    <small class="text-muted">2 Minutes Ago</small>
                 </div>
+                 <?php }} ?>
             </div>
-            <div class="update">
-                    <div class="profile-photo">
-                        <img src="./img/profile-4.jpg">
-                    </div>
-                <div class="message">
-                    <p><b>Mike Tyson</b> received his order of
-                    Night lion tech GPS drone.</p>
-                    <small class="text-muted">2 Minutes Ago</small>
-                </div>
-            </div>
-            </div>
-        </div>
-        <!--------------------- END OF RECENT UPDATES ------------------->
-        <div class="sales-analytics">
-            <h2>Sales Analytics</h2>
-        <div class="item online">
-            <div class="icon">
-                <span class="material-icons-sharp">shopping_cart</span>
-            </div>
-        <div class="right">
-            <div class="info">
-                <h3>ONLINE ORDERS</h3>
-                <small class="text-muted">Last 24 Hours</small>
-            </div>
-                <h5 class="success">+39%</h5>
-                <h3>3849</h3>
-            </div>
-        </div>
+            
+            <script type="text/javascript">
+                function myhref(funcionarios){
+                window.location.href = funcionarios;}
+            </script>
 
-        <div class="item offline">
-            <div class="icon">
-                <span class="material-icons-sharp">local_mall</span>
-            </div>
-        <div class="right">
-            <div class="info">
-                <h3>OFFLINE ORDERS</h3>
-                <small class="text-muted">Last 24 Hours</small>
-            </div>
-                <h5 class="danger">-17%</h5>
-                <h3>1100</h3>
             </div>
         </div>
+            </div>  
 
-        <div class="item customers">
+         <!--------------------- END OF RECENT UPDATES ------------------->
+
+         <div class="sales-analytics">
+            <h2>Reuniões Recentes</h2>
+
+            <?php
+
+                $sql ="SELECT * FROM reunioes where data_reuniao > CURDATE() order by id_reuniao desc LIMIT 2";
+
+                if($res=mysqli_query($conn,$sql)){
+
+                $id_reuniao = array();
+                $nome_reuniao = array();
+                $data_reuniao = array();
+                $desc_reuniao = array();
+
+                $iol= 0;
+                while($reg=mysqli_fetch_assoc($res)){
+
+                    $id_reuniao[$iol] = $reg['id_reuniao'];
+                    $nome_reuniao[$iol] = $reg['nome_reuniao'];
+                    $data_reuniao[$iol] = $reg['data_reuniao'];
+                    $desc_reuniao[$iol] = $reg['desc_reuniao'];
+
+            ?>
+
+        <div class="item online" onclick="myhref('reuniao.php');">
             <div class="icon">
-                <span class="material-icons-sharp">person</span>
+                <span class="material-icons-sharp">video_camera_front</span>
             </div>
         <div class="right">
-            <div class="info">
-                <h3>NEW CUSTOMERS</h3>
-                <small class="text-muted">Last 24 Hours</small>
+            <div class="info" style="max-width: 110px;">
+                <h3><?php echo $nome_reuniao[$iol]; ?></h3>
+                <small class="text-muted"><?php echo $desc_reuniao[$iol]; ?></small>
             </div>
-                <h5 class="success">+25%</h5>
-                <h3>849</h3>
+                <h3><?php echo $data_reuniao[$iol]; ?></h3>
             </div>
         </div>
-            <div class="item add-product">
+        
+        <script type="text/javascript">
+            function myhref(reuniao){
+            window.location.href = reuniao;}
+        </script>
+
+        <?php }} ?>
+
+        <div class="item add-product" onclick="myhref('Creuniao.php');">
                 <div>
                     <span class="material-icons-sharp">add</span>
                 <h3>Add Product</h3>
             </div>
         </div>
-    </div>
-    </div>
-    </div>
+
+        <script type="text/javascript">
+            function myhref(Creuniao){
+            window.location.href = Creuniao;}
+        </script>
 
     <script src="js/index.js"></script>
 
