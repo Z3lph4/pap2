@@ -95,37 +95,19 @@ session_start();
                 <input type="date">
             </div>
 
-            <?php
-
-                $sql ="SELECT * FROM atividadesrecentes order by id desc LIMIT 3";
-
-                if($res=mysqli_query($conn,$sql)){
-
-                $id = array();
-                $desc = array();
-                $data = array();
-
-                $iol= 0;
-                while($reg=mysqli_fetch_assoc($res)){
-
-                    $id[$iol] = $reg['id'];
-                    $desc[$iol] = $reg['texto'];
-                    $data[$iol] = $reg['data'];
-
-            ?>
+            
 
             <div class="insights">
                 <div class="sales">
                     <span class="material-icons-sharp">analytics</span>
                     <div class="middle"> <!-- style="width: 220px;" --> 
                         <div class="left">
-                            <h3><?php echo $desc[$iol]; ?></h3>
+                            <h3></h3>
                         </div>
                     </div>
-                    <small class="text-muted"><?php echo $reg['data']; ?></small>
+                    <small class="text-muted"></small>
                 </div>
 
-                <?php }} ?>
                 <!-- ========== End of Income ========== -->
             </div>
             <!-- ========== End of Insights ========== -->
@@ -171,11 +153,16 @@ session_start();
                     <td><?php echo $data_tarefa[$iol]; ?></td>
                     <td class="warning"><?php echo $reg['utilizador']; ?></td>
                     <td><?php echo $reg['desc_tarefa']; ?></td>
-                    <td class="primary" href="#">Details</td>
+                    <td class="primary" onclick="myhref('tarefas.php');">Detalhes</td>
                 </tr>
                     </tbody>
                 </table>
             </div>
+
+            <script type="text/javascript">
+                function myhref(tarefas){
+                window.location.href = tarefas;}
+            </script>
 
             <?php }} ?>
 

@@ -93,6 +93,55 @@ session_start();
 
         <main>
 
+        <h1>Tarefas Recentes</h1>
+
+            <div class="date">
+                <input type="date">
+            </div>
+
+            <?php
+
+            $sql ="SELECT * FROM material";
+
+            if($res=mysqli_query($conn,$sql)){
+
+            $id_material = array();
+            $nome_material = array();
+            $desc_material = array();
+            $qnt_material = array();
+
+            $iol= 0;
+            while($reg=mysqli_fetch_assoc($res)){
+
+                $id_material[$iol] = $reg['id_material'];
+                $nome_material[$iol] = $reg['nome_material'];
+                $qnt_material[$iol] = $reg['qnt_material'];
+                $desc_material[$iol] = $reg['desc_material'];
+
+            ?>
+<!-- ?????????? erro linha 119 ??????????? -->
+            <div class="recent-orders">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome do Material</th>
+                                <th>Quantidade</th>
+                                <th>Descrição</th>
+                                <th></th>
+                            </tr>
+                    </thead>
+                <tbody>
+                <tr>
+                    <td><?php echo $nome_material[$iol]; ?></td>
+                    <td><?php echo $qnt_material[$iol]; ?></td>
+                    <td><?php echo $desc_material[$iol]; ?></td>
+                </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <?php }} ?>
+
         </main>
 
         <!-- ============== END OF MAIN ============ -->

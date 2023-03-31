@@ -93,6 +93,58 @@ session_start();
 
         <main>
 
+        <h1>Tarefas Recentes</h1>
+
+            <div class="date">
+                <input type="date">
+            </div>
+
+            <?php
+
+            $sql ="SELECT * FROM users";
+
+            if($res=mysqli_query($conn,$sql)){
+
+            $id_user = array();
+            $nome_user = array();
+            $tel_user = array();
+            $email_user = array();
+
+            $iol= 0;
+            while($reg=mysqli_fetch_assoc($res)){
+
+                $id_user[$iol] = $reg['id_user'];
+                $nome_user[$iol] = $reg['nome_user'];
+                $email_user[$iol] = $reg['email_user'];
+                $tel_user = $reg['tel_user'];
+
+            ?>
+
+            <div class="recent-orders">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome do Funcionário</th>
+                                <th style="width: 210px; max-width: 210px;">Email</th>
+                                <th>Funcionário</th>
+                                <th>Telemóvel</th>
+                                <th></th>
+                            </tr>
+                    </thead>
+                    
+                <tbody>
+                <tr>
+                    <td><?php echo $nome_user[$iol]; ?></td>
+                    <td><?php echo $email_user[$iol]; ?></td>
+                    <td class="warning"><?php echo $reg['id_user']; ?></td>
+                    <td><?php echo $reg['tel_user']; ?></td>
+                </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <?php }} ?>
+
         </main>
 
         <!-- ============== END OF MAIN ============ -->
