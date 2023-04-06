@@ -124,10 +124,10 @@ session_start();
                     <table>
                         <thead>
                             <tr>
-                                <th>Nome do Funcionário</th>
-                                <th style="width: 210px; max-width: 210px;">Email</th>
-                                <th>Funcionário</th>
-                                <th>Telemóvel</th>
+                                <th style="width: 300px; max-width: 300px;">Nome do Funcionário</th>
+                                <th style="width: 400px; max-width: 400px;">Email</th>
+                                <th style="width: 300px; max-width: 300px;">Funcionário</th>
+                                <th style="width: 300px; max-width: 300px;">Telemóvel</th>
                                 <th></th>
                             </tr>
                     </thead>
@@ -167,8 +167,8 @@ session_start();
             </div>
             <div class="profile">
             <div class="info">
-                <p>Hey, <b>Daniel</b></p>
-                <small class="text-muted">Admin</small>
+                <p>Hey, <b><?php echo $_SESSION["user_name"]; ?></b></p>
+                <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
             <div class="profile-photo">
                 <img src="./img/profile-1.jpg">

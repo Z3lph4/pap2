@@ -93,6 +93,55 @@ session_start();
 
             <main>
 
+            <h1>Reuniões Recentes</h1>
+
+                <div class="date">
+                    <input type="date">
+                </div>
+
+                <?php
+
+                $sql ="SELECT * FROM reunioes";
+
+                if($res=mysqli_query($conn,$sql)){
+
+                $id_reuniao = array();
+                $nome_reuniao = array();
+                $data_reuniao = array();
+                $desc_reuniao = array();
+
+                $iol= 0;
+                while($reg=mysqli_fetch_assoc($res)){
+
+                    $id_reuniao[$iol] = $reg['id_reuniao'];
+                    $nome_reuniao[$iol] = $reg['nome_reuniao'];
+                    $data_reuniao[$iol] = $reg['data_reuniao'];
+                    $desc_reuniao = $reg['desc_reuniao'];
+
+                ?>
+
+                <div class="recent-orders">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Assunto da Reunião</th>
+                                    <th>Data da Reunião</th>
+                                    <th>Descrição</th>
+                                    <th></th>
+                                </tr>
+                        </thead>
+                    <tbody>
+                    <tr>
+                        <td style="width: 300px; max-width: 300px;"><?php echo $nome_reuniao[$iol]; ?></td>
+                        <td style="width: 300px; max-width: 300px;"><?php echo $data_reuniao[$iol]; ?></td>
+                        <td><?php echo $reg['desc_reuniao']; ?></td>
+                    </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <?php }} ?>
+
             </main>
 
         <!-- ============== END OF MAIN ============ -->
@@ -115,8 +164,8 @@ session_start();
             </div>
             <div class="profile">
             <div class="info">
-                <p>Hey, <b>Daniel</b></p>
-                <small class="text-muted">Admin</small>
+                <p>Hey, <b><?php echo $_SESSION["user_name"]; ?></b></p>
+                <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
             <div class="profile-photo">
                 <img src="./img/profile-1.jpg">
@@ -217,7 +266,7 @@ session_start();
         <div class="item add-product" onclick="myhref('Creuniao.php');">
                 <div>
                     <span class="material-icons-sharp">add</span>
-                <h3>Add Product</h3>
+                <h3>Adicionar Reunião</h3>
             </div>
         </div>
 

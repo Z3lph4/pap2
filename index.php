@@ -97,19 +97,19 @@ session_start();
 
             
 
-            <div class="insights">
+            <!-- <div class="insights">
                 <div class="sales">
                     <span class="material-icons-sharp">analytics</span>
-                    <div class="middle"> <!-- style="width: 220px;" --> 
+                    <div class="middle">  
                         <div class="left">
                             <h3></h3>
                         </div>
                     </div>
                     <small class="text-muted"></small>
-                </div>
+                </div> -->
 
                 <!-- ========== End of Income ========== -->
-            </div>
+            <!-- </div> -->
             <!-- ========== End of Insights ========== -->
             
             <?php
@@ -184,13 +184,16 @@ session_start();
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
             <div class="profile-photo">
-                <?php if (isset($_COOKIE["user_img"])){
+                <img src="./img/profile-1.jpg">
+            </div>
+            <!-- <div class="profile-photo">
+                < ? php if (isset($_COOKIE["user_img"])){
                 echo "<img onclick='myhref('perfil.php');' src='". $_COOKIE["user_img"] . "'>";} ?>
                 <script type="text/javascript">
                     function myhref(perfil){
                     window.location.href = perfil;}
                 </script>
-            </div>
+            </div> -->
             </div>
         </div>
         <!-- END OF TOP -->

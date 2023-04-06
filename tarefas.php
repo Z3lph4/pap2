@@ -137,7 +137,7 @@ session_start();
                     <td><?php echo $data_tarefa[$iol]; ?></td>
                     <td class="warning"><?php echo $reg['utilizador']; ?></td>
                     <td><?php echo $reg['desc_tarefa']; ?></td>
-                    <td class="primary" href="#">Details</td>
+                    <!-- <td class="primary" href="#">Details</td> -->
                 </tr>
                     </tbody>
                 </table>
@@ -165,8 +165,8 @@ session_start();
             </div>
             <div class="profile">
             <div class="info">
-                <p>Hey, <b>Daniel</b></p>
-                <small class="text-muted">Admin</small>
+                <p>Hey, <b><?php echo $_SESSION["user_name"]; ?></b></p>
+                <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
             <div class="profile-photo">
                 <img src="./img/profile-1.jpg">
@@ -266,7 +266,7 @@ session_start();
         <div class="item add-product" onclick="myhref('Ctarefa.php');">
                 <div>
                     <span class="material-icons-sharp">add</span>
-                <h3>Add Product</h3>
+                <h3>Adicionar Tarefas</h3>
             </div>
         </div>
 
