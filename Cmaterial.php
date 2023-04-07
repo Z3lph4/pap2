@@ -4,8 +4,30 @@ include 'config.php';
 
 session_start();
 
-?>
+error_reporting(0);
 
+if (isset($_POST["signup"])) {
+    $full_name = mysqli_real_escape_string($conn, $_POST["signup_nome_user"]);
+    $email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
+    $tel = mysqli_real_escape_string($conn, $_POST["signup_tel_user"]);
+
+    if($pass !== $cpass) {
+        echo "<script>alert('Password incorreta.');</script>";
+      } elseif ($check_email > 0) {
+        echo "<script>alert('Email já existe.');</script>";
+      } else {
+      $sql = "INSERT INTO material (nome_material, desc_material, qnt_material) VALUES ('$full_name', '$email', '$tel')";
+      $result = mysqli_query($conn, $sql);
+      if ($result) {
+        $_POST["signup_nome_user"] = "";
+        $_POST["signup_email"] = "";
+        $_POST["signup_tel_user"] = "";
+
+    }
+  }
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,6 +113,19 @@ session_start();
         <!-- ============= END OF ASIDE ============ -->
 
         <main>
+
+        <div class="mainprof2">
+      
+        <div class="containerprof2 a-containerprof" id="a-container">
+            <form action="" class="formprof" id="a-form" method="post">
+            <h2 class="form_titleprof titleprof">Criar Reunião</h2>
+            <input class="form__inputprof" type="text" placeholder="Material" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
+            <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
+            <input class="form__inputprof" type="number" placeholder="Quantidade" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
+                <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
+            </form>
+        </div>
+        </div>
 
         </main>
 

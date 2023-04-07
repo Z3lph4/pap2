@@ -133,10 +133,10 @@ session_start();
                     </thead>
                 <tbody>
                 <tr>
-                    <td><?php echo $nome_tarefa[$iol]; ?></td>
-                    <td><?php echo $data_tarefa[$iol]; ?></td>
-                    <td class="warning"><?php echo $reg['utilizador']; ?></td>
-                    <td><?php echo $reg['desc_tarefa']; ?></td>
+                    <td style="width: 260px; max-width: 260px;"><?php echo $nome_tarefa[$iol]; ?></td>
+                    <td style="width: 260px; max-width: 260px;"><?php echo $data_tarefa[$iol]; ?></td>
+                    <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $reg['utilizador']; ?></td>
+                    <td style="width: 330px; max-width: 330px;"><?php echo $reg['desc_tarefa']; ?></td>
                     <!-- <td class="primary" href="#">Details</td> -->
                 </tr>
                     </tbody>

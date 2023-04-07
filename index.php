@@ -95,7 +95,7 @@ session_start();
                 <input type="date">
             </div>
 
-            
+            <br><br>
 
             <!-- <div class="insights">
                 <div class="sales">
@@ -112,9 +112,11 @@ session_start();
             <!-- </div> -->
             <!-- ========== End of Insights ========== -->
             
+            <h2>Tarefas Recentes</h2>
+
             <?php
 
-            $sql ="SELECT * FROM tarefas";
+            $sql ="SELECT * FROM tarefas where data_tarefa > CURDATE() order by id_tarefa desc LIMIT 2";
 
             if($res=mysqli_query($conn,$sql)){
 
@@ -136,7 +138,7 @@ session_start();
             ?>
 
             <div class="recent-orders">
-                <h2>Tarefas Recentes</h2>
+                
                     <table>
                         <thead>
                             <tr>
@@ -149,10 +151,10 @@ session_start();
                     </thead>
                 <tbody>
                 <tr>
-                    <td><?php echo $nome_tarefa[$iol]; ?></td>
-                    <td><?php echo $data_tarefa[$iol]; ?></td>
-                    <td class="warning"><?php echo $reg['utilizador']; ?></td>
-                    <td><?php echo $reg['desc_tarefa']; ?></td>
+                    <td style="width: 230px; max-width: 230px;"><?php echo $nome_tarefa[$iol]; ?></td>
+                    <td style="width: 230px; max-width: 230px;"><?php echo $data_tarefa[$iol]; ?></td>
+                    <td style="width: 230px; max-width: 230px;" class="warning"><?php echo $reg['utilizador']; ?></td>
+                    <td style="width: 230px; max-width: 230px;"><?php echo $reg['desc_tarefa']; ?></td>
                     <td class="primary" onclick="myhref('tarefas.php');">Detalhes</td>
                 </tr>
                     </tbody>
@@ -163,6 +165,55 @@ session_start();
                 function myhref(tarefas){
                 window.location.href = tarefas;}
             </script>
+
+            <?php }} ?>
+
+                        <!-- ====================== Fim Tarefas =============== -->
+
+                    <br><br>
+
+            <h2>Material Recente</h2>
+
+            <?php
+
+            $sql ="SELECT * FROM material order by id_material desc LIMIT 2";
+
+            if($res=mysqli_query($conn,$sql)){
+
+            $id_material = array();
+            $nome_material = array();
+            $desc_material = array();
+            $qnt_material = array();
+
+            $iol= 0;
+            while($reg=mysqli_fetch_assoc($res)){
+
+                $id_material[$iol] = $reg['id_material'];
+                $nome_material[$iol] = $reg['nome_material'];
+                $qnt_material[$iol] = $reg['qnt_material'];
+                $desc_material[$iol] = $reg['desc_material'];
+
+            ?>
+
+            <div class="recent-orders">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome do Material</th>
+                                <th>Quantidade</th>
+                                <th>Descrição</th>
+                                <th></th>
+                            </tr>
+                    </thead>
+                <tbody>
+                <tr>
+                    <td style="width: 360px; max-width: 360px;"><?php echo $nome_material[$iol]; ?></td>
+                    <td style="width: 360px; max-width: 360px;"><?php echo $qnt_material[$iol]; ?></td>
+                    <td><?php echo $desc_material[$iol]; ?></td>
+                </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <?php }} ?>
 

@@ -93,7 +93,7 @@ session_start();
 
         <main>
 
-        <h1>Tarefas Recentes</h1>
+        <h1>Material Recente</h1>
 
             <div class="date">
                 <input type="date">
@@ -119,7 +119,7 @@ session_start();
                 $desc_material[$iol] = $reg['desc_material'];
 
             ?>
-<!-- ?????????? erro linha 119 ??????????? -->
+
             <div class="recent-orders">
                     <table>
                         <thead>
@@ -132,8 +132,8 @@ session_start();
                     </thead>
                 <tbody>
                 <tr>
-                    <td><?php echo $nome_material[$iol]; ?></td>
-                    <td><?php echo $qnt_material[$iol]; ?></td>
+                    <td style="width: 360px; max-width: 360px;"><?php echo $nome_material[$iol]; ?></td>
+                    <td style="width: 360px; max-width: 360px;"><?php echo $qnt_material[$iol]; ?></td>
                     <td><?php echo $desc_material[$iol]; ?></td>
                 </tr>
                     </tbody>
@@ -164,8 +164,8 @@ session_start();
             </div>
             <div class="profile">
             <div class="info">
-                <p>Hey, <b>Daniel</b></p>
-                <small class="text-muted">Admin</small>
+                <p>Hey, <b><?php echo $_SESSION["user_name"]; ?></b></p>
+                <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
             <div class="profile-photo">
                 <img src="./img/profile-1.jpg">
@@ -266,7 +266,7 @@ session_start();
         <div class="item add-product" onclick="myhref('Cmaterial.php');">
                 <div>
                     <span class="material-icons-sharp">add</span>
-                <h3>Add Product</h3>
+                <h3>Adicionar Material</h3>
             </div>
         </div>
 
