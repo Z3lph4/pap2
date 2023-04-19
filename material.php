@@ -108,10 +108,6 @@ if (isset($_POST["action"])) {
 
         <h1>Material</h1>
 
-            <div class="date">
-                <input type="date">
-            </div>
-
             <?php
 
             $sql ="SELECT * FROM material order by id_material desc LIMIT 4";

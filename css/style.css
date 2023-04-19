@@ -888,7 +888,38 @@ main .recent-orders a {
     border: none;
     outline: none;
   }
+
+  .buttonreun {
+    margin-left: 10px;
+    width: 70px;
+    height: 20px;
+    border-radius: 10px;
+    font-size: 11px;
+    letter-spacing: 0.7px;
+    background-color: #4B70E2;
+    color: #f9f9f9;
+    border: none;
+    outline: none;
+  }
   
+  .buttonind {
+    margin-top: 150px;
+    margin-left: 597px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 15px;
+    font-weight: 400;
+    font-size: 14px;
+    letter-spacing: 0.7px;
+    background-color: #4B70E2;
+    color: #f9f9f9;
+    box-shadow: var(--box-shadow);
+    border: none;
+    outline: none;
+  }
+
+  .pointer {cursor: pointer;}
+
   /**/
   .a-containerprof {
     z-index: 100;

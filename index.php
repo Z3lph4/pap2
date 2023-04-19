@@ -154,7 +154,7 @@ session_start();
                     <td style="width: 230px; max-width: 230px;"><?php echo $data_tarefa[$iol]; ?></td>
                     <td style="width: 230px; max-width: 230px;" class="warning"><?php echo $reg['utilizador']; ?></td>
                     <td style="width: 230px; max-width: 230px;"><?php echo $reg['desc_tarefa']; ?></td>
-                    <td class="primary" onclick="myhref('tarefas.php');">Detalhes</td>
+                    <td class="primary pointer" onclick="myhref('tarefas.php');">Detalhes</td>
                 </tr>
                     </tbody>
                 </table>
@@ -208,11 +208,10 @@ session_start();
                     <td style="width: 230px; max-width: 230px;"><?php echo $nome_material[$iol]; ?></td>
                     <td style="width: 230px; max-width: 230px;"><?php echo $qnt_material[$iol]; ?></td>
                     <td style="width: 230px; max-width: 230px;"><?php echo $desc_material[$iol]; ?></td>
-                    
-                    <td class="primary" onclick="myhref('material.php');">Detalhes</td>
                 </tr>
                     </tbody>
                 </table>
+                
             </div>
 
             <script type="text/javascript">
@@ -221,6 +220,10 @@ session_start();
             </script>
 
             <?php }} ?>
+
+            <br>
+
+            <span class="buttonind pointer" onclick="myhref('material.php');">Ver mais</span>
 
         </main>
         <!-- ============== END OF MAIN ============ -->
@@ -303,7 +306,7 @@ session_start();
 
             <?php
 
-                $sql ="SELECT * FROM reunioes where data_reuniao > CURDATE() order by id_reuniao desc LIMIT 2";
+                $sql ="SELECT * FROM reunioes where data_reuniao > CURDATE() order by id_reuniao desc LIMIT 3";
 
                 if($res=mysqli_query($conn,$sql)){
 

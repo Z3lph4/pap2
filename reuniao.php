@@ -103,70 +103,69 @@ if (isset($_POST["action"])) {
         </aside>
         <!-- ============= END OF ASIDE ============ -->
 
-            <main>
-
+        <main>
             <h1>Reuniões</h1>
 
+            <form method="POST">
                 <div class="date">
-                    <input type="date">
+                    <input type="date" name="data_pesquisa">
+                    <button type="submit" class="form__buttonprof buttonreun submitprof">Pesquisar</button>
                 </div>
+            </form>
 
-                <?php
+            <?php
+            $sql = "SELECT * FROM reunioes ";
 
-                $sql ="SELECT * FROM reunioes where data_reuniao > CURDATE() order by id_reuniao desc LIMIT 4";
-
-                if($res=mysqli_query($conn,$sql)){
-
-                $id_reuniao = array();
-                $nome_reuniao = array();
-                $data_reuniao = array();
-                $desc_reuniao = array();
-
-                $iol= 0;
-                while($reg=mysqli_fetch_assoc($res)){
-
-                    $id_reuniao[$iol] = $reg['id_reuniao'];
-                    $nome_reuniao[$iol] = $reg['nome_reuniao'];
-                    $data_reuniao[$iol] = $reg['data_reuniao'];
-                    $desc_reuniao = $reg['desc_reuniao'];
-
-                ?>
-
-                <div class="recent-orders">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Assunto da Reunião</th>
-                                    <th>Data da Reunião</th>
-                                    <th>Descrição</th>
-                                </tr>
-                        </thead>
-                    <tbody>
-                    <tr>
-                        <td style="width: 230px; max-width: 230px;"><?php echo $nome_reuniao[$iol]; ?></td>
-                        <td style="width: 230px; max-width: 230px;"><?php echo $data_reuniao[$iol]; ?></td>
-                        <td style="width: 230px; max-width: 230px;"><?php echo $reg['desc_reuniao']; ?></td>
-
-                        <td><div class="productsdel">
+            if(isset($_POST['data_pesquisa'])){
+                $data_pesquisa = $_POST['data_pesquisa'];
+                $sql .= "WHERE DATE(data_reuniao) = '$data_pesquisa'";
+            }
+            $sql .= " ORDER BY data_reuniao DESC LIMIT 4";
+            
+            if($res=mysqli_query($conn,$sql)){
+                if(mysqli_num_rows($res) > 0){
+                    while($reg=mysqli_fetch_assoc($res)){
+                        ?>
+                        <div class="recent-orders">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 360px; max-width: 360px;">Assunto da Reunião</th>
+                                        <th style="width: 360px; max-width: 360px;">Data da Reunião</th>
+                                        <th style="width: 400px; max-width: 400px;">Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><?php echo $reg['nome_reuniao']; ?></td>
+                                        <td><?php echo $reg['data_reuniao']; ?></td>
+                                        <td><?php echo $reg['desc_reuniao']; ?></td>
+                                        <td>
+                                            <div class="productsdel">
+                                                <?php
+                                                    $form_id = "DeleteMaterial" . $reg['id_reuniao'];
+                                                ?>
+                                                <form method="post" action="reuniao.php" id="<?php echo $form_id ?>">
+                                                    <input type="hidden" name="MaterialId" value="<?php echo $reg['id_reuniao'] ?>" />
+                                                    <input type="hidden" name="action" value="DeleteMaterial" />  
+                                                    <a class="tm-product-delete-link" onClick="document.getElementById('<?php echo $form_id ?>').submit();">
+                                                        <i class="material-icons-sharp">delete</i>
+                                                    </a>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                         <?php
-                                $form_id = "DeleteMaterial" . $id_reuniao[$iol];
-                            ?>
-                            <form method="post" action="reuniao.php" id="<?php echo $form_id ?>">
-                                <input type="hidden" name="MaterialId" value="<?php echo $id_reuniao[$iol] ?>" />
-                                <input type="hidden" name="action" value="DeleteMaterial" />  
-                            <a class="tm-product-delete-link" onClick="document.getElementById('<?php echo $form_id ?>').submit();">
-                                <i class="material-icons-sharp">delete</i></a>
-                            </div>
-                        </form>
-                    </td>
-                    </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <?php }} ?>
-
-            </main>
+                    }
+                } else {
+                    echo "Nenhuma reunião encontrada para esta data.";
+                }
+            }
+            ?>
+        </main>
 
         <!-- ============== END OF MAIN ============ -->
 

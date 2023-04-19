@@ -107,10 +107,6 @@ if (isset($_POST["action"])) {
 
         <h1>Funcionários</h1>
 
-            <div class="date">
-                <input type="date">
-            </div>
-
             <?php
 
             $sql ="SELECT * FROM users order by id_user desc LIMIT 4";
