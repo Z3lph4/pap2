@@ -4,6 +4,19 @@ include 'config.php';
 
 session_start();
 
+if (isset($_POST["action"])) {
+    switch(strtoupper($_POST["action"])) {
+      case "DELETEMATERIAL":
+        if (isset($_POST["MaterialId"])) {
+          $deleteTarefa = "DELETE FROM material WHERE id_material = " . $_POST["MaterialId"];
+  
+          mysqli_query($conn, $deleteTarefa);
+        }
+        break;
+    }
+  }
+  
+
 ?>
 
 <!DOCTYPE html>
@@ -12,7 +25,7 @@ session_start();
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GestEMP</title>
+    <title>EmTec</title>
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -32,7 +45,7 @@ session_start();
             <a href="index.php">
                 <div class="logo"> 
                     <img src="img/logo2.png">
-                    <h2>Gest<span class="clogo">EMP</span></h2>
+                    <h2>Em<span class="clogo">Tec</span></h2>
                 </div>
                 <div class="close" id="close-btn">
                 <span class="material-icons-sharp">close</span>
@@ -93,7 +106,7 @@ session_start();
 
         <main>
 
-        <h1>Material Recente</h1>
+        <h1>Material</h1>
 
             <div class="date">
                 <input type="date">
@@ -101,7 +114,7 @@ session_start();
 
             <?php
 
-            $sql ="SELECT * FROM material";
+            $sql ="SELECT * FROM material order by id_material desc LIMIT 4";
 
             if($res=mysqli_query($conn,$sql)){
 
@@ -124,17 +137,29 @@ session_start();
                     <table>
                         <thead>
                             <tr>
-                                <th>Nome do Material</th>
-                                <th>Quantidade</th>
-                                <th>Descrição</th>
-                                <th></th>
+                                <th style="width: 350px; max-width: 350px;">Nome do Material</th>
+                                <th style="width: 350px; max-width: 350px;">Quantidade</th>
+                                <th style="width: 350px; max-width: 350px;">Descrição</th>
                             </tr>
                     </thead>
                 <tbody>
                 <tr>
-                    <td style="width: 360px; max-width: 360px;"><?php echo $nome_material[$iol]; ?></td>
-                    <td style="width: 360px; max-width: 360px;"><?php echo $qnt_material[$iol]; ?></td>
+                    <td><?php echo $nome_material[$iol]; ?></td>
+                    <td><?php echo $qnt_material[$iol]; ?></td>
                     <td><?php echo $desc_material[$iol]; ?></td>
+
+                    <td><div class="productsdel">
+                        <?php
+                                $form_id = "DeleteMaterial" . $id_material[$iol];
+                            ?>
+                            <form method="post" action="material.php" id="<?php echo $form_id ?>">
+                                <input type="hidden" name="MaterialId" value="<?php echo $id_material[$iol] ?>" />
+                                <input type="hidden" name="action" value="DeleteMaterial" />  
+                            <a class="tm-product-delete-link" onClick="document.getElementById('<?php echo $form_id ?>').submit();">
+                                <i class="material-icons-sharp">delete</i></a>
+                            </div>
+                        </form>
+                    </td>
                 </tr>
                     </tbody>
                 </table>

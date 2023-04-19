@@ -37,7 +37,7 @@ if (isset($_POST["signup"])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GestEMP</title>
+    <title>EmTec</title>
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -57,7 +57,7 @@ if (isset($_POST["signup"])) {
                 <a href="index.php">
                 <div class="logo"> 
                     <img src="img/logo2.png">
-                    <h2>Gest<span class="clogo">EMP</span></h2>
+                    <h2>Em<span class="clogo">Tec</span></h2>
                 </div>
                 <div class="close" id="close-btn">
                 <span class="material-icons-sharp">close</span>
@@ -126,7 +126,31 @@ if (isset($_POST["signup"])) {
           <input class="form__inputprof" type="text" placeholder="Tarefa" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
           <input class="form__inputprof" type="date" placeholder="Data" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
           <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
-          <input class="form__inputprof" type="number" placeholder="Funcionário" name="signup_pass" value="<?php echo $_POST["signup_pass"]; ?>" required/>
+
+          <?php
+                // Estabelecer conexão com o banco de dados
+                $conn = mysqli_connect("localhost", "root", "", "pap2");
+
+                // Verificar se a conexão foi estabelecida com sucesso
+                if (!$conn) {
+                    die("Falha na conexão: " . mysqli_connect_error());
+                }
+
+                // Consulta SQL para selecionar os utilizadores na tabela "users"
+                $sql = "SELECT id_user, nome_user FROM users";
+
+                // Executa a consulta SQL e armazena o resultado em uma variável
+                $result = mysqli_query($conn, $sql);
+
+                // Exibe a caixa de seleção
+                echo '<select class="form__inputprof" name="signup_pass" required>';
+                while ($row = mysqli_fetch_assoc($result)) {
+                    echo '<option value="' . $row['id_user'] . '">' . $row['nome_user'] . '</option>';
+                }
+                echo '</select>';
+
+            ?>
+
             <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
         </form>
       </div>
@@ -154,8 +178,8 @@ if (isset($_POST["signup"])) {
             </div>
             <div class="profile">
             <div class="info">
-                <p>Hey, <b>Daniel</b></p>
-                <small class="text-muted">Admin</small>
+                <p>Hey, <b><?php echo $_SESSION["user_name"]; ?></b></p>
+                <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small>
             </div>
             <div class="profile-photo">
                 <img src="./img/profile-1.jpg">

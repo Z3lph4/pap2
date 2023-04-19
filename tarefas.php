@@ -4,6 +4,18 @@ include 'config.php';
 
 session_start();
 
+if (isset($_POST["action"])) {
+    switch(strtoupper($_POST["action"])) {
+      case "DELETEMATERIAL":
+        if (isset($_POST["MaterialId"])) {
+          $deleteTarefa = "DELETE FROM tarefas WHERE id_tarefa = " . $_POST["MaterialId"];
+  
+          mysqli_query($conn, $deleteTarefa);
+        }
+        break;
+    }
+  }
+
 ?>
 
 <!DOCTYPE html>
@@ -12,7 +24,7 @@ session_start();
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GestEMP</title>
+    <title>EmTec</title>
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -32,7 +44,7 @@ session_start();
             <a href="index.php">
                 <div class="logo"> 
                     <img src="img/logo2.png">
-                    <h2>Gest<span class="clogo">EMP</span></h2>
+                    <h2>Em<span class="clogo">Tec</span></h2>
                 </div>
                 <div class="close" id="close-btn">
                 <span class="material-icons-sharp">close</span>
@@ -91,7 +103,7 @@ session_start();
         </aside>
         <!-- ============= END OF ASIDE ============ -->
         <main>
-            <h1>Tarefas Recentes</h1>
+            <h1>Tarefas</h1>
 
             <div class="date">
                 <input type="date">
@@ -99,7 +111,7 @@ session_start();
 
             <?php
 
-            $sql ="SELECT * FROM tarefas";
+            $sql ="SELECT * FROM tarefas where data_tarefa > CURDATE() order by id_tarefa desc LIMIT 4";
 
             if($res=mysqli_query($conn,$sql)){
 
@@ -137,7 +149,18 @@ session_start();
                     <td style="width: 260px; max-width: 260px;"><?php echo $data_tarefa[$iol]; ?></td>
                     <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $reg['utilizador']; ?></td>
                     <td style="width: 330px; max-width: 330px;"><?php echo $reg['desc_tarefa']; ?></td>
-                    <!-- <td class="primary" href="#">Details</td> -->
+                    <td style="width: 70px; max-width: 70px;"><div class="productsdel">
+                        <?php
+                                $form_id = "DeleteMaterial" . $id_tarefa[$iol];
+                            ?>
+                            <form method="post" action="tarefas.php" id="<?php echo $form_id ?>">
+                                <input type="hidden" name="MaterialId" value="<?php echo $id_tarefa[$iol] ?>" />
+                                <input type="hidden" name="action" value="DeleteMaterial" />  
+                            <a class="tm-product-delete-link" onClick="document.getElementById('<?php echo $form_id ?>').submit();">
+                                <i class="material-icons-sharp">delete</i></a>
+                            </div>
+                        </form>
+                    </td>
                 </tr>
                     </tbody>
                 </table>

@@ -410,8 +410,7 @@ main table tbody tr:last-child td {
 main .recent-orders a {
     text-align: center;
     display: block;
-    margin: 1rem auto;
-    color: var(--color-primary);
+    color: var(--color-background);
 }
 
 /* ============= RIGHT ============= */
@@ -1031,3 +1030,29 @@ main .recent-orders a {
     transform: translateY(-50%);
     color: #999;
   }
+
+  .productsdel {
+    display: flex;
+    align-items: center;
+  }
+  @media screen and (max-width: 480px) {
+    .productsdel {
+      width: 120px;
+    }
+  }
+
+  .tm-product-delete-link {
+    padding-top: 8px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+  }
+  
+  .tm-product-delete-icon {
+  font-size: 1.1rem;
+  color: #fff;
+  }
+  

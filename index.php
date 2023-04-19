@@ -12,7 +12,7 @@ session_start();
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GestEMP</title>
+    <title>EmTec</title>
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -24,7 +24,7 @@ session_start();
             <div class="top">
                 <div class="logo"> 
                     <img src="img/logo2.png">
-                    <h2>Gest<span class="clogo">EMP</span></h2>
+                    <h2>Em<span class="clogo">Tec</span></h2>
                 </div>
                 <div class="close" id="close-btn">
                 <span class="material-icons-sharp">close</span>
@@ -89,7 +89,7 @@ session_start();
         </aside>
         <!-- ============= END OF ASIDE ============ -->
         <main>
-            <h1>Dashboard</h1>
+            <h1>Geral</h1>
 
             <div class="date">
                 <input type="date">
@@ -146,7 +146,6 @@ session_start();
                                 <th>Data da tarefa</th>
                                 <th>Funcionário</th>
                                 <th>Descrição</th>
-                                <th></th>
                             </tr>
                     </thead>
                 <tbody>
@@ -202,18 +201,24 @@ session_start();
                                 <th>Nome do Material</th>
                                 <th>Quantidade</th>
                                 <th>Descrição</th>
-                                <th></th>
                             </tr>
                     </thead>
                 <tbody>
                 <tr>
-                    <td style="width: 360px; max-width: 360px;"><?php echo $nome_material[$iol]; ?></td>
-                    <td style="width: 360px; max-width: 360px;"><?php echo $qnt_material[$iol]; ?></td>
-                    <td><?php echo $desc_material[$iol]; ?></td>
+                    <td style="width: 230px; max-width: 230px;"><?php echo $nome_material[$iol]; ?></td>
+                    <td style="width: 230px; max-width: 230px;"><?php echo $qnt_material[$iol]; ?></td>
+                    <td style="width: 230px; max-width: 230px;"><?php echo $desc_material[$iol]; ?></td>
+                    
+                    <td class="primary" onclick="myhref('material.php');">Detalhes</td>
                 </tr>
                     </tbody>
                 </table>
             </div>
+
+            <script type="text/javascript">
+                function myhref(material){
+                window.location.href = material;}
+            </script>
 
             <?php }} ?>
 

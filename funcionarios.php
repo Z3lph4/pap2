@@ -4,6 +4,18 @@ include 'config.php';
 
 session_start();
 
+if (isset($_POST["action"])) {
+    switch(strtoupper($_POST["action"])) {
+      case "DELETEMATERIAL":
+        if (isset($_POST["MaterialId"])) {
+          $deleteTarefa = "DELETE FROM users WHERE id_user = " . $_POST["MaterialId"];
+  
+          mysqli_query($conn, $deleteTarefa);
+        }
+        break;
+    }
+  }
+
 ?>
 
 <!DOCTYPE html>
@@ -12,7 +24,7 @@ session_start();
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GestEMP</title>
+    <title>EmTec</title>
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -32,7 +44,7 @@ session_start();
             <a href="index.php">
                 <div class="logo"> 
                     <img src="img/logo2.png">
-                    <h2>Gest<span class="clogo">EMP</span></h2>
+                    <h2>Em<span class="clogo">Tec</span></h2>
                 </div>
                 <div class="close" id="close-btn">
                 <span class="material-icons-sharp">close</span>
@@ -93,7 +105,7 @@ session_start();
 
         <main>
 
-        <h1>Tarefas Recentes</h1>
+        <h1>Funcionários</h1>
 
             <div class="date">
                 <input type="date">
@@ -101,7 +113,7 @@ session_start();
 
             <?php
 
-            $sql ="SELECT * FROM users";
+            $sql ="SELECT * FROM users order by id_user desc LIMIT 4";
 
             if($res=mysqli_query($conn,$sql)){
 
@@ -125,10 +137,9 @@ session_start();
                         <thead>
                             <tr>
                                 <th style="width: 300px; max-width: 300px;">Nome do Funcionário</th>
-                                <th style="width: 400px; max-width: 400px;">Email</th>
+                                <th style="width: 350px; max-width: 350px;">Email</th>
                                 <th style="width: 300px; max-width: 300px;">Funcionário</th>
                                 <th style="width: 300px; max-width: 300px;">Telemóvel</th>
-                                <th></th>
                             </tr>
                     </thead>
                     
@@ -138,6 +149,20 @@ session_start();
                     <td><?php echo $email_user[$iol]; ?></td>
                     <td class="warning"><?php echo $reg['id_user']; ?></td>
                     <td><?php echo $reg['tel_user']; ?></td>
+        
+                    <td><div class="productsdel">
+                        <?php
+                                $form_id = "DeleteMaterial" . $id_user[$iol];
+                            ?>
+                            <form method="post" action="funcionarios.php" id="<?php echo $form_id ?>">
+                                <input type="hidden" name="MaterialId" value="<?php echo $id_user[$iol] ?>" />
+                                <input type="hidden" name="action" value="DeleteMaterial" />  
+                            <a class="tm-product-delete-link" onClick="document.getElementById('<?php echo $form_id ?>').submit();">
+                                <i class="material-icons-sharp">delete</i></a>
+                            </div>
+                        </form>
+                    </td>
+
                 </tr>
                     </tbody>
                 </table>
