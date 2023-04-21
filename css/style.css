@@ -15,27 +15,56 @@
     --color-primary-variant: #111e88;
     --color-dark-variant: #677483;
     --color-background: #f6f6f9;
-
+  
     --card-border-radius: 2rem;
     --border-radius-1: 0.4rem;
     --border-radius-2: 0.8rem;
     --border-radius-3: 1.2rem;
-
+  
     --card-padding: 1.8rem;
     --padding-1: 1.2rem;
-
+  
     --box-shadow: 0 2rem 3rem var(--color-light);
-}
-
-/* --------------------- DARK THEME VARAIBLES -------------------- */
-.dark-theme-variables {
+  }
+  
+  /* --------------------- DARK THEME VARAIBLES -------------------- */
+  :root.dark {
     --color-background: #181a1e;
     --color-white: #202528;
     --color-dark: #edeffd;
     --color-dark-variant: #a3bdcc;
     --color-light: rgba(0, 0, 0, 0.4);
     --box-shadow: 0 2rem 3rem var(--color-light);
-}
+  }
+  
+  /* --------------------- BUTTON VARAIBLES -------------------- */
+  button {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 1rem;
+    border: none;
+    border-radius: var(--border-radius-1);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  button:hover {
+    background-color: var(--color-primary-variant);
+  }
+  
+  button:active {
+    transform: translateY(2px);
+  }
+  
+  .dark button {
+    background-color: var(--color-primary);
+  }
+  
+  .dark button:hover {
+    background-color: var(--color-primary-variant);
+    color: var(--color-white);
+  }
+  
 
 *{
     margin: 0;
@@ -890,21 +919,21 @@ main .recent-orders a {
   }
 
   .buttonreun {
+    padding-bottom: 6px;
+    padding-top: 6px;
     margin-left: 10px;
-    width: 70px;
-    height: 20px;
     border-radius: 10px;
     font-size: 11px;
     letter-spacing: 0.7px;
-    background-color: #4B70E2;
-    color: #f9f9f9;
+    color: var(--color-primary);
+    color: var(--color-white);
     border: none;
     outline: none;
   }
   
   .buttonind {
-    margin-top: 150px;
-    margin-left: 597px;
+    margin-top: 40px;
+    margin-left: 328px;
     padding-left: 6px;
     padding-right: 6px;
     border-radius: 15px;
@@ -1086,4 +1115,5 @@ main .recent-orders a {
   font-size: 1.1rem;
   color: #fff;
   }
+  
   

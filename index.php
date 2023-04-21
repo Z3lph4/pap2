@@ -89,13 +89,13 @@ session_start();
         </aside>
         <!-- ============= END OF ASIDE ============ -->
         <main>
-            <h1>Geral</h1>
+            <!-- <h1>Geral</h1>
 
             <div class="date">
                 <input type="date">
             </div>
 
-            <br><br>
+            <br><br> -->
 
             <!-- <div class="insights">
                 <div class="sales">
@@ -112,7 +112,7 @@ session_start();
             <!-- </div> -->
             <!-- ========== End of Insights ========== -->
             
-            <h2>Tarefas Recentes</h2>
+            <h1>Tarefas Recentes</h1>
 
             <?php
 
@@ -169,9 +169,9 @@ session_start();
 
                         <!-- ====================== Fim Tarefas =============== -->
 
-                    <br><br>
+                    <br>
 
-            <h2>Material Recente</h2>
+            <h1>Material Recente</h1>
 
             <?php
 
@@ -221,9 +221,9 @@ session_start();
 
             <?php }} ?>
 
-            <br>
+            <!-- <br>
 
-            <span class="buttonind pointer" onclick="myhref('material.php');">Ver mais</span>
+            <span class="buttonind pointer" onclick="myhref('material.php');">Ver mais</span> -->
 
         </main>
         <!-- ============== END OF MAIN ============ -->
@@ -233,10 +233,43 @@ session_start();
             <button id="menu-btn">
                 <span class="material-icons-sharp">menu</span>
             </button>
+
+            <!-- =========== Mudança de tema ======== -->
             <div class="theme-toggler">
-                <span class="material-icons-sharp active" onclick="document.cookie = 'darkMode=false';">light_mode</span>
-                <span class="material-icons-sharp" onclick="document.cookie = 'darkMode=true';">dark_mode</span>
+                <span class="material-icons-sharp active" id="light-mode-btn" onclick="setTheme('light')">light_mode</span>
+                <span class="material-icons-sharp" id="dark-mode-btn" onclick="setTheme('dark')">dark_mode</span>
             </div>
+
+            <script>
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    document.getElementById('dark-mode-btn').classList.add('active');
+                    document.getElementById('light-mode-btn').classList.remove('active');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                    document.getElementById('light-mode-btn').classList.add('active');
+                    document.getElementById('dark-mode-btn').classList.remove('active');
+                }
+            }
+
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+
+            const themeSwitchers = document.querySelectorAll('.theme-toggler .material-icons-sharp');
+            themeSwitchers.forEach((switcher) => {
+                switcher.addEventListener('click', () => {
+                    setTheme(switcher.innerText === 'dark_mode' ? 'dark' : 'light');
+                });
+            });
+            </script>
+
             <div class="profile">
             <div class="info">
                 <p>Hey, <b><?php echo $_SESSION["user_name"]; ?></b></p>
@@ -306,7 +339,7 @@ session_start();
 
             <?php
 
-                $sql ="SELECT * FROM reunioes where data_reuniao > CURDATE() order by id_reuniao desc LIMIT 3";
+                $sql ="SELECT * FROM reunioes where data_reuniao > CURDATE() order by id_reuniao desc LIMIT 2";
 
                 if($res=mysqli_query($conn,$sql)){
 
@@ -346,5 +379,6 @@ session_start();
         </script>
 
     <script src="js/index.js"></script>
+
 </body>
 </html>

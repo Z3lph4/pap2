@@ -4,6 +4,8 @@ include 'config.php';
 
 session_start();
 
+error_reporting(0);
+
 if (isset($_POST["action"])) {
     switch(strtoupper($_POST["action"])) {
       case "DELETEMATERIAL":
@@ -30,12 +32,6 @@ if (isset($_POST["action"])) {
     <!-- === Style sheet === -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-
-<!-- SET DARKMODE/ LIGHTMODE -->
-<?php 
-    if (isset($_COOKIE["darkMode"]) && $_COOKIE["darkMode"] == "true") { echo "<body class='dark-theme-variables'>"; } 
-    else { echo "<body>"; } 
-    ?>
 
 <body>
     <div class="container">
@@ -141,7 +137,7 @@ if (isset($_POST["action"])) {
                                         <td><?php echo $reg['data_reuniao']; ?></td>
                                         <td><?php echo $reg['desc_reuniao']; ?></td>
                                         <td>
-                                            <div class="productsdel">
+                                            <div class="productsdel pointer">
                                                 <?php
                                                     $form_id = "DeleteMaterial" . $reg['id_reuniao'];
                                                 ?>
@@ -160,9 +156,9 @@ if (isset($_POST["action"])) {
                         </div>
                         <?php
                     }
-                } else {
-                    echo "Nenhuma reunião encontrada para esta data.";
-                }
+                } else { ?>
+                   <span class=""> <?php echo "Nenhuma reunião encontrada para esta data."; ?> </span>
+               <?php }
             }
             ?>
         </main>
@@ -174,17 +170,43 @@ if (isset($_POST["action"])) {
             <button id="menu-btn">
                 <span class="material-icons-sharp">menu</span>
             </button>
-            <div class="theme-toggler">
-            <?php if (isset($_COOKIE["darkMode"]) && $_COOKIE["darkMode"] == "true") {
-                    echo "<span class='material-icons-sharp'>light_mode</span>";
-                    echo "<span class='material-icons-sharp active'>dark_mode</span>";
-                }
-                else
-                {
-                    echo "<span class='material-icons-sharp active'>light_mode</span>";
-                    echo "<span class='material-icons-sharp'>dark_mode</span>";
-                } ?>
-            </div>
+            
+            <!-- =========== Mudança de tema ======== -->
+        <div class="theme-toggler">
+            <span class="material-icons-sharp active" id="light-mode-btn" onclick="setTheme('light')">light_mode</span>
+            <span class="material-icons-sharp" id="dark-mode-btn" onclick="setTheme('dark')">dark_mode</span>
+        </div>
+
+        <script>
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                document.getElementById('dark-mode-btn').classList.add('active');
+                document.getElementById('light-mode-btn').classList.remove('active');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                document.getElementById('light-mode-btn').classList.add('active');
+                document.getElementById('dark-mode-btn').classList.remove('active');
+            }
+        }
+
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+            setTheme('dark');
+        } else {
+            setTheme('light');
+        }
+
+        const themeSwitchers = document.querySelectorAll('.theme-toggler .material-icons-sharp');
+        themeSwitchers.forEach((switcher) => {
+            switcher.addEventListener('click', () => {
+                setTheme(switcher.innerText === 'dark_mode' ? 'dark' : 'light');
+            });
+        });
+        </script>
+
             <div class="profile">
             <div class="info">
                 <p>Hey, <b><?php echo $_SESSION["user_name"]; ?></b></p>
