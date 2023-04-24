@@ -105,10 +105,10 @@ if (isset($_POST["signup"])) {
                 <h3>Registo</h3>    
             </a>
 
-            <a href="definicoes.php">
+            <!-- <a href="definicoes.php">
             <span class="material-icons-sharp">settings</span>
-                <h3>Defenições</h3>    
-            </a>
+                <h3>Definições</h3>    
+            </a> -->
 
             <a href="login.php">
             <span class="material-icons-sharp">logout</span>

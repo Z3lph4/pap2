@@ -72,10 +72,11 @@ session_start();
                 <h3>Registo</h3>    
             </a>
 
-            <a href="definicoes.php" class="active">
+            <!-- <a href="definicoes.php">
             <span class="material-icons-sharp">settings</span>
-                <h3>Defenições</h3>    
-            </a>
+                <h3>Definições</h3>    
+            </a> -->
+
             <a href="login.php">
             <span class="material-icons-sharp">logout</span>
                 <h3>Sair</h3>    

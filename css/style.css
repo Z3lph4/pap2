@@ -1115,5 +1115,24 @@ main .recent-orders a {
   font-size: 1.1rem;
   color: #fff;
   }
-  
-  
+
+  /* Estilizando a seta */
+  .select-arrow {
+    position: absolute;
+    top: 62%;
+    right: 62px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 6px solid #555;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+    cursor: pointer;
+    pointer-events: none;
+  }
+
+  /* Estilizando o select e adicionando margem para a seta */
+  .form__inputprof {
+    padding-right: 30px;
+    margin-right: 10px;
+  }

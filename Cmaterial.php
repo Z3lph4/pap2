@@ -99,10 +99,11 @@ if (isset($_POST["signup"])) {
                 <h3>Registo</h3>    
             </a>
 
-            <a href="definicoes.php">
+            <!-- <a href="definicoes.php">
             <span class="material-icons-sharp">settings</span>
-                <h3>Defenições</h3>    
-            </a>
+                <h3>Definições</h3>    
+            </a> -->
+
             <a href="login.php">
             <span class="material-icons-sharp">logout</span>
                 <h3>Sair</h3>    
@@ -136,17 +137,43 @@ if (isset($_POST["signup"])) {
             <button id="menu-btn">
                 <span class="material-icons-sharp">menu</span>
             </button>
-            <div class="theme-toggler">
-            <?php if (isset($_COOKIE["darkMode"]) && $_COOKIE["darkMode"] == "true") {
-                    echo "<span class='material-icons-sharp'>light_mode</span>";
-                    echo "<span class='material-icons-sharp active'>dark_mode</span>";
-                }
-                else
-                {
-                    echo "<span class='material-icons-sharp active'>light_mode</span>";
-                    echo "<span class='material-icons-sharp'>dark_mode</span>";
-                } ?>
-            </div>
+
+            <!-- =========== Mudança de tema ======== -->
+        <div class="theme-toggler">
+            <span class="material-icons-sharp active" id="light-mode-btn" onclick="setTheme('light')">light_mode</span>
+            <span class="material-icons-sharp" id="dark-mode-btn" onclick="setTheme('dark')">dark_mode</span>
+        </div>
+
+        <script>
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                document.getElementById('dark-mode-btn').classList.add('active');
+                document.getElementById('light-mode-btn').classList.remove('active');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                document.getElementById('light-mode-btn').classList.add('active');
+                document.getElementById('dark-mode-btn').classList.remove('active');
+            }
+        }
+
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+            setTheme('dark');
+        } else {
+            setTheme('light');
+        }
+
+        const themeSwitchers = document.querySelectorAll('.theme-toggler .material-icons-sharp');
+        themeSwitchers.forEach((switcher) => {
+            switcher.addEventListener('click', () => {
+                setTheme(switcher.innerText === 'dark_mode' ? 'dark' : 'light');
+            });
+        });
+        </script>
+
             <div class="profile">
             <div class="info">
                 <p>Hey, <b><?php echo $_SESSION["user_name"]; ?></b></p>

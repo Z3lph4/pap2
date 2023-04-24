@@ -79,15 +79,18 @@ if (isset($_POST["action"])) {
             </a>
             
             <!-- ======== Consuante o rank ========= -->
+            <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
             <a href="register.php">
             <span class="material-icons-sharp">person_add</span>
                 <h3>Registo</h3>    
             </a>
+            <?php } ?>
 
-            <a href="definicoes.php">
+            <!-- <a href="definicoes.php">
             <span class="material-icons-sharp">settings</span>
-                <h3>Defenições</h3>    
-            </a>
+                <h3>Definições</h3>    
+            </a> -->
+
             <a href="login.php">
             <span class="material-icons-sharp">logout</span>
                 <h3>Sair</h3>    
@@ -136,6 +139,7 @@ if (isset($_POST["action"])) {
                                 <td style="width: 260px; max-width: 260px;"><?php echo $reg['data_tarefa']; ?></td>
                                 <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $reg['utilizador']; ?></td>
                                 <td style="width: 330px; max-width: 330px;"><?php echo $reg['desc_tarefa']; ?></td>
+                                <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                                 <td>
                                     <div class="productdel pointer">
                                         <?php
@@ -149,7 +153,7 @@ if (isset($_POST["action"])) {
                                             </a>
                                         </form>
                                     </div>
-                                </td>
+                                </td> <?php } ?>
                             </tr>
                         </tbody>
                     </table>
@@ -314,12 +318,14 @@ if (isset($_POST["action"])) {
 
         <?php }} ?>
 
+        <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
         <div class="item add-product" onclick="myhref('Ctarefa.php');">
                 <div>
                     <span class="material-icons-sharp">add</span>
                 <h3>Adicionar Tarefas</h3>
             </div>
         </div>
+        <?php } ?>
 
         <script type="text/javascript">
             function myhref(Ctarefa){

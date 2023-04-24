@@ -71,10 +71,10 @@ session_start();
                 </a>
             <?php } ?>
 
-            <a href="definicoes.php">
+            <!-- <a href="definicoes.php">
             <span class="material-icons-sharp">settings</span>
-                <h3>Defenições</h3>    
-            </a>
+                <h3>Definições</h3>    
+            </a> -->
 
             <a href="login.php">
             <span class="material-icons-sharp">logout</span>
@@ -240,6 +240,12 @@ session_start();
                 <span class="material-icons-sharp" id="dark-mode-btn" onclick="setTheme('dark')">dark_mode</span>
             </div>
 
+
+            <!-- //LOCAL STORAGE APENAS USADO EM JS (https://stackoverflow.com/questions/3855337/php-localstorage)
+                    //FAZER SISTEMA DE COOKIES PARA ARMAZENAR VARIAVEL
+                    //NO ONLOAD DO BODY FAZER
+                    //onload="setTheme(<php echo localStorage.getItem('theme'); ?>);"
+                    //SÓ QUE OBTER A COOKIE E PASSAR PARA A SETTHEME -->
             <script>
             function setTheme(theme) {
                 if (theme === 'dark') {

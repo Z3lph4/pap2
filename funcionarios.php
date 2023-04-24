@@ -79,15 +79,18 @@ if (isset($_POST["action"])) {
             </a>
             
             <!-- ======== Consuante o rank ========= -->
+            <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
             <a href="register.php">
             <span class="material-icons-sharp">person_add</span>
                 <h3>Registo</h3>    
             </a>
+            <?php } ?>
 
-            <a href="definicoes.php">
+            <!-- <a href="definicoes.php">
             <span class="material-icons-sharp">settings</span>
-                <h3>Defenições</h3>    
-            </a>
+                <h3>Definições</h3>    
+            </a> -->
+
             <a href="login.php">
             <span class="material-icons-sharp">logout</span>
                 <h3>Sair</h3>    
@@ -139,7 +142,7 @@ if (isset($_POST["action"])) {
                     <td><?php echo $email_user[$iol]; ?></td>
                     <td class="warning"><?php echo $reg['id_user']; ?></td>
                     <td><?php echo $reg['tel_user']; ?></td>
-        
+                    <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                     <td><div class="productsdel pointer">
                         <?php
                                 $form_id = "DeleteMaterial" . $id_user[$iol];
@@ -151,8 +154,8 @@ if (isset($_POST["action"])) {
                                 <i class="material-icons-sharp">delete</i></a>
                             </div>
                         </form>
-                    </td>
-
+                    </td> 
+                    <?php } ?>
                 </tr>
                     </tbody>
                 </table>
