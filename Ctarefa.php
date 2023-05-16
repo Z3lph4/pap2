@@ -11,19 +11,21 @@ if (isset($_POST["signup"])) {
     $email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
     $tel = mysqli_real_escape_string($conn, $_POST["signup_tel_user"]);
     $uti = mysqli_real_escape_string($conn, $_POST["signup_pass"]);
+    $mat = mysqli_real_escape_string($conn, $_POST["material"]);
 
     if($pass !== $cpass) {
         echo "<script>alert('Password incorreta.');</script>";
       } elseif ($check_email > 0) {
         echo "<script>alert('Email já existe.');</script>";
       } else {
-      $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador) VALUES ('$full_name', '$tel', '$email', '$uti')";
+      $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador, material) VALUES ('$full_name', '$tel', '$email', '$uti', '$mat')";
       $result = mysqli_query($conn, $sql);
       if ($result) {
         $_POST["signup_nome_user"] = "";
         $_POST["signup_email"] = "";
         $_POST["signup_tel_user"] = "";
         $_POST["signup_pass"] = "";
+        $_POST["material"] = "";
 
     }
   }
@@ -147,6 +149,31 @@ if (isset($_POST["signup"])) {
                 echo '<select class="form__inputprof" name="signup_pass" required>';
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo '<option value="' . $row['id_user'] . '">' . $row['nome_user'] . '</option>';
+                }
+                echo '</select>';
+                echo '<span class="select-arrow"></span>';
+
+            ?>
+
+            <?php
+                // Estabelecer conexão com a Base de dados
+                $conn = mysqli_connect("localhost", "root", "", "pap2");
+
+                // Verificar se a conexão foi estabelecida com sucesso
+                if (!$conn) {
+                    die("Falha na conexão: " . mysqli_connect_error());
+                }
+
+                // Consulta SQL para selecionar os utilizadores na tabela "users"
+                $sql = "SELECT id_material, nome_material FROM material";
+
+                // Executa a consulta SQL e armazena o resultado em uma variável
+                $result = mysqli_query($conn, $sql);
+
+                // Exibe a caixa de seleção
+                echo '<select class="form__inputprof" name="material" required>';
+                while ($row = mysqli_fetch_assoc($result)) {
+                    echo '<option value="' . $row['id_material'] . '">' . $row['nome_material'] . '</option>';
                 }
                 echo '</select>';
                 echo '<span class="select-arrow"></span>';

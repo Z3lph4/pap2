@@ -90,6 +90,163 @@ session_start();
 
         <main>
 
+        <div class="wrapper">
+        <div class="profile-card js-profile-card">
+            <div class="profile-card__img">
+            <img src="./img/profile-1.jpg" alt="profile card">
+            <div class="overlay"></div>
+            <div class="icon-container">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            </div>
+
+        <script>
+            // Seleciona o elemento .profile-card__img
+        const profileImg = document.querySelector('.profile-card__img');
+
+        // Seleciona o elemento .icon-container
+        const iconContainer = document.querySelector('.icon-container');
+
+        // Adiciona um ouvinte de evento de clique ao elemento .profile-card__img
+        profileImg.addEventListener('click', () => {
+        // Cria um elemento de entrada de arquivo
+        const input = document.createElement('input');
+        input.type = 'file';
+        
+        // Adiciona um ouvinte de evento de alteração ao elemento de entrada de arquivo
+        input.addEventListener('change', (event) => {
+            // Obtém a primeira imagem selecionada
+            const selectedImage = event.target.files[0];
+            
+            // Define a imagem selecionada como a nova imagem de perfil
+            const profileImg = document.querySelector('.profile-card__img img');
+            profileImg.src = URL.createObjectURL(selectedImage);
+        });
+        
+        // Dispara o clique no elemento de entrada de arquivo
+        input.click();
+        });
+
+        // Adiciona uma classe ao elemento .icon-container quando o mouse estiver sobre o elemento .profile-card__img
+        profileImg.addEventListener('mouseover', () => {
+        iconContainer.classList.add('show');
+        });
+
+        // Remove a classe do elemento .icon-container quando o mouse sair do elemento .profile-card__img
+        profileImg.addEventListener('mouseout', () => {
+        iconContainer.classList.remove('show');
+        });
+
+        </script>
+
+            <?php
+
+                $sql ="SELECT * FROM users where id_user = 20";
+
+                if($res=mysqli_query($conn,$sql)){
+
+                $id_user = array();
+                $nome_user = array();
+                $tel_user = array();
+                $email_user = array();
+
+                $iol= 0;
+                while($reg=mysqli_fetch_assoc($res)){
+
+                    $id_user[$iol] = $reg['id_user'];
+                    $nome_user[$iol] = $reg['nome_user'];
+                    $email_user[$iol] = $reg['email_user'];
+                    $tel_user = $reg['tel_user'];
+
+                ?>
+
+            <div class="profile-card__cnt js-profile-cnt">
+            <div class="profile-card__name"><?php echo $nome_user[$iol]; ?></div>
+
+                    <?php }} ?>
+
+                    <?php
+
+                $sql ="SELECT * FROM per_user";
+
+                if($res=mysqli_query($conn,$sql)){
+
+                $id_puser = array();
+                $img_user = array();
+                $desc_user = array();
+                $loc_user = array();
+
+                $iol= 0;
+                while($reg=mysqli_fetch_assoc($res)){
+
+                    $id_puser[$iol] = $reg['id_puser'];
+                    $img_user[$iol] = $reg['img_user'];
+                    $desc_user[$iol] = $reg['desc_user'];
+                    $loc_user = $reg['loc_user'];
+
+                ?>
+
+            <div class="profile-card__txt"><?php echo $desc_user[$iol]; ?></div>
+            <div class="profile-card-loc">
+                <span class="profile-card-loc__txt">
+                    <?php echo $loc_user[$iol]; ?>
+                </span>
+            </div>
+            
+            <?php }} ?>
+
+
+            <div class="profile-card-inf">
+
+            <?php
+
+                $sql ="SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users where id_user = 20";
+
+                if($res=mysqli_query($conn,$sql)){
+
+                $id_user = array();
+                $full_name = array();
+                $data = array();
+
+                $iol= 0;
+                while($reg=mysqli_fetch_assoc($res)){
+
+                    $id_user[$iol] = $reg['id_user'];
+                    $full_name[$iol] = $reg['nome_user'];
+                    $data[$iol] = $reg['data'];
+                ?>
+
+                <div class="profile-card-inf__item">
+                <div class="profile-card-inf__title"><?php echo $reg['data']; ?></div>
+                <div class="profile-card-inf__txt">Dias na Empresa</div>
+                </div>
+
+                    <?php }} ?>
+
+                <div class="profile-card-inf__item">
+                <div class="profile-card-inf__title">85</div>
+                <div class="profile-card-inf__txt">Trabalhos Realizados</div>
+                </div>
+            </div>
+
+            <div class="profile-card-ctr">
+                <button class="profile-card__button button--blue js-message-btn" onclick="myhref('chat.php');">Mensagem</button>
+                
+                <script type="text/javascript">
+                        function myhref(chat){
+                        window.location.href = chat;}
+                    </script> 
+
+                <button class="profile-card__button button--orange" onclick="myhref('perfil2.php');">Editar</button>
+            </div>
+            </div>
+        <!-- partial -->
+                    <script type="text/javascript">
+                        function myhref(perfil2){
+                        window.location.href = perfil2;}
+                    </script>         
+                    <script  src="./profile.js"></script>
+
         </main>
 
         <!-- ============== END OF MAIN ============ -->

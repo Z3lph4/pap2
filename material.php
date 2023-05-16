@@ -114,14 +114,12 @@ if (isset($_POST["action"])) {
             $id_material = array();
             $nome_material = array();
             $desc_material = array();
-            $qnt_material = array();
 
             $iol= 0;
             while($reg=mysqli_fetch_assoc($res)){
 
                 $id_material[$iol] = $reg['id_material'];
                 $nome_material[$iol] = $reg['nome_material'];
-                $qnt_material[$iol] = $reg['qnt_material'];
                 $desc_material[$iol] = $reg['desc_material'];
 
             ?>
@@ -131,14 +129,14 @@ if (isset($_POST["action"])) {
                         <thead>
                             <tr>
                                 <th style="width: 350px; max-width: 350px;">Nome do Material</th>
-                                <th style="width: 350px; max-width: 350px;">Quantidade</th>
+                                <th style="width: 350px; max-width: 350px;">Nº do Material</th>
                                 <th style="width: 350px; max-width: 350px;">Descrição</th>
                             </tr>
                     </thead>
                 <tbody>
                 <tr>
                     <td><?php echo $nome_material[$iol]; ?></td>
-                    <td><?php echo $qnt_material[$iol]; ?></td>
+                    <td class="warning"><?php echo $id_material[$iol]; ?></td>
                     <td><?php echo $desc_material[$iol]; ?></td>
                     <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                     <td><div class="productsdel pointer">

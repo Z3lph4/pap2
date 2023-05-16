@@ -129,7 +129,7 @@ if (isset($_POST["action"])) {
                             <tr>
                                 <th>Nome da tarefa</th>
                                 <th>Data da tarefa</th>
-                                <th>Funcionário</th>
+                                <th>Material</th>
                                 <th>Descrição</th>
                             </tr>
                         </thead>
@@ -137,7 +137,7 @@ if (isset($_POST["action"])) {
                             <tr>
                                 <td style="width: 260px; max-width: 260px;"><?php echo $reg['nome_tarefa']; ?></td>
                                 <td style="width: 260px; max-width: 260px;"><?php echo $reg['data_tarefa']; ?></td>
-                                <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $reg['utilizador']; ?></td>
+                                <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $reg['material']; ?></td>
                                 <td style="width: 330px; max-width: 330px;"><?php echo $reg['desc_tarefa']; ?></td>
                                 <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                                 <td>

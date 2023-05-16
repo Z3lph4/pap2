@@ -131,7 +131,7 @@ if (isset($_POST["action"])) {
                             <tr>
                                 <th style="width: 300px; max-width: 300px;">Nome do Funcionário</th>
                                 <th style="width: 350px; max-width: 350px;">Email</th>
-                                <th style="width: 300px; max-width: 300px;">Funcionário</th>
+                                <!-- <th style="width: 300px; max-width: 300px;">Funcionário</th> -->
                                 <th style="width: 300px; max-width: 300px;">Telemóvel</th>
                             </tr>
                     </thead>
@@ -140,7 +140,7 @@ if (isset($_POST["action"])) {
                 <tr>
                     <td><?php echo $nome_user[$iol]; ?></td>
                     <td><?php echo $email_user[$iol]; ?></td>
-                    <td class="warning"><?php echo $reg['id_user']; ?></td>
+                    <!-- <td class="warning">< ? php echo $reg['id_user']; ?></td> -->
                     <td><?php echo $reg['tel_user']; ?></td>
                     <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                     <td><div class="productsdel pointer">

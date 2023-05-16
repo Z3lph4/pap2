@@ -182,14 +182,12 @@ session_start();
             $id_material = array();
             $nome_material = array();
             $desc_material = array();
-            $qnt_material = array();
 
             $iol= 0;
             while($reg=mysqli_fetch_assoc($res)){
 
                 $id_material[$iol] = $reg['id_material'];
                 $nome_material[$iol] = $reg['nome_material'];
-                $qnt_material[$iol] = $reg['qnt_material'];
                 $desc_material[$iol] = $reg['desc_material'];
 
             ?>
@@ -199,19 +197,25 @@ session_start();
                         <thead>
                             <tr>
                                 <th>Nome do Material</th>
-                                <th>Quantidade</th>
+                                <th>Nº do Material</th>
                                 <th>Descrição</th>
                             </tr>
                     </thead>
                 <tbody>
                 <tr>
                     <td style="width: 230px; max-width: 230px;"><?php echo $nome_material[$iol]; ?></td>
-                    <td style="width: 230px; max-width: 230px;"><?php echo $qnt_material[$iol]; ?></td>
+                    <td class="warning" style="width: 230px; max-width: 230px;"><?php echo $id_material[$iol]; ?></td>
                     <td style="width: 230px; max-width: 230px;"><?php echo $desc_material[$iol]; ?></td>
+                    <td class="primary pointer" onclick="myhref('material.php');">Detalhes</td>
                 </tr>
                     </tbody>
                 </table>
                 
+            <script type="text/javascript">
+                function myhref(material){
+                window.location.href = material;}
+            </script>
+
             </div>
 
             <script type="text/javascript">
