@@ -198,7 +198,7 @@ if (isset($_POST["signup"])) {
 
             <div class="profile">
             <div class="info">
-                <p>Hey, <b><?php echo $_SESSION["user_name"]; ?></b></p>
+                <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted">Admin</small>
             </div>
             <div class="profile-photo">

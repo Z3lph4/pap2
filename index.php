@@ -116,7 +116,7 @@ session_start();
 
             <?php
 
-            $sql ="SELECT * FROM tarefas where data_tarefa > CURDATE() order by id_tarefa desc LIMIT 2";
+            $sql ="SELECT * FROM tarefas order by id_tarefa desc LIMIT 2";
 
             if($res=mysqli_query($conn,$sql)){
 
@@ -278,7 +278,7 @@ session_start();
 
             <div class="profile">
             <div class="info">
-                <p>Hey, <b><?php echo $_SESSION["user_name"]; ?></b></p>
+                <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
             <div class="profile-photo">

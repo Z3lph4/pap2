@@ -138,7 +138,7 @@ session_start();
 
             <div class="profile">
             <div class="info">
-                <p>Hey, <b><?php echo $_SESSION["user_name"]; ?></b></p>
+                <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
             <div class="profile-photo">
