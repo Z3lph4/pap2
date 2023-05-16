@@ -1,5 +1,4 @@
 <?php
-
 include 'config.php';
 
 session_start();
@@ -13,32 +12,35 @@ if (isset($_POST["signup"])) {
     $pass = mysqli_real_escape_string($conn, md5($_POST["signup_pass"]));
     $cpass = mysqli_real_escape_string($conn, md5($_POST["signup_cpass"]));
     $rank = filter_input(INPUT_POST,'inserir', FILTER_SANITIZE_STRING);
+    $imagem_padrao = './img/users/padrao.png'; // Caminho da imagem padrão
 
     $check_email = mysqli_num_rows(mysqli_query($conn, "SELECT email_user From users WHERE email_user='$email'"));
 
     if($pass !== $cpass) {
-      echo "<script>alert('Password incorreta.');</script>";
+        echo "<script>alert('Password incorreta.');</script>";
     } elseif ($check_email > 0) {
-      echo "<script>alert('Email já existe.');</script>";
+        echo "<script>alert('Email já existe.');</script>";
     } else {
-      $sql = "INSERT INTO users (nome_user, email_user, tel_user, pass_user, rank_user) VALUES ('$full_name', '$email', '$tel', '$pass', '$rank')";
-      $result = mysqli_query($conn, $sql);
-      if ($result) {
-        $_POST["signup_nome_user"] = "";
-        $_POST["signup_email"] = "";
-        $_POST["signup_tel_user"] = "";
-        $_POST["signup_pass"] = "";
-        $_POST["signup_cpass"] = "";
-        $_POST["rank_user"] = "";
+        $sql = "INSERT INTO users (nome_user, email_user, tel_user, pass_user, rank_user, imagem) VALUES ('$full_name', '$email', '$tel', '$pass', '$rank', '$imagem_padrao')";
+        $result = mysqli_query($conn, $sql);
+        if ($result) {
+            $_POST["signup_nome_user"] = "";
+            $_POST["signup_email"] = "";
+            $_POST["signup_tel_user"] = "";
+            $_POST["signup_pass"] = "";
+            $_POST["signup_cpass"] = "";
+            $_POST["rank_user"] = "";
 
-        echo "<script>alert('Registado com sucesso.');</script>";
-      } else {
-        echo "<script>alert('Falha no registo. Tente novamente!');</script>";
-      }
+            echo "<script>alert('Registado com sucesso.');</script>";
+        } else {
+            echo "<script>alert('Falha no registo. Tente novamente!');</script>";
+        }
     }
-  }
-
+}
 ?>
+
+<!-- Resto do seu código HTML -->
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -121,26 +123,22 @@ if (isset($_POST["signup"])) {
             
             </div>
         </aside>
-
-    <!-- SET DARKMODE/ LIGHTMODE -->
-    <?php 
-    if (isset($_COOKIE["darkMode"]) && $_COOKIE["darkMode"] == "true") { echo "<body class='dark-theme-variables'>"; } 
-    else { echo "<body>"; } 
-    ?>
-
     
     <body>
 
       <div class="mainprof2">
       
       <div class="containerprof2 a-containerprof" id="a-container">
-        <form action="" class="formprof" id="a-form" method="post">
+        <form action="" class="formprof" id="a-form" method="post" enctype="multipart/form-data">
           <h2 class="form_titleprof titleprof">Criar Conta</h2>
           <input class="form__inputprof" type="text" placeholder="Nome" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
           <input class="form__inputprof" type="email" placeholder="Email" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
           <input class="form__inputprof" type="text" placeholder="Telemóvel" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
           <input class="form__inputprof" type="password" placeholder="Palavra-pass" name="signup_pass" value="<?php echo $_POST["signup_pass"]; ?>" required/>
           <input class="form__inputprof" type="password" placeholder="Confirmar Palavra-pass" name="signup_cpass" value="<?php echo $_POST["signup_cpass"]; ?>" required/>
+
+          <!-- <input type="file" name="signup_imagem" accept="image/*" required /> -->
+
             <div class="form__select-container">
             <select id="inserir" name="inserir" class="form__selectprof">
                 <option id="inserir" value="" disabled selected hidden>Selecione uma opção</option>
@@ -196,19 +194,30 @@ if (isset($_POST["signup"])) {
         });
         </script>
 
-            <div class="profile">
+        <!-- ============= Perfil ============== -->
+
+        <div onclick="myhref('perfil.php');" class="profile">
             <div class="info">
                 <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted">Admin</small>
             </div>
             <div class="profile-photo">
-                <img onclick="myhref('perfil.php');" src="./img/profile-1.jpg">
+                <?php
+                $imagem_usuario = $_SESSION["imagem"];
+                if (!empty($imagem_usuario)) {
+                    echo '<img onclick="myhref(\'perfil.php\');" src="./img/users/' . $imagem_usuario . '">';
+                } else {
+                    echo '<img onclick="myhref(\'perfil.php\');" src="./img/users/padrao.png">';
+                }
+                ?>
                 <script type="text/javascript">
-                    function myhref(perfil){
-                    window.location.href = perfil;}
+                    function myhref(perfil) {
+                        window.location.href = perfil;
+                    }
                 </script>
             </div>
-            </div>
+        </div>
+
         </div>
         <!-- END OF TOP -->
 

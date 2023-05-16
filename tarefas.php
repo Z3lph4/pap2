@@ -100,78 +100,95 @@ if (isset($_POST["action"])) {
         </aside>
         <!-- ============= END OF ASIDE ============ -->
         <main>
-    <h1>Tarefas</h1>
+        <h1>Tarefas</h1>
 
-    <form method="POST">
-        <div class="date">
-            <input type="date" name="data_pesquisa">
-            <button type="submit" class="buttonreun">Pesquisar</button>
-        </div>
-    </form>
+            <form method="POST">
+                <div class="date">
+                    <input type="date" name="data_pesquisa">
+                    <button type="submit" class="buttonreun">Pesquisar</button>
+                </div>
+            </form>
 
-    <?php
-    $sql = "SELECT * FROM tarefas";
+            <?php
+            $sql = "SELECT * FROM tarefas";
 
-    if(isset($_POST['data_pesquisa'])){
-        $data_pesquisa = $_POST['data_pesquisa'];
-        $sql .= " WHERE DATE(data_tarefa) = '$data_pesquisa'";
-    }
-    $sql .= " ORDER BY data_tarefa DESC LIMIT 4";
-    
-    if($res=mysqli_query($conn,$sql)){
-        if(mysqli_num_rows($res) > 0){
-            while($reg=mysqli_fetch_assoc($res)){
-                ?>
+            if(isset($_POST['data_pesquisa'])){
+                $data_pesquisa = $_POST['data_pesquisa'];
+                $sql .= " WHERE DATE(data_tarefa) = '$data_pesquisa'";
+            }
+            $sql .= " ORDER BY data_tarefa DESC LIMIT 4";
 
-                <div class="recent-orders">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nome da tarefa</th>
-                                <th>Data da tarefa</th>
-                                <th>Material</th>
-                                <th>Descrição</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="width: 260px; max-width: 260px;"><?php echo $reg['nome_tarefa']; ?></td>
-                                <td style="width: 260px; max-width: 260px;"><?php echo $reg['data_tarefa']; ?></td>
-                                <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $reg['material']; ?></td>
-                                <td style="width: 330px; max-width: 330px;"><?php echo $reg['desc_tarefa']; ?></td>
-                                <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
+            if($res = mysqli_query($conn, $sql)){
+                if(mysqli_num_rows($res) > 0){
+                    while($reg = mysqli_fetch_assoc($res)){
+                        $utilizador_id = $reg['utilizador'];
+                        $material_id = $reg['material'];
+
+                        // Consulta SQL para obter o nome do utilizador correspondente
+                        $sql_utilizador = "SELECT nome_user FROM users WHERE id_user = $utilizador_id";
+                        $res_utilizador = mysqli_query($conn, $sql_utilizador);
+                        $row_utilizador = mysqli_fetch_assoc($res_utilizador);
+                        $utilizador_nome = $row_utilizador['nome_user'];
+
+                        // Consulta SQL para obter o nome do material correspondente
+                        $sql_material = "SELECT nome_material FROM material WHERE id_material = $material_id";
+                        $res_material = mysqli_query($conn, $sql_material);
+                        $row_material = mysqli_fetch_assoc($res_material);
+                        $material_nome = $row_material['nome_material'];
+            ?>
+            <div class="recent-orders">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome da tarefa</th>
+                            <th>Data da tarefa</th>
+                            <th>Funcionário</th>
+                            <th>Material</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="width: 260px; max-width: 260px;"><?php echo $reg['nome_tarefa']; ?></td>
+                            <td style="width: 260px; max-width: 260px;"><?php echo $reg['data_tarefa']; ?></td>
+                            <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $utilizador_nome; ?></td>
+                            <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $material_nome; ?></td>
+                            <td style="width: 330px; max-width: 330px;"><?php echo $reg['desc_tarefa']; ?></td>
+                            <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                                 <td>
                                     <div class="productdel pointer">
                                         <?php
-                                            $form_id = "DeleteMaterial" . $reg['id_tarefa'];
+                                        $form_id = "DeleteMaterial" . $reg['id_tarefa'];
                                         ?>
                                         <form method="post" action="tarefas.php" id="<?php echo $form_id ?>">
                                             <input type="hidden" name="MaterialId" value="<?php echo $reg['id_tarefa'] ?>" />
-                                            <input type="hidden" name="action" value="DeleteMaterial" />  
+                                            <input type="hidden" name="action" value="DeleteMaterial" />
                                             <a class="tm-product-delete-link" onClick="document.getElementById('<?php echo $form_id ?>').submit();">
-                                                <i class="material-icons-sharp">delete</i>
-                                            </a>
-                                        </form>
-                                    </div>
-                                </td> <?php } ?>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                        <i class="material-icons-sharp">delete</i>
+                                    </a>
+                                   </form>
+                                </div>
+                            </td>
+                            <?php } ?>
+                        </tr>
+                    </tbody>
+                </table>
+                    </div>
 
-            <?php
-            }
-        } else {
-            ?>
-            <span class="">Nenhuma tarefa encontrada para a data pesquisada.</span>
-            <?php
-        }
-    } else {
-        ?>
-        <span class="">Erro ao realizar a consulta.</span>
-        <?php
-    }
-    ?>
+                       <?php
+                           }
+                            } else {
+                       ?>
+                           <span class="">Nenhuma tarefa encontrada para a data pesquisada.</span>
+                        <?php
+                            }
+                            } else {
+                        ?>
+                        <span class="">Erro ao realizar a consulta.</span>
+                        <?php
+                            }
+                        ?>
+
 </main>
 
         <!-- ============== END OF MAIN ============ -->
@@ -218,7 +235,7 @@ if (isset($_POST["action"])) {
         });
         </script>
 
-            <div class="profile">
+            <div onclick="myhref('perfil.php');" class="profile">
             <div class="info">
                 <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
@@ -227,6 +244,12 @@ if (isset($_POST["action"])) {
                 <img src="./img/profile-1.jpg">
             </div>
             </div>
+
+            <script type="text/javascript">
+                function myhref(perfil){
+                window.location.href = perfil;}
+            </script>
+
         </div>
         <!-- END OF TOP -->
         <div class="recent-updates">  

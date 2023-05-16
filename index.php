@@ -115,59 +115,63 @@ session_start();
             <h1>Tarefas Recentes</h1>
 
             <?php
+            $sql = "SELECT * FROM tarefas ORDER BY id_tarefa DESC LIMIT 2";
 
-            $sql ="SELECT * FROM tarefas order by id_tarefa desc LIMIT 2";
+            if ($res = mysqli_query($conn, $sql)) {
+                while ($reg = mysqli_fetch_assoc($res)) {
+                    $id_tarefa = $reg['id_tarefa'];
+                    $nome_tarefa = $reg['nome_tarefa'];
+                    $data_tarefa = $reg['data_tarefa'];
+                    $desc_tarefa = $reg['desc_tarefa'];
+                    $utilizador_id = $reg['utilizador'];
+                    $material_id = $reg['material'];
 
-            if($res=mysqli_query($conn,$sql)){
+                    // Consulta SQL para obter o nome do utilizador correspondente
+                    $sql_utilizador = "SELECT nome_user FROM users WHERE id_user = $utilizador_id";
+                    $res_utilizador = mysqli_query($conn, $sql_utilizador);
+                    $row_utilizador = mysqli_fetch_assoc($res_utilizador);
+                    $utilizador_nome = $row_utilizador['nome_user'];
 
-            $id_tarefa = array();
-            $nome_tarefa = array();
-            $data_tarefa = array();
-            $desc_tarefa = array();
-            $utilizador = array();
-
-            $iol= 0;
-            while($reg=mysqli_fetch_assoc($res)){
-
-                $id_tarefa[$iol] = $reg['id_tarefa'];
-                $nome_tarefa[$iol] = $reg['nome_tarefa'];
-                $data_tarefa[$iol] = $reg['data_tarefa'];
-                $desc_tarefa = $reg['desc_tarefa'];
-                $utilizador = $reg['utilizador'];
-
+                    // Consulta SQL para obter o nome do material correspondente
+                    $sql_material = "SELECT nome_material FROM material WHERE id_material = $material_id";
+                    $res_material = mysqli_query($conn, $sql_material);
+                    $row_material = mysqli_fetch_assoc($res_material);
+                    $material_nome = $row_material['nome_material'];
             ?>
 
-            <div class="recent-orders">
-                
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nome da tarefa</th>
-                                <th>Data da tarefa</th>
-                                <th>Funcionário</th>
-                                <th>Descrição</th>
-                            </tr>
-                    </thead>
-                <tbody>
-                <tr>
-                    <td style="width: 230px; max-width: 230px;"><?php echo $nome_tarefa[$iol]; ?></td>
-                    <td style="width: 230px; max-width: 230px;"><?php echo $data_tarefa[$iol]; ?></td>
-                    <td style="width: 230px; max-width: 230px;" class="warning"><?php echo $reg['utilizador']; ?></td>
-                    <td style="width: 230px; max-width: 230px;"><?php echo $reg['desc_tarefa']; ?></td>
-                    <td class="primary pointer" onclick="myhref('tarefas.php');">Detalhes</td>
-                </tr>
-                    </tbody>
-                </table>
-            </div>
+                    <div class="recent-orders">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome da tarefa</th>
+                                    <th>Data da tarefa</th>
+                                    <th>Funcionário</th>
+                                    <th>Material</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="width: 230px; max-width: 230px;"><?php echo $nome_tarefa; ?></td>
+                                    <td style="width: 230px; max-width: 230px;"><?php echo $data_tarefa; ?></td>
+                                    <td style="width: 230px; max-width: 230px;" class="warning"><?php echo $utilizador_nome; ?></td>
+                                    <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $material_nome; ?></td>
+                                    <td style="width: 230px; max-width: 230px;"><?php echo $desc_tarefa; ?></td>
+                                    <td class="primary pointer" onclick="myhref('tarefas.php');">Detalhes</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-            <script type="text/javascript">
-                function myhref(tarefas){
-                window.location.href = tarefas;}
-            </script>
+                    <script type="text/javascript">
+                        function myhref(tarefas) {
+                            window.location.href = tarefas;
+                        }
+                    </script>
 
             <?php }} ?>
-
-                        <!-- ====================== Fim Tarefas =============== -->
+  
+            <!-- ====================== Fim Tarefas =============== -->
 
                     <br>
 
@@ -280,7 +284,7 @@ session_start();
             });
             </script>
 
-            <div class="profile">
+            <div onclick="myhref('perfil.php');" class="profile">
             <div class="info">
                 <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
@@ -297,6 +301,12 @@ session_start();
                 </script>
             </div> -->
             </div>
+
+            <script type="text/javascript">
+                function myhref(perfil){
+                window.location.href = perfil;}
+            </script>
+
         </div>
         <!-- END OF TOP -->
         <div class="recent-updates">  
