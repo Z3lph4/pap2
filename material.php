@@ -26,6 +26,8 @@ if (isset($_POST["action"])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmTec</title>
+    <link rel="shortcut icon" href="img/logo2.png" type="image/x-icon" />
+    <link rel="icon" href="img/logo2.png" type="image/x-icon" />
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -139,18 +141,29 @@ if (isset($_POST["action"])) {
                     <td class="warning"><?php echo $id_material[$iol]; ?></td>
                     <td><?php echo $desc_material[$iol]; ?></td>
                     <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
-                    <td><div class="productsdel pointer">
-                        <?php
+                        <td>
+                            <div class="productsdel pointer">
+                                <?php
                                 $form_id = "DeleteMaterial" . $id_material[$iol];
-                            ?>
-                            <form method="post" action="material.php" id="<?php echo $form_id ?>">
-                                <input type="hidden" name="MaterialId" value="<?php echo $id_material[$iol] ?>" />
-                                <input type="hidden" name="action" value="DeleteMaterial" />  
-                            <a class="tm-product-delete-link" onClick="document.getElementById('<?php echo $form_id ?>').submit();">
-                                <i class="material-icons-sharp">delete</i></a>
+                                ?>
+                                <form method="post" action="material.php" id="<?php echo $form_id ?>">
+                                    <input type="hidden" name="MaterialId" value="<?php echo $id_material[$iol] ?>" />
+                                    <input type="hidden" name="action" value="DeleteMaterial" />  
+                                    <a class="tm-product-delete-link" onClick="showConfirmation('<?php echo $form_id ?>');">
+                                        <i class="material-icons-sharp">delete</i>
+                                    </a>
+                                </form>
                             </div>
-                        </form>
-                    </td> <?php } ?>
+                        </td>
+
+                        <script>
+                            function showConfirmation(formId) {
+                                if (confirm("Tem certeza de que deseja excluir este material?")) {
+                                    document.getElementById(formId).submit();
+                                }
+                            }
+                        </script>
+                    <?php } ?>
                 </tr>
                     </tbody>
                 </table>
@@ -203,6 +216,8 @@ if (isset($_POST["action"])) {
             });
         });
         </script>
+
+        <!-- ==== Perfil ==== -->
 
             <div onclick="myhref('perfil.php');" class="profile">
             <div class="info">

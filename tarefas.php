@@ -25,6 +25,8 @@ if (isset($_POST["action"])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmTec</title>
+    <link rel="shortcut icon" href="img/logo2.png" type="image/x-icon" />
+    <link rel="icon" href="img/logo2.png" type="image/x-icon" />
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -122,19 +124,12 @@ if (isset($_POST["action"])) {
                 if(mysqli_num_rows($res) > 0){
                     while($reg = mysqli_fetch_assoc($res)){
                         $utilizador_id = $reg['utilizador'];
-                        $material_id = $reg['material'];
 
                         // Consulta SQL para obter o nome do utilizador correspondente
                         $sql_utilizador = "SELECT nome_user FROM users WHERE id_user = $utilizador_id";
                         $res_utilizador = mysqli_query($conn, $sql_utilizador);
                         $row_utilizador = mysqli_fetch_assoc($res_utilizador);
                         $utilizador_nome = $row_utilizador['nome_user'];
-
-                        // Consulta SQL para obter o nome do material correspondente
-                        $sql_material = "SELECT nome_material FROM material WHERE id_material = $material_id";
-                        $res_material = mysqli_query($conn, $sql_material);
-                        $row_material = mysqli_fetch_assoc($res_material);
-                        $material_nome = $row_material['nome_material'];
             ?>
             <div class="recent-orders">
                 <table>
@@ -142,8 +137,7 @@ if (isset($_POST["action"])) {
                         <tr>
                             <th>Nome da tarefa</th>
                             <th>Data da tarefa</th>
-                            <th>Funcionário</th>
-                            <th>Material</th>
+                            <th>Responsável</th>
                             <th>Descrição</th>
                         </tr>
                     </thead>
@@ -152,23 +146,31 @@ if (isset($_POST["action"])) {
                             <td style="width: 260px; max-width: 260px;"><?php echo $reg['nome_tarefa']; ?></td>
                             <td style="width: 260px; max-width: 260px;"><?php echo $reg['data_tarefa']; ?></td>
                             <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $utilizador_nome; ?></td>
-                            <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $material_nome; ?></td>
                             <td style="width: 330px; max-width: 330px;"><?php echo $reg['desc_tarefa']; ?></td>
                             <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                                 <td>
-                                    <div class="productdel pointer">
-                                        <?php
-                                        $form_id = "DeleteMaterial" . $reg['id_tarefa'];
-                                        ?>
-                                        <form method="post" action="tarefas.php" id="<?php echo $form_id ?>">
-                                            <input type="hidden" name="MaterialId" value="<?php echo $reg['id_tarefa'] ?>" />
-                                            <input type="hidden" name="action" value="DeleteMaterial" />
-                                            <a class="tm-product-delete-link" onClick="document.getElementById('<?php echo $form_id ?>').submit();">
-                                        <i class="material-icons-sharp">delete</i>
-                                    </a>
-                                   </form>
+                                <div class="productdel pointer">
+                                    <?php
+                                    $form_id = "DeleteMaterial" . $reg['id_tarefa'];
+                                    ?>
+                                    <form method="post" action="tarefas.php" id="<?php echo $form_id ?>">
+                                        <input type="hidden" name="MaterialId" value="<?php echo $reg['id_tarefa'] ?>" />
+                                        <input type="hidden" name="action" value="DeleteMaterial" />
+                                        <a class="tm-product-delete-link" onClick="showConfirmation('<?php echo $form_id ?>');">
+                                            <i class="material-icons-sharp">delete</i>
+                                        </a>
+                                    </form>
                                 </div>
                             </td>
+
+                            <script>
+                                function showConfirmation(formId) {
+                                    if (confirm("Tem certeza de que deseja excluir esta tarefa?")) {
+                                        document.getElementById(formId).submit();
+                                    }
+                                }
+                            </script>
+
                             <?php } ?>
                         </tr>
                     </tbody>

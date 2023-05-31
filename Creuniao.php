@@ -10,18 +10,20 @@ if (isset($_POST["signup"])) {
     $full_name = mysqli_real_escape_string($conn, $_POST["signup_nome_user"]);
     $email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
     $tel = mysqli_real_escape_string($conn, $_POST["signup_tel_user"]);
+    $hora = mysqli_real_escape_string($conn, $_POST["signup_hora_reuniao"]);
 
     if($pass !== $cpass) {
         echo "<script>alert('Password incorreta.');</script>";
       } elseif ($check_email > 0) {
         echo "<script>alert('Email já existe.');</script>";
       } else {
-      $sql = "INSERT INTO reunioes (nome_reuniao, desc_reuniao, data_reuniao) VALUES ('$full_name', '$email', '$tel')";
+      $sql = "INSERT INTO reunioes (nome_reuniao, desc_reuniao, data_reuniao, hora_reuniao) VALUES ('$full_name', '$email', '$tel', '$hora')";
       $result = mysqli_query($conn, $sql);
       if ($result) {
         $_POST["signup_nome_user"] = "";
         $_POST["signup_email"] = "";
         $_POST["signup_tel_user"] = "";
+        $_POST["singup_hora_reuniao"] = "";
 
     }
   }
@@ -36,17 +38,13 @@ if (isset($_POST["signup"])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmTec</title>
+    <link rel="shortcut icon" href="img/logo2.png" type="image/x-icon" />
+    <link rel="icon" href="img/logo2.png" type="image/x-icon" />
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-
-<!-- SET DARKMODE/ LIGHTMODE -->
-<?php 
-    if (isset($_COOKIE["darkMode"]) && $_COOKIE["darkMode"] == "true") { echo "<body class='dark-theme-variables'>"; } 
-    else { echo "<body>"; } 
-    ?>
 
 <body>
     <div class="container">
@@ -113,12 +111,6 @@ if (isset($_POST["signup"])) {
             
             </div>
         </aside>
-
-        <!-- SET DARKMODE/ LIGHTMODE -->
-            <?php 
-            if (isset($_COOKIE["darkMode"]) && $_COOKIE["darkMode"] == "true") { echo "<body class='dark-theme-variables'>"; } 
-            else { echo "<body>"; } 
-            ?>
         <!-- ============= END OF ASIDE ============ -->
 
         <main>
@@ -131,7 +123,8 @@ if (isset($_POST["signup"])) {
           <input class="form__inputprof" type="text" placeholder="Assunto" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
           <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
           <input class="form__inputprof" type="date" placeholder="Data" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
-            <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
+          <input class="form__inputprof" type="time" placeholder="Hora" name="signup_hora_reuniao" value="<?php echo $_POST["signup_hora_reuniao"]; ?>" required/>
+          <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
         </form>
       </div>
     </div>

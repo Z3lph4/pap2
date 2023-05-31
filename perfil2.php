@@ -4,18 +4,6 @@ include 'config.php';
 
 session_start();
 
-if (isset($_POST["action"])) {
-    switch(strtoupper($_POST["action"])) {
-      case "DELETEMATERIAL":
-        if (isset($_POST["MaterialId"])) {
-          $deleteTarefa = "DELETE FROM users WHERE id_user = " . $_POST["MaterialId"];
-  
-          mysqli_query($conn, $deleteTarefa);
-        }
-        break;
-    }
-  }
-
 ?>
 
 <!DOCTYPE html>
@@ -59,7 +47,7 @@ if (isset($_POST["action"])) {
                 <h3>Tarefas</h3>    
             </a>
 
-            <a href="funcionarios.php" class="active">
+            <a href="funcionarios.php">
             <span class="material-icons-sharp">group</span>
                 <h3>Funcionários</h3>    
             </a>
@@ -75,7 +63,7 @@ if (isset($_POST["action"])) {
                 <h3>Material</h3>    
             </a>
             
-            <a href="perfil.php">
+            <a href="perfil.php" class="active">
             <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
             </a>
@@ -104,76 +92,154 @@ if (isset($_POST["action"])) {
 
         <main>
 
-        <h1>Funcionários</h1>
+        <div class="wrapper">
+        <div class="profile-card js-profile-card">
+            <div class="profile-card__img">
+            <img src="./img/profile-1.jpg" alt="profile card">
+            <div class="overlay"></div>
+            <div class="icon-container">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            </div>
+
+        <script>
+            // Seleciona o elemento .profile-card__img
+        const profileImg = document.querySelector('.profile-card__img');
+
+        // Seleciona o elemento .icon-container
+        const iconContainer = document.querySelector('.icon-container');
+
+        // Adiciona um ouvinte de evento de clique ao elemento .profile-card__img
+        profileImg.addEventListener('click', () => {
+        // Cria um elemento de entrada de arquivo
+        const input = document.createElement('input');
+        input.type = 'file';
+        
+        // Adiciona um ouvinte de evento de alteração ao elemento de entrada de arquivo
+        input.addEventListener('change', (event) => {
+            // Obtém a primeira imagem selecionada
+            const selectedImage = event.target.files[0];
+            
+            // Define a imagem selecionada como a nova imagem de perfil
+            const profileImg = document.querySelector('.profile-card__img img');
+            profileImg.src = URL.createObjectURL(selectedImage);
+        });
+        
+        // Dispara o clique no elemento de entrada de arquivo
+        input.click();
+        });
+
+        // Adiciona uma classe ao elemento .icon-container quando o mouse estiver sobre o elemento .profile-card__img
+        profileImg.addEventListener('mouseover', () => {
+        iconContainer.classList.add('show');
+        });
+
+        // Remove a classe do elemento .icon-container quando o mouse sair do elemento .profile-card__img
+        profileImg.addEventListener('mouseout', () => {
+        iconContainer.classList.remove('show');
+        });
+
+        </script>
 
             <?php
 
-            $sql ="SELECT * FROM users order by id_user desc LIMIT 4";
+                $sql ="SELECT * FROM users where id_user = 20";
 
-            if($res=mysqli_query($conn,$sql)){
+                if($res=mysqli_query($conn,$sql)){
 
-            $id_user = array();
-            $nome_user = array();
-            $tel_user = array();
-            $email_user = array();
+                $id_user = array();
+                $nome_user = array();
+                $tel_user = array();
+                $email_user = array();
 
-            $iol= 0;
-            while($reg=mysqli_fetch_assoc($res)){
+                $iol= 0;
+                while($reg=mysqli_fetch_assoc($res)){
 
-                $id_user[$iol] = $reg['id_user'];
-                $nome_user[$iol] = $reg['nome_user'];
-                $email_user[$iol] = $reg['email_user'];
-                $tel_user = $reg['tel_user'];
+                    $id_user[$iol] = $reg['id_user'];
+                    $nome_user[$iol] = $reg['nome_user'];
+                    $email_user[$iol] = $reg['email_user'];
 
-            ?>
+                ?>
 
-            <div class="recent-orders">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 300px; max-width: 300px;">Nome do Funcionário</th>
-                                <th style="width: 350px; max-width: 350px;">Email</th>
-                                <!-- <th style="width: 300px; max-width: 300px;">Funcionário</th> -->
-                                <th style="width: 300px; max-width: 300px;">Telemóvel</th>
-                            </tr>
-                    </thead>
-                    
-                <tbody>
-                <tr>
-                    <td><?php echo $nome_user[$iol]; ?></td>
-                    <td><?php echo $email_user[$iol]; ?></td>
-                    <!-- <td class="warning">< ? php echo $reg['id_user']; ?></td> -->
-                    <td><?php echo $reg['tel_user']; ?></td>
-                    <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
-                        <td>
-                            <div class="productsdel pointer">
-                                <?php
-                                $form_id = "DeleteMaterial" . $id_user[$iol];
-                                ?>
-                                <form method="post" action="funcionarios.php" id="<?php echo $form_id ?>">
-                                    <input type="hidden" name="MaterialId" value="<?php echo $id_user[$iol] ?>" />
-                                    <input type="hidden" name="action" value="DeleteMaterial" />  
-                                    <a class="tm-product-delete-link" onClick="showConfirmation('<?php echo $form_id ?>');">
-                                        <i class="material-icons-sharp">delete</i>
-                                    </a>
-                                </form>
-                            </div>
-                        </td>
+            <div class="profile-card__cnt js-profile-cnt">
+            <div class="profile-card__name"><?php echo $nome_user[$iol]; ?></div>
 
-                        <script>
-                            function showConfirmation(formId) {
-                                if (confirm("Tem certeza de que deseja excluir este Funcionário?")) {
-                                    document.getElementById(formId).submit();
-                                }
-                            }
-                        </script>
-                    <?php } ?>
-                </tr>
-                    </tbody>
-                </table>
+                    <?php }} ?>
+
+                    <?php
+
+                $sql ="SELECT * FROM per_user where id_puser = 1";
+
+                if($res=mysqli_query($conn,$sql)){
+
+                $id_puser = array();
+                $desc_user = array();
+                $loc_user = array();
+
+                $iol= 0;
+                while($reg=mysqli_fetch_assoc($res)){
+
+                    $id_puser[$iol] = $reg['id_puser'];
+                    $desc_user[$iol] = $reg['desc_user'];
+                    $loc_user[$iol] = $reg['loc_user'];
+
+                ?>
+
+            <div class="profile-card__txt"><?php echo $desc_user[$iol]; ?></div>
+            <div class="profile-card-loc">
+                <span class="profile-card-loc__txt">
+                    <?php echo $loc_user[$iol]; ?>
+                </span>
+            </div>
+            
+            <?php }} ?>
+
+
+            <div class="profile-card-inf">
+
+            <?php
+
+                $sql ="SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users where id_user = 20";
+
+                if($res=mysqli_query($conn,$sql)){
+
+                $id_user = array();
+                $full_name = array();
+                $data = array();
+
+                $iol= 0;
+                while($reg=mysqli_fetch_assoc($res)){
+
+                    $id_user[$iol] = $reg['id_user'];
+                    $full_name[$iol] = $reg['nome_user'];
+                    $data[$iol] = $reg['data'];
+                ?>
+
+                <div class="profile-card-inf__item">
+                <div class="profile-card-inf__title"><?php echo $reg['data']; ?></div>
+                <div class="profile-card-inf__txt">Dias na Empresa</div>
+                </div>
+
+                    <?php }} ?>
             </div>
 
-            <?php }} ?>
+            <div class="profile-card-ctr">
+                <button class="profile-card__button button--blue js-message-btn" onclick="myhref('chat.php');">Mensagem</button>
+                
+                <script type="text/javascript">
+                        function myhref(chat){
+                        window.location.href = chat;}
+                    </script> 
+
+                <button class="profile-card__button button--orange" onclick="myhref('perfil2.php');">Editar</button>
+            </div>
+            </div>
+        <!-- partial -->
+                    <script type="text/javascript">
+                        function myhref(perfil2){
+                        window.location.href = perfil2;}
+                    </script>         
+                    <script  src="./profile.js"></script>
 
         </main>
 
@@ -185,7 +251,7 @@ if (isset($_POST["action"])) {
                 <span class="material-icons-sharp">menu</span>
             </button>
             
-                <!-- =========== Mudança de tema ======== -->
+            <!-- =========== Mudança de tema ======== -->
         <div class="theme-toggler">
             <span class="material-icons-sharp active" id="light-mode-btn" onclick="setTheme('light')">light_mode</span>
             <span class="material-icons-sharp" id="dark-mode-btn" onclick="setTheme('dark')">dark_mode</span>

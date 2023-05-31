@@ -4,18 +4,6 @@ include 'config.php';
 
 session_start();
 
-if (isset($_POST["action"])) {
-    switch(strtoupper($_POST["action"])) {
-      case "DELETEMATERIAL":
-        if (isset($_POST["MaterialId"])) {
-          $deleteTarefa = "DELETE FROM users WHERE id_user = " . $_POST["MaterialId"];
-  
-          mysqli_query($conn, $deleteTarefa);
-        }
-        break;
-    }
-  }
-
 ?>
 
 <!DOCTYPE html>
@@ -32,12 +20,10 @@ if (isset($_POST["action"])) {
     <!-- === Style sheet === -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
     <div class="container">
         <aside>
             <div class="top">
-            <a href="index.php">
                 <div class="logo"> 
                     <img src="img/logo2.png">
                     <h2>Em<span class="clogo">Tec</span></h2>
@@ -45,11 +31,10 @@ if (isset($_POST["action"])) {
                 <div class="close" id="close-btn">
                 <span class="material-icons-sharp">close</span>
                 </div>
-                </a>
             </div>
-            
+
             <div class="sidebar">
-                <a href="index.php">
+                <a href="index.php" class="active">
                 <span class="material-icons-sharp">home</span>
                 <h3>Home</h3>    
             </a>
@@ -59,7 +44,7 @@ if (isset($_POST["action"])) {
                 <h3>Tarefas</h3>    
             </a>
 
-            <a href="funcionarios.php" class="active">
+            <a href="funcionarios.php">
             <span class="material-icons-sharp">group</span>
                 <h3>Funcionários</h3>    
             </a>
@@ -74,7 +59,7 @@ if (isset($_POST["action"])) {
             <span class="material-icons-sharp">home_repair_service</span>
                 <h3>Material</h3>    
             </a>
-            
+
             <a href="perfil.php">
             <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
@@ -82,10 +67,10 @@ if (isset($_POST["action"])) {
             
             <!-- ======== Consuante o rank ========= -->
             <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
-            <a href="register.php">
-            <span class="material-icons-sharp">person_add</span>
-                <h3>Registo</h3>    
-            </a>
+                <a href="register.php">
+                    <span class="material-icons-sharp">person_add</span>
+                    <h3>Registo</h3>    
+                </a>
             <?php } ?>
 
             <!-- <a href="definicoes.php">
@@ -95,88 +80,21 @@ if (isset($_POST["action"])) {
 
             <a href="login.php">
             <span class="material-icons-sharp">logout</span>
-                <h3>Sair</h3>    
+                <h3>Sair</h3>
+                <script type="text/javascript">
+                    function myhref(logout){
+                    window.location.href = logout;}
+                </script>
             </a>
             
             </div>
         </aside>
         <!-- ============= END OF ASIDE ============ -->
-
         <main>
-
-        <h1>Funcionários</h1>
-
-            <?php
-
-            $sql ="SELECT * FROM users order by id_user desc LIMIT 4";
-
-            if($res=mysqli_query($conn,$sql)){
-
-            $id_user = array();
-            $nome_user = array();
-            $tel_user = array();
-            $email_user = array();
-
-            $iol= 0;
-            while($reg=mysqli_fetch_assoc($res)){
-
-                $id_user[$iol] = $reg['id_user'];
-                $nome_user[$iol] = $reg['nome_user'];
-                $email_user[$iol] = $reg['email_user'];
-                $tel_user = $reg['tel_user'];
-
-            ?>
-
-            <div class="recent-orders">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 300px; max-width: 300px;">Nome do Funcionário</th>
-                                <th style="width: 350px; max-width: 350px;">Email</th>
-                                <!-- <th style="width: 300px; max-width: 300px;">Funcionário</th> -->
-                                <th style="width: 300px; max-width: 300px;">Telemóvel</th>
-                            </tr>
-                    </thead>
-                    
-                <tbody>
-                <tr>
-                    <td><?php echo $nome_user[$iol]; ?></td>
-                    <td><?php echo $email_user[$iol]; ?></td>
-                    <!-- <td class="warning">< ? php echo $reg['id_user']; ?></td> -->
-                    <td><?php echo $reg['tel_user']; ?></td>
-                    <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
-                        <td>
-                            <div class="productsdel pointer">
-                                <?php
-                                $form_id = "DeleteMaterial" . $id_user[$iol];
-                                ?>
-                                <form method="post" action="funcionarios.php" id="<?php echo $form_id ?>">
-                                    <input type="hidden" name="MaterialId" value="<?php echo $id_user[$iol] ?>" />
-                                    <input type="hidden" name="action" value="DeleteMaterial" />  
-                                    <a class="tm-product-delete-link" onClick="showConfirmation('<?php echo $form_id ?>');">
-                                        <i class="material-icons-sharp">delete</i>
-                                    </a>
-                                </form>
-                            </div>
-                        </td>
-
-                        <script>
-                            function showConfirmation(formId) {
-                                if (confirm("Tem certeza de que deseja excluir este Funcionário?")) {
-                                    document.getElementById(formId).submit();
-                                }
-                            }
-                        </script>
-                    <?php } ?>
-                </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <?php }} ?>
+            
+        <!-- CHAT -->
 
         </main>
-
         <!-- ============== END OF MAIN ============ -->
 
         <div class="right">
@@ -184,42 +102,48 @@ if (isset($_POST["action"])) {
             <button id="menu-btn">
                 <span class="material-icons-sharp">menu</span>
             </button>
-            
-                <!-- =========== Mudança de tema ======== -->
-        <div class="theme-toggler">
-            <span class="material-icons-sharp active" id="light-mode-btn" onclick="setTheme('light')">light_mode</span>
-            <span class="material-icons-sharp" id="dark-mode-btn" onclick="setTheme('dark')">dark_mode</span>
-        </div>
 
-        <script>
-        function setTheme(theme) {
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-                document.getElementById('dark-mode-btn').classList.add('active');
-                document.getElementById('light-mode-btn').classList.remove('active');
-            } else {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-                document.getElementById('light-mode-btn').classList.add('active');
-                document.getElementById('dark-mode-btn').classList.remove('active');
+            <!-- =========== Mudança de tema ======== -->
+            <div class="theme-toggler">
+                <span class="material-icons-sharp active" id="light-mode-btn" onclick="setTheme('light')">light_mode</span>
+                <span class="material-icons-sharp" id="dark-mode-btn" onclick="setTheme('dark')">dark_mode</span>
+            </div>
+
+
+            <!-- //LOCAL STORAGE APENAS USADO EM JS (https://stackoverflow.com/questions/3855337/php-localstorage)
+                    //FAZER SISTEMA DE COOKIES PARA ARMAZENAR VARIAVEL
+                    //NO ONLOAD DO BODY FAZER
+                    //onload="setTheme(<php echo localStorage.getItem('theme'); ?>);"
+                    //SÓ QUE OBTER A COOKIE E PASSAR PARA A SETTHEME -->
+            <script>
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    document.getElementById('dark-mode-btn').classList.add('active');
+                    document.getElementById('light-mode-btn').classList.remove('active');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                    document.getElementById('light-mode-btn').classList.add('active');
+                    document.getElementById('dark-mode-btn').classList.remove('active');
+                }
             }
-        }
 
-        const theme = localStorage.getItem('theme');
-        if (theme === 'dark') {
-            setTheme('dark');
-        } else {
-            setTheme('light');
-        }
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
 
-        const themeSwitchers = document.querySelectorAll('.theme-toggler .material-icons-sharp');
-        themeSwitchers.forEach((switcher) => {
-            switcher.addEventListener('click', () => {
-                setTheme(switcher.innerText === 'dark_mode' ? 'dark' : 'light');
+            const themeSwitchers = document.querySelectorAll('.theme-toggler .material-icons-sharp');
+            themeSwitchers.forEach((switcher) => {
+                switcher.addEventListener('click', () => {
+                    setTheme(switcher.innerText === 'dark_mode' ? 'dark' : 'light');
+                });
             });
-        });
-        </script>
+            </script>
 
             <div onclick="myhref('perfil.php');" class="profile">
             <div class="info">
@@ -229,6 +153,14 @@ if (isset($_POST["action"])) {
             <div class="profile-photo">
                 <img src="./img/profile-1.jpg">
             </div>
+            <!-- <div class="profile-photo">
+                < ? php if (isset($_COOKIE["user_img"])){
+                echo "<img onclick='myhref('perfil.php');' src='". $_COOKIE["user_img"] . "'>";} ?>
+                <script type="text/javascript">
+                    function myhref(perfil){
+                    window.location.href = perfil;}
+                </script>
+            </div> -->
             </div>
 
             <script type="text/javascript">
@@ -237,7 +169,6 @@ if (isset($_POST["action"])) {
             </script>
 
         </div>
-
         <!-- END OF TOP -->
         <div class="recent-updates">  
             <h2>Utilizadores Recentes</h2>              
@@ -272,7 +203,7 @@ if (isset($_POST["action"])) {
                 </div>
                  <?php }} ?>
             </div>
-            
+               
             <script type="text/javascript">
                 function myhref(funcionarios){
                 window.location.href = funcionarios;}
@@ -320,13 +251,13 @@ if (isset($_POST["action"])) {
                 <h3><?php echo $data_reuniao[$iol]; ?></h3>
             </div>
         </div>
-        
+
+        <?php }} ?>
+
         <script type="text/javascript">
             function myhref(reuniao){
             window.location.href = reuniao;}
         </script>
-
-        <?php }} ?>
 
     <script src="js/index.js"></script>
 

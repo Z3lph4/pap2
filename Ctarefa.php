@@ -11,21 +11,19 @@ if (isset($_POST["signup"])) {
     $email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
     $tel = mysqli_real_escape_string($conn, $_POST["signup_tel_user"]);
     $uti = mysqli_real_escape_string($conn, $_POST["signup_pass"]);
-    $mat = mysqli_real_escape_string($conn, $_POST["material"]);
 
     if($pass !== $cpass) {
         echo "<script>alert('Password incorreta.');</script>";
       } elseif ($check_email > 0) {
         echo "<script>alert('Email já existe.');</script>";
       } else {
-      $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador, material) VALUES ('$full_name', '$tel', '$email', '$uti', '$mat')";
+      $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador) VALUES ('$full_name', '$tel', '$email', '$uti')";
       $result = mysqli_query($conn, $sql);
       if ($result) {
         $_POST["signup_nome_user"] = "";
         $_POST["signup_email"] = "";
         $_POST["signup_tel_user"] = "";
         $_POST["signup_pass"] = "";
-        $_POST["material"] = "";
 
     }
   }
@@ -40,6 +38,8 @@ if (isset($_POST["signup"])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmTec</title>
+    <link rel="shortcut icon" href="img/logo2.png" type="image/x-icon" />
+    <link rel="icon" href="img/logo2.png" type="image/x-icon" />
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -130,7 +130,9 @@ if (isset($_POST["signup"])) {
           <input class="form__inputprof" type="date" placeholder="Data" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
           <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
 
-          <?php
+          <div class="form__select-container">
+            <select id="inserir" name="inserir" class="form__selectprof">
+                <?php
                 // Estabelecer conexão com a Base de dados
                 $conn = mysqli_connect("localhost", "root", "", "pap2");
 
@@ -145,40 +147,15 @@ if (isset($_POST["signup"])) {
                 // Executa a consulta SQL e armazena o resultado em uma variável
                 $result = mysqli_query($conn, $sql);
 
-                // Exibe a caixa de seleção
-                echo '<select class="form__inputprof" name="signup_pass" required>';
+                // Exibe a opção padrão e as opções do banco de dados
+                echo '<option value="" disabled selected hidden>Selecione um responsável</option>';
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo '<option value="' . $row['id_user'] . '">' . $row['nome_user'] . '</option>';
                 }
-                echo '</select>';
-                echo '<span class="select-arrow"></span>';
-
-            ?>
-
-            <?php
-                // Estabelecer conexão com a Base de dados
-                $conn = mysqli_connect("localhost", "root", "", "pap2");
-
-                // Verificar se a conexão foi estabelecida com sucesso
-                if (!$conn) {
-                    die("Falha na conexão: " . mysqli_connect_error());
-                }
-
-                // Consulta SQL para selecionar os utilizadores na tabela "users"
-                $sql = "SELECT id_material, nome_material FROM material";
-
-                // Executa a consulta SQL e armazena o resultado em uma variável
-                $result = mysqli_query($conn, $sql);
-
-                // Exibe a caixa de seleção
-                echo '<select class="form__inputprof" name="material" required>';
-                while ($row = mysqli_fetch_assoc($result)) {
-                    echo '<option value="' . $row['id_material'] . '">' . $row['nome_material'] . '</option>';
-                }
-                echo '</select>';
-                echo '<span class="select-arrow"></span>';
-
-            ?>
+                ?>
+            </select>
+            <i class="fa fa-chevron-down form__select-icon" aria-hidden="true"></i>
+        </div>
 
             <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
         </form>
@@ -247,6 +224,7 @@ if (isset($_POST["signup"])) {
             </script>
 
         </div>
+
         <!-- END OF TOP -->
         <div class="recent-updates">  
             <h2>Utilizadores Recentes</h2>              

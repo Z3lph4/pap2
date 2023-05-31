@@ -27,6 +27,8 @@ if (isset($_POST["action"])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmTec</title>
+    <link rel="shortcut icon" href="img/logo2.png" type="image/x-icon" />
+    <link rel="icon" href="img/logo2.png" type="image/x-icon" />
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -103,69 +105,81 @@ if (isset($_POST["action"])) {
         <!-- ============= END OF ASIDE ============ -->
 
         <main>
-            <h1>Reuniões</h1>
+    <h1>Reuniões</h1>
 
-            <form method="POST">
-                <div class="date">
-                    <input type="date" name="data_pesquisa">
-                    <button type="submit" class="form__buttonprof buttonreun submitprof">Pesquisar</button>
+    <form method="POST">
+        <div class="date">
+            <input type="date" name="data_pesquisa">
+            <button type="submit" class="form__buttonprof buttonreun submitprof">Pesquisar</button>
+        </div>
+    </form>
+
+    <?php
+    $sql = "SELECT * FROM reunioes ";
+
+    if (isset($_POST['data_pesquisa'])) {
+        $data_pesquisa = $_POST['data_pesquisa'];
+        $sql .= "WHERE DATE(data_reuniao) = '$data_pesquisa'";
+    }
+    $sql .= " ORDER BY data_reuniao DESC LIMIT 4";
+
+    if ($res = mysqli_query($conn, $sql)) {
+        if (mysqli_num_rows($res) > 0) {
+            while ($reg = mysqli_fetch_assoc($res)) {
+                ?>
+                <div class="recent-orders">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 360px; max-width: 360px;">Assunto da Reunião</th>
+                                <th style="width: 360px; max-width: 360px;">Data da Reunião</th>
+                                <th style="width: 360px; max-width: 360px;">Hora da Reunião</th>
+                                <th style="width: 400px; max-width: 400px;">Descrição</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><?php echo $reg['nome_reuniao']; ?></td>
+                                <td><?php echo $reg['data_reuniao']; ?></td>
+                                <td class="warning"><?php echo $reg['hora_reuniao']; ?></td>
+                                <td><?php echo $reg['desc_reuniao']; ?></td>
+                                <?php if (isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
+                                    <td>
+                                        <div class="productsdel pointer">
+                                            <?php
+                                            $form_id = "DeleteMaterial" . $reg['id_reuniao'];
+                                            ?>
+                                            <form method="post" action="reuniao.php" id="<?php echo $form_id ?>">
+                                                <input type="hidden" name="MaterialId" value="<?php echo $reg['id_reuniao'] ?>" />
+                                                <input type="hidden" name="action" value="DeleteMaterial" />
+                                                <a class="tm-product-delete-link" onClick="showConfirmation('<?php echo $form_id ?>');">
+                                                    <i class="material-icons-sharp">delete</i>
+                                                </a>
+                                            </form>
+                                        </div>
+                                    </td>
+
+                                    <script>
+                                        function showConfirmation(formId) {
+                                            if (confirm("Tem certeza de que deseja excluir esta reunião?")) {
+                                                document.getElementById(formId).submit();
+                                            }
+                                        }
+                                    </script>
+                                <?php } ?>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </form>
-
-            <?php
-            $sql = "SELECT * FROM reunioes ";
-
-            if(isset($_POST['data_pesquisa'])){
-                $data_pesquisa = $_POST['data_pesquisa'];
-                $sql .= "WHERE DATE(data_reuniao) = '$data_pesquisa'";
+    <?php
             }
-            $sql .= " ORDER BY data_reuniao DESC LIMIT 4";
-            
-            if($res=mysqli_query($conn,$sql)){
-                if(mysqli_num_rows($res) > 0){
-                    while($reg=mysqli_fetch_assoc($res)){
-                        ?>
-                        <div class="recent-orders">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th style="width: 360px; max-width: 360px;">Assunto da Reunião</th>
-                                        <th style="width: 360px; max-width: 360px;">Data da Reunião</th>
-                                        <th style="width: 400px; max-width: 400px;">Descrição</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><?php echo $reg['nome_reuniao']; ?></td>
-                                        <td><?php echo $reg['data_reuniao']; ?></td>
-                                        <td><?php echo $reg['desc_reuniao']; ?></td>
-                                        <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
-                                        <td>
-                                            <div class="productsdel pointer">
-                                                <?php
-                                                    $form_id = "DeleteMaterial" . $reg['id_reuniao'];
-                                                ?>
-                                                <form method="post" action="reuniao.php" id="<?php echo $form_id ?>">
-                                                    <input type="hidden" name="MaterialId" value="<?php echo $reg['id_reuniao'] ?>" />
-                                                    <input type="hidden" name="action" value="DeleteMaterial" />  
-                                                    <a class="tm-product-delete-link" onClick="document.getElementById('<?php echo $form_id ?>').submit();">
-                                                        <i class="material-icons-sharp">delete</i>
-                                                    </a>
-                                                </form>
-                                            </div>
-                                        </td> <?php } ?>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <?php
-                    }
-                } else { ?>
-                   <span class=""> <?php echo "Nenhuma reunião encontrada para esta data."; ?> </span>
-               <?php }
-            }
-            ?>
-        </main>
+        } else { ?>
+            <span class=""><?php echo "Nenhuma reunião encontrada para esta data."; ?></span>
+    <?php
+        }
+    }
+    ?>
+</main>
 
         <!-- ============== END OF MAIN ============ -->
 

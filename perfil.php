@@ -13,6 +13,8 @@ session_start();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmTec</title>
+    <link rel="shortcut icon" href="img/logo2.png" type="image/x-icon" />
+    <link rel="icon" href="img/logo2.png" type="image/x-icon" />
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -139,94 +141,72 @@ session_start();
 
         </script>
 
+            <div class="profile-card__cnt js-profile-cnt">
+            <div class="profile-card__name"><?php echo $_SESSION["user_name"]; ?></div>
+
             <?php
 
-                $sql ="SELECT * FROM users where id_user = 20";
+                if (!isset($_SESSION['id_puser'])) {
+                }
+
+                $logged_in_user_id = $_SESSION['id_puser'];
+
+                $sql = "SELECT * FROM per_user WHERE id_puser = $logged_in_user_id";
 
                 if($res=mysqli_query($conn,$sql)){
 
-                $id_user = array();
-                $nome_user = array();
-                $tel_user = array();
-                $email_user = array();
-
-                $iol= 0;
-                while($reg=mysqli_fetch_assoc($res)){
-
-                    $id_user[$iol] = $reg['id_user'];
-                    $nome_user[$iol] = $reg['nome_user'];
-                    $email_user[$iol] = $reg['email_user'];
-                    $tel_user = $reg['tel_user'];
-
-                ?>
-
-            <div class="profile-card__cnt js-profile-cnt">
-            <div class="profile-card__name"><?php echo $nome_user[$iol]; ?></div>
-
-                    <?php }} ?>
-
-                    <?php
-
-                $sql ="SELECT * FROM per_user";
-
-                if($res=mysqli_query($conn,$sql)){
-
-                $id_puser = array();
-                $img_user = array();
-                $desc_user = array();
-                $loc_user = array();
-
-                $iol= 0;
-                while($reg=mysqli_fetch_assoc($res)){
-
+                    $id_puser = array();
+                    $desc_user = array();
+                    $loc_user = array();
+    
+                    $iol= 0;
+                    while($reg=mysqli_fetch_assoc($res)){
+    
                     $id_puser[$iol] = $reg['id_puser'];
-                    $img_user[$iol] = $reg['img_user'];
                     $desc_user[$iol] = $reg['desc_user'];
-                    $loc_user = $reg['loc_user'];
-
+                    $loc_user[$iol] = $reg['loc_user'];
                 ?>
 
-            <div class="profile-card__txt"><?php echo $desc_user[$iol]; ?></div>
-            <div class="profile-card-loc">
-                <span class="profile-card-loc__txt">
-                    <?php echo $loc_user[$iol]; ?>
-                </span>
-            </div>
-            
-            <?php }} ?>
+                <div class="profile-card__txt"><?php echo $desc_user[$iol]; ?></div>
+                <div class="profile-card-loc">
+                    <span class="profile-card-loc__txt">
+                        <?php echo $loc_user[$iol]; ?>
+                    </span>
+                </div>
+
+                <?php }} ?>
 
 
             <div class="profile-card-inf">
 
             <?php
 
-                $sql ="SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users where id_user = 20";
+                if (!isset($_SESSION['id_user'])) {
+                }
+
+                $logged_in_user_id = $_SESSION['id_user'];
+
+                $sql ="SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users 
+                where id_user = $logged_in_user_id";
 
                 if($res=mysqli_query($conn,$sql)){
 
                 $id_user = array();
-                $full_name = array();
                 $data = array();
 
                 $iol= 0;
                 while($reg=mysqli_fetch_assoc($res)){
 
                     $id_user[$iol] = $reg['id_user'];
-                    $full_name[$iol] = $reg['nome_user'];
                     $data[$iol] = $reg['data'];
                 ?>
 
                 <div class="profile-card-inf__item">
-                <div class="profile-card-inf__title"><?php echo $reg['data']; ?></div>
+                <div class="profile-card-inf__title"><?php echo $data[$iol]; ?></div>
                 <div class="profile-card-inf__txt">Dias na Empresa</div>
                 </div>
 
                     <?php }} ?>
-
-                <div class="profile-card-inf__item">
-                <div class="profile-card-inf__title">85</div>
-                <div class="profile-card-inf__txt">Trabalhos Realizados</div>
-                </div>
             </div>
 
             <div class="profile-card-ctr">

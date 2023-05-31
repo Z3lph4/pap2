@@ -13,6 +13,8 @@ session_start();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmTec</title>
+    <link rel="shortcut icon" href="img/logo2.png" type="image/x-icon" />
+    <link rel="icon" href="img/logo2.png" type="image/x-icon" />
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -124,7 +126,6 @@ session_start();
                     $data_tarefa = $reg['data_tarefa'];
                     $desc_tarefa = $reg['desc_tarefa'];
                     $utilizador_id = $reg['utilizador'];
-                    $material_id = $reg['material'];
 
                     // Consulta SQL para obter o nome do utilizador correspondente
                     $sql_utilizador = "SELECT nome_user FROM users WHERE id_user = $utilizador_id";
@@ -132,11 +133,7 @@ session_start();
                     $row_utilizador = mysqli_fetch_assoc($res_utilizador);
                     $utilizador_nome = $row_utilizador['nome_user'];
 
-                    // Consulta SQL para obter o nome do material correspondente
-                    $sql_material = "SELECT nome_material FROM material WHERE id_material = $material_id";
-                    $res_material = mysqli_query($conn, $sql_material);
-                    $row_material = mysqli_fetch_assoc($res_material);
-                    $material_nome = $row_material['nome_material'];
+                    
             ?>
 
                     <div class="recent-orders">
@@ -145,8 +142,7 @@ session_start();
                                 <tr>
                                     <th>Nome da tarefa</th>
                                     <th>Data da tarefa</th>
-                                    <th>Funcionário</th>
-                                    <th>Material</th>
+                                    <th>Responsável</th>
                                     <th>Descrição</th>
                                 </tr>
                             </thead>
@@ -155,7 +151,6 @@ session_start();
                                     <td style="width: 230px; max-width: 230px;"><?php echo $nome_tarefa; ?></td>
                                     <td style="width: 230px; max-width: 230px;"><?php echo $data_tarefa; ?></td>
                                     <td style="width: 230px; max-width: 230px;" class="warning"><?php echo $utilizador_nome; ?></td>
-                                    <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $material_nome; ?></td>
                                     <td style="width: 230px; max-width: 230px;"><?php echo $desc_tarefa; ?></td>
                                     <td class="primary pointer" onclick="myhref('tarefas.php');">Detalhes</td>
                                 </tr>
