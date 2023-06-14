@@ -94,6 +94,11 @@ if (isset($_POST["signup"])) {
             <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
             </a>
+
+            <a href="chat.php">
+            <span class="material-icons-sharp">chat</span>
+                <h3>Chat</h3>    
+            </a>
             
             <!-- ======== Consuante o rank ========= -->
             <a href="register.php">
@@ -121,7 +126,7 @@ if (isset($_POST["signup"])) {
       
         <div class="containerprof2 a-containerprof" id="a-container">
             <form action="" class="formprof" id="a-form" method="post">
-            <h2 class="form_titleprof titleprof">Criar Reunião</h2>
+            <h2 class="form_titleprof titleprof">Novo Material</h2>
             <input class="form__inputprof" type="text" placeholder="Material" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
             <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
                 <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />

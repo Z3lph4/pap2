@@ -21,7 +21,7 @@ if (isset($_POST["signup"])) {
     } elseif ($check_email > 0) {
         echo "<script>alert('Email já existe.');</script>";
     } else {
-        $sql = "INSERT INTO users (nome_user, email_user, tel_user, pass_user, rank_user, imagem) VALUES ('$full_name', '$email', '$tel', '$pass', '$rank', '$imagem_padrao')";
+        $sql = "INSERT INTO users (nome_user, email_user, tel_user, pass_user, rank_user, imagem, loc_user, desc_user) VALUES ('$full_name', '$email', '$tel', '$pass', '$rank', '$imagem_padrao', 'Inserir localizacao', 'Inserir descricao')";
         $result = mysqli_query($conn, $sql);
         if ($result) {
             $_POST["signup_nome_user"] = "";
@@ -98,6 +98,11 @@ if (isset($_POST["signup"])) {
             <a href="perfil.php">
             <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
+            </a>
+
+            <a href="chat.php">
+            <span class="material-icons-sharp">chat</span>
+                <h3>Chat</h3>    
             </a>
             
             <!-- ======== Consuante o rank ========= -->

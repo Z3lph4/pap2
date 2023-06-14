@@ -79,6 +79,11 @@ if (isset($_POST["action"])) {
             <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
             </a>
+
+            <a href="chat.php">
+            <span class="material-icons-sharp">chat</span>
+                <h3>Chat</h3>    
+            </a>
             
             <!-- ======== Consuante o rank ========= -->
             <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
@@ -103,79 +108,72 @@ if (isset($_POST["action"])) {
         <!-- ============= END OF ASIDE ============ -->
 
         <main>
+    <h1>Funcionários</h1>
 
-        <h1>Funcionários</h1>
+    <?php
+    $sql = "SELECT * FROM users ORDER BY id_user DESC LIMIT 4";
 
-            <?php
-
-            $sql ="SELECT * FROM users order by id_user desc LIMIT 4";
-
-            if($res=mysqli_query($conn,$sql)){
-
-            $id_user = array();
-            $nome_user = array();
-            $tel_user = array();
-            $email_user = array();
-
-            $iol= 0;
-            while($reg=mysqli_fetch_assoc($res)){
-
-                $id_user[$iol] = $reg['id_user'];
-                $nome_user[$iol] = $reg['nome_user'];
-                $email_user[$iol] = $reg['email_user'];
-                $tel_user = $reg['tel_user'];
-
+    if ($res = mysqli_query($conn, $sql)) {
+        while ($reg = mysqli_fetch_assoc($res)) {
+            $id_user = $reg['id_user'];
+            $nome_user = $reg['nome_user'];
+            $email_user = $reg['email_user'];
+            $tel_user = $reg['tel_user'];
             ?>
 
             <div class="recent-orders">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 300px; max-width: 300px;">Nome do Funcionário</th>
-                                <th style="width: 350px; max-width: 350px;">Email</th>
-                                <!-- <th style="width: 300px; max-width: 300px;">Funcionário</th> -->
-                                <th style="width: 300px; max-width: 300px;">Telemóvel</th>
-                            </tr>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 300px; max-width: 300px;">Nome do Funcionário</th>
+                            <th style="width: 350px; max-width: 350px;">Email</th>
+                            <th style="width: 300px; max-width: 300px;">Telemóvel</th>
+                        </tr>
                     </thead>
                     
-                <tbody>
-                <tr>
-                    <td><?php echo $nome_user[$iol]; ?></td>
-                    <td><?php echo $email_user[$iol]; ?></td>
-                    <!-- <td class="warning">< ? php echo $reg['id_user']; ?></td> -->
-                    <td><?php echo $reg['tel_user']; ?></td>
-                    <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
-                        <td>
-                            <div class="productsdel pointer">
-                                <?php
-                                $form_id = "DeleteMaterial" . $id_user[$iol];
-                                ?>
-                                <form method="post" action="funcionarios.php" id="<?php echo $form_id ?>">
-                                    <input type="hidden" name="MaterialId" value="<?php echo $id_user[$iol] ?>" />
-                                    <input type="hidden" name="action" value="DeleteMaterial" />  
-                                    <a class="tm-product-delete-link" onClick="showConfirmation('<?php echo $form_id ?>');">
-                                        <i class="material-icons-sharp">delete</i>
-                                    </a>
-                                </form>
-                            </div>
-                        </td>
+                    <tbody>
+                        <tr>
+                            <td><?php echo $nome_user; ?></td>
+                            <td><?php echo $email_user; ?></td>
+                            <td><?php echo $tel_user; ?></td>
+                            <td class="primary pointer" style="padding-right: 15px;">
+                                <a href="perfil.php?id=<?php echo $id_user; ?>" style="color: #007bff; padding: 10px;">Detalhes</a>
+                            </td>
 
-                        <script>
-                            function showConfirmation(formId) {
-                                if (confirm("Tem certeza de que deseja excluir este Funcionário?")) {
-                                    document.getElementById(formId).submit();
-                                }
-                            }
-                        </script>
-                    <?php } ?>
-                </tr>
+                            <?php if (isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
+                                <td>
+                                    <div class="productsdel pointer">
+                                        <?php
+                                        $form_id = "DeleteMaterial" . $id_user;
+                                        ?>
+                                        <form method="post" action="funcionarios.php" id="<?php echo $form_id ?>">
+                                            <input type="hidden" name="MaterialId" value="<?php echo $id_user ?>" />
+                                            <input type="hidden" name="action" value="DeleteMaterial" />  
+                                            <a class="tm-product-delete-link" onClick="showConfirmation('<?php echo $form_id ?>');">
+                                                <i class="material-icons-sharp">delete</i>
+                                            </a>
+                                        </form>
+                                    </div>
+                                </td>
+
+                                <script>
+                                    function showConfirmation(formId) {
+                                        if (confirm("Tem certeza de que deseja excluir este Funcionário?")) {
+                                            document.getElementById(formId).submit();
+                                        }
+                                    }
+                                </script>
+                            <?php } ?>
+                        </tr>
                     </tbody>
                 </table>
             </div>
 
-            <?php }} ?>
-
-        </main>
+    <?php
+        }
+    }
+    ?>
+</main>
 
         <!-- ============== END OF MAIN ============ -->
 

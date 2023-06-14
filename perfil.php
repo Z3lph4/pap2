@@ -4,6 +4,39 @@ include 'config.php';
 
 session_start();
 
+// Verifique se o botão "Editar" foi clicado
+if (isset($_POST['edit'])) {
+    // Defina a variável de sessão 'editing' como true
+    $_SESSION['editing'] = true;
+} elseif (isset($_POST['save'])) { // Verifique se o botão "Salvar" foi clicado
+    // Obtenha os valores enviados do formulário
+    $editedDescUser = $_POST['desc_user'];
+    $editedLocUser = $_POST['loc_user'];
+
+    // Verifique se os campos foram preenchidos
+    if (!empty($editedDescUser) && !empty($editedLocUser)) {
+        // Execute a lógica de atualização dos campos no banco de dados
+        $logged_in_user_id = $_SESSION['id_puser'];
+        $sql = "UPDATE per_user SET desc_user = '$editedDescUser', loc_user = '$editedLocUser' WHERE id_puser = $logged_in_user_id";
+
+        if (mysqli_query($conn, $sql)) {
+            // Os dados foram atualizados com sucesso na base de dados
+            // Defina a variável de sessão 'editing' como false
+            $_SESSION['editing'] = false;
+        } else {
+            // Ocorreu um erro ao atualizar os dados na base de dados
+            // Exiba uma mensagem de erro ou realize outra ação apropriada
+        }
+    }
+} elseif (isset($_POST['cancel'])) { // Verifique se o botão "Cancelar" foi clicado
+    // Defina a variável de sessão 'editing' como false
+    $_SESSION['editing'] = false;
+
+    // Redirecione de volta para a página inicial
+    header("Location: perfil.php");
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -67,6 +100,11 @@ session_start();
             <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
             </a>
+
+            <a href="chat.php">
+            <span class="material-icons-sharp">chat</span>
+                <h3>Chat</h3>    
+            </a>
             
             <!-- ======== Consuante o rank ========= -->
             <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
@@ -102,56 +140,54 @@ session_start();
             </div>
             </div>
 
-        <script>
+            <script>
+        // Adiciona um ouvinte de evento de clique ao botão "Editar"
+        const editButton = document.getElementById('edit-button');
+        editButton.addEventListener('click', () => {
             // Seleciona o elemento .profile-card__img
-        const profileImg = document.querySelector('.profile-card__img');
+            const profileImg = document.querySelector('.profile-card__img');
 
-        // Seleciona o elemento .icon-container
-        const iconContainer = document.querySelector('.icon-container');
+            // Seleciona o elemento .icon-container
+            const iconContainer = document.querySelector('.icon-container');
 
-        // Adiciona um ouvinte de evento de clique ao elemento .profile-card__img
-        profileImg.addEventListener('click', () => {
-        // Cria um elemento de entrada de arquivo
-        const input = document.createElement('input');
-        input.type = 'file';
-        
-        // Adiciona um ouvinte de evento de alteração ao elemento de entrada de arquivo
-        input.addEventListener('change', (event) => {
-            // Obtém a primeira imagem selecionada
-            const selectedImage = event.target.files[0];
-            
-            // Define a imagem selecionada como a nova imagem de perfil
-            const profileImg = document.querySelector('.profile-card__img img');
-            profileImg.src = URL.createObjectURL(selectedImage);
+            // Adiciona um ouvinte de evento de clique ao elemento .profile-card__img
+            profileImg.addEventListener('click', () => {
+                // Cria um elemento de entrada de arquivo
+                const input = document.createElement('input');
+                input.type = 'file';
+
+                // Adiciona um ouvinte de evento de alteração ao elemento de entrada de arquivo
+                input.addEventListener('change', (event) => {
+                    // Obtém a primeira imagem selecionada
+                    const selectedImage = event.target.files[0];
+
+                    // Define a imagem selecionada como a nova imagem de perfil
+                    const profileImg = document.querySelector('.profile-card__img img');
+                    profileImg.src = URL.createObjectURL(selectedImage);
+                });
+
+                // Dispara o clique no elemento de entrada de arquivo
+                input.click();
+            });
+
+            // Adiciona uma classe ao elemento .icon-container quando o mouse estiver sobre o elemento .profile-card__img
+            profileImg.addEventListener('mouseover', () => {
+                iconContainer.classList.add('show');
+            });
+
+            // Remove a classe do elemento .icon-container quando o mouse sair do elemento .profile-card__img
+            profileImg.addEventListener('mouseout', () => {
+                iconContainer.classList.remove('show');
+            });
         });
-        
-        // Dispara o clique no elemento de entrada de arquivo
-        input.click();
-        });
-
-        // Adiciona uma classe ao elemento .icon-container quando o mouse estiver sobre o elemento .profile-card__img
-        profileImg.addEventListener('mouseover', () => {
-        iconContainer.classList.add('show');
-        });
-
-        // Remove a classe do elemento .icon-container quando o mouse sair do elemento .profile-card__img
-        profileImg.addEventListener('mouseout', () => {
-        iconContainer.classList.remove('show');
-        });
-
-        </script>
+    </script>
 
             <div class="profile-card__cnt js-profile-cnt">
             <div class="profile-card__name"><?php echo $_SESSION["user_name"]; ?></div>
 
             <?php
 
-                if (!isset($_SESSION['id_puser'])) {
-                }
-
-                $logged_in_user_id = $_SESSION['id_puser'];
-
-                $sql = "SELECT * FROM per_user WHERE id_puser = $logged_in_user_id";
+                $sql = "SELECT * FROM users WHERE id_user = 20";
 
                 if($res=mysqli_query($conn,$sql)){
 
@@ -162,7 +198,7 @@ session_start();
                     $iol= 0;
                     while($reg=mysqli_fetch_assoc($res)){
     
-                    $id_puser[$iol] = $reg['id_puser'];
+                    $id_puser[$iol] = $reg['id_user'];
                     $desc_user[$iol] = $reg['desc_user'];
                     $loc_user[$iol] = $reg['loc_user'];
                 ?>
@@ -181,13 +217,8 @@ session_start();
 
             <?php
 
-                if (!isset($_SESSION['id_user'])) {
-                }
-
-                $logged_in_user_id = $_SESSION['id_user'];
-
                 $sql ="SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users 
-                where id_user = $logged_in_user_id";
+                where id_user = 20";
 
                 if($res=mysqli_query($conn,$sql)){
 
@@ -210,15 +241,18 @@ session_start();
             </div>
 
             <div class="profile-card-ctr">
-                <button class="profile-card__button button--blue js-message-btn" onclick="myhref('chat.php');">Mensagem</button>
-                
-                <script type="text/javascript">
-                        function myhref(chat){
-                        window.location.href = chat;}
-                    </script> 
-
-                <button class="profile-card__button button--orange" onclick="myhref('perfil2.php');">Editar</button>
-            </div>
+                    <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
+                        <form method="POST" action="">
+                            <button class="profile-card__button button--blue" type="submit" name="save">Salvar</button>
+                            <button class="profile-card__button button--orange" type="submit" name="cancel">Cancelar</button>
+                        </form>
+                    <?php else: ?>
+                        <button class="profile-card__button button--blue js-message-btn" onclick="myhref('chat.php');">Mensagem</button>
+                        <form method="POST" action="">
+                            <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
+                        </form>
+                    <?php endif; ?>
+                </div>
             </div>
         <!-- partial -->
                     <script type="text/javascript">

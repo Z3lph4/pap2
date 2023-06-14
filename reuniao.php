@@ -82,6 +82,11 @@ if (isset($_POST["action"])) {
                 <h3>Perfil</h3>    
             </a>
             
+            <a href="chat.php">
+            <span class="material-icons-sharp">chat</span>
+                <h3>Chat</h3>    
+            </a>
+            
             <!-- ======== Consuante o rank ========= -->
             <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
             <a href="register.php">

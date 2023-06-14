@@ -64,6 +64,11 @@ session_start();
             <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
             </a>
+
+            <a href="chat.php">
+            <span class="material-icons-sharp">chat</span>
+                <h3>Chat</h3>    
+            </a>
             
             <!-- ======== Consuante o rank ========= -->
             <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
@@ -394,6 +399,7 @@ session_start();
         </script>
 
     <script src="js/index.js"></script>
+    <script src="chat.js"></script>
 
 </body>
 </html>
