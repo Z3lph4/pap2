@@ -178,37 +178,43 @@ if (isset($_POST['edit'])) {
             </script>
 
             <div class="profile-card__cnt js-profile-cnt">
-                
+                <?php
+                    // Recupere o ID do funcionário da URL
+                    $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
 
-            <?php
-                // Recupere o ID do funcionário da URL
-                $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
+                    if ($employeeId !== null) {
+                        $sql = "SELECT * FROM users WHERE id_user = $employeeId";
 
-                if ($employeeId !== null) {
-                    $sql = "SELECT * FROM users WHERE id_user = $employeeId";
+                        if ($res = mysqli_query($conn, $sql)) {
+                            while ($reg = mysqli_fetch_assoc($res)) {
+                                $desc_user = $reg['desc_user'];
+                                $loc_user = $reg['loc_user'];
+                                $nome_user = $reg['nome_user'];
+                                ?>
 
-                    if ($res = mysqli_query($conn, $sql)) {
-                        while ($reg = mysqli_fetch_assoc($res)) {
-                            $desc_user = $reg['desc_user'];
-                            $loc_user = $reg['loc_user'];
-                            $nome_user = $reg['nome_user'];
-                            ?>
+                                <div class="profile-card__name"><?php echo $nome_user; ?></div>
 
-                            <div class="profile-card__name"><?php echo $nome_user; ?></div>
-                            <div class="profile-card__txt"><?php echo $desc_user; ?></div>
-                            <div class="profile-card-loc">
-                                <span class="profile-card-loc__txt">
-                                    <?php echo $loc_user; ?>
-                                </span>
-                            </div>
+                                <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
+                                    <input type="text" name="desc_user" value="<?php echo $desc_user; ?>">
+                                <?php else: ?>
+                                    <div class="profile-card__txt"><?php echo $desc_user; ?></div>
+                                <?php endif; ?>
 
-                        <?php
+                                <div class="profile-card-loc">
+                                    <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
+                                        <input type="text" name="loc_user" value="<?php echo $loc_user; ?>">
+                                    <?php else: ?>
+                                        <span class="profile-card-loc__txt"><?php echo $loc_user; ?></span>
+                                    <?php endif; ?>
+                                </div>
+
+                            <?php
+                            }
                         }
+                    } else {
+                        // Lógica para quando não há ID de funcionário fornecido na URL
+                        echo "ID de funcionário não fornecido.";
                     }
-                } else {
-                    // Lógica para quando não há ID de funcionário fornecido na URL
-                    echo "ID de funcionário não fornecido.";
-                }
                 ?>
 
                 <div class="profile-card-inf">
