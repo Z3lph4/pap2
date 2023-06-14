@@ -96,8 +96,8 @@ if (isset($_POST['edit'])) {
                 <h3>Material</h3>    
             </a>
             
-            <a href="perfil.php" class="active">
-            <span class="material-icons-sharp">account_circle</span>
+            <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>" class="active">
+                <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
             </a>
 
@@ -129,115 +129,115 @@ if (isset($_POST['edit'])) {
         <!-- ============= END OF ASIDE ============ -->
 
         <main>
-
-        <div class="wrapper">
+    <div class="wrapper">
         <div class="profile-card js-profile-card">
             <div class="profile-card__img">
-            <img src="./img/profile-1.jpg" alt="profile card">
-            <div class="overlay"></div>
-            <div class="icon-container">
-                <i class="fas fa-exchange-alt"></i>
+                <img src="./img/profile-1.jpg" alt="profile card">
+                <div class="overlay"></div>
+                <div class="icon-container">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
             </div>
-            </div>
 
-        <script>
-            // Seleciona o elemento .profile-card__img
-        const profileImg = document.querySelector('.profile-card__img');
+            <script>
+                // Seleciona o elemento .profile-card__img
+                const profileImg = document.querySelector('.profile-card__img');
 
-        // Seleciona o elemento .icon-container
-        const iconContainer = document.querySelector('.icon-container');
+                // Seleciona o elemento .icon-container
+                const iconContainer = document.querySelector('.icon-container');
 
-        // Adiciona um ouvinte de evento de clique ao elemento .profile-card__img
-        profileImg.addEventListener('click', () => {
-        // Cria um elemento de entrada de arquivo
-        const input = document.createElement('input');
-        input.type = 'file';
-        
-        // Adiciona um ouvinte de evento de alteração ao elemento de entrada de arquivo
-        input.addEventListener('change', (event) => {
-            // Obtém a primeira imagem selecionada
-            const selectedImage = event.target.files[0];
-            
-            // Define a imagem selecionada como a nova imagem de perfil
-            const profileImg = document.querySelector('.profile-card__img img');
-            profileImg.src = URL.createObjectURL(selectedImage);
-        });
-        
-        // Dispara o clique no elemento de entrada de arquivo
-        input.click();
-        });
+                // Adiciona um ouvinte de evento de clique ao elemento .profile-card__img
+                profileImg.addEventListener('click', () => {
+                // Cria um elemento de entrada de arquivo
+                const input = document.createElement('input');
+                input.type = 'file';
 
-        // Adiciona uma classe ao elemento .icon-container quando o mouse estiver sobre o elemento .profile-card__img
-        profileImg.addEventListener('mouseover', () => {
-        iconContainer.classList.add('show');
-        });
+                // Adiciona um ouvinte de evento de alteração ao elemento de entrada de arquivo
+                input.addEventListener('change', (event) => {
+                    // Obtém a primeira imagem selecionada
+                    const selectedImage = event.target.files[0];
+                    
+                    // Define a imagem selecionada como a nova imagem de perfil
+                    const profileImg = document.querySelector('.profile-card__img img');
+                    profileImg.src = URL.createObjectURL(selectedImage);
+                });
 
-        // Remove a classe do elemento .icon-container quando o mouse sair do elemento .profile-card__img
-        profileImg.addEventListener('mouseout', () => {
-        iconContainer.classList.remove('show');
-        });
+                // Dispara o clique no elemento de entrada de arquivo
+                input.click();
+                });
 
-        </script>
+                // Adiciona uma classe ao elemento .icon-container quando o mouse estiver sobre o elemento .profile-card__img
+                profileImg.addEventListener('mouseover', () => {
+                iconContainer.classList.add('show');
+                });
+
+                // Remove a classe do elemento .icon-container quando o mouse sair do elemento .profile-card__img
+                profileImg.addEventListener('mouseout', () => {
+                iconContainer.classList.remove('show');
+                });
+            </script>
 
             <div class="profile-card__cnt js-profile-cnt">
-            <div class="profile-card__name"><?php echo $_SESSION["user_name"]; ?></div>
+                <div class="profile-card__name"><?php echo $_SESSION["user_name"]; ?></div>
 
-            <?php
+                <?php
+                // Recupere o ID do funcionário da URL
+                $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
 
-                $sql = "SELECT * FROM users WHERE id_user = 20";
+                if ($employeeId !== null) {
+                    $sql = "SELECT * FROM users WHERE id_user = $employeeId";
 
-                if($res=mysqli_query($conn,$sql)){
+                    if ($res = mysqli_query($conn, $sql)) {
+                        while ($reg = mysqli_fetch_assoc($res)) {
+                            $desc_user = $reg['desc_user'];
+                            $loc_user = $reg['loc_user'];
+                            ?>
 
-                    $id_puser = array();
-                    $desc_user = array();
-                    $loc_user = array();
-    
-                    $iol= 0;
-                    while($reg=mysqli_fetch_assoc($res)){
-    
-                    $id_puser[$iol] = $reg['id_user'];
-                    $desc_user[$iol] = $reg['desc_user'];
-                    $loc_user[$iol] = $reg['loc_user'];
+                            <div class="profile-card__txt"><?php echo $desc_user; ?></div>
+                            <div class="profile-card-loc">
+                                <span class="profile-card-loc__txt">
+                                    <?php echo $loc_user; ?>
+                                </span>
+                            </div>
+
+                        <?php
+                        }
+                    }
+                } else {
+                    // Lógica para quando não há ID de funcionário fornecido na URL
+                    echo "ID de funcionário não fornecido.";
+                }
                 ?>
 
-                <div class="profile-card__txt"><?php echo $desc_user[$iol]; ?></div>
-                <div class="profile-card-loc">
-                    <span class="profile-card-loc__txt">
-                        <?php echo $loc_user[$iol]; ?>
-                    </span>
+                <div class="profile-card-inf">
+                    <?php
+                    // Recupere novamente o ID do funcionário da URL
+                    $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
+
+                    if ($employeeId !== null) {
+                        $sql = "SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users WHERE id_user = $employeeId";
+
+                        if ($res = mysqli_query($conn, $sql)) {
+                            while ($reg = mysqli_fetch_assoc($res)) {
+                                $data = $reg['data'];
+                                ?>
+
+                                <div class="profile-card-inf__item">
+                                    <div class="profile-card-inf__title"><?php echo $data; ?></div>
+                                    <div class="profile-card-inf__txt">Dias na Empresa</div>
+                                </div>
+
+                            <?php
+                            }
+                        }
+                    } else {
+                        // Lógica para quando não há ID de funcionário fornecido na URL
+                        echo "ID de funcionário não fornecido.";
+                    }
+                    ?>
                 </div>
 
-                <?php }} ?>
-
-
-            <div class="profile-card-inf">
-
-            <?php
-
-                $sql ="SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users 
-                where id_user = 20";
-
-                if($res=mysqli_query($conn,$sql)){
-
-                $id_user = array();
-                $data = array();
-
-                $iol= 0;
-                while($reg=mysqli_fetch_assoc($res)){
-
-                    $id_user[$iol] = $reg['id_user'];
-                    $data[$iol] = $reg['data'];
-                ?>
-
-                <div class="profile-card-inf__item">
-                <div class="profile-card-inf__title"><?php echo $data[$iol]; ?></div>
-                <div class="profile-card-inf__txt">Dias na Empresa</div>
-                </div>
-
-                    <?php }} ?>
-            </div>
-
-            <div class="profile-card-ctr">
+                <div class="profile-card-ctr">
                     <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
                         <form method="POST" action="">
                             <button class="profile-card__button button--blue" type="submit" name="save">Salvar</button>
@@ -251,14 +251,11 @@ if (isset($_POST['edit'])) {
                     <?php endif; ?>
                 </div>
             </div>
-        <!-- partial -->
-                    <script type="text/javascript">
-                        function myhref(perfil2){
-                        window.location.href = perfil2;}
-                    </script>         
-                    <script  src="./profile.js"></script>
-
-        </main>
+        </div>
+    </div>
+    <!-- Resto do seu código -->
+    <script src="./profile.js"></script>
+</main>
 
         <!-- ============== END OF MAIN ============ -->
 

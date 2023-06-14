@@ -75,8 +75,8 @@ if (isset($_POST["action"])) {
                 <h3>Material</h3>    
             </a>
             
-            <a href="perfil.php">
-            <span class="material-icons-sharp">account_circle</span>
+            <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>">
+                <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
             </a>
 
@@ -137,7 +137,7 @@ if (isset($_POST["action"])) {
                             <td><?php echo $email_user; ?></td>
                             <td><?php echo $tel_user; ?></td>
                             <td class="primary pointer" style="padding-right: 15px;">
-                                <a href="perfil.php?id=<?php echo $id_user; ?>" style="color: #007bff; padding: 10px;">Detalhes</a>
+                                <a style="color: #007bff; padding: 10px;" href="perfil.php?id=<?php echo $id_user; ?>">Detalhes</a>
                             </td>
 
                             <?php if (isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>

@@ -60,8 +60,8 @@ session_start();
                 <h3>Material</h3>    
             </a>
 
-            <a href="perfil.php">
-            <span class="material-icons-sharp">account_circle</span>
+            <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>">
+                <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
             </a>
             
