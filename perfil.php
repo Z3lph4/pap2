@@ -11,8 +11,8 @@ if (isset($_POST['edit'])) {
     // Verifique se os campos desc_user e loc_user estão definidos em $_POST
     if (isset($_POST['desc_user']) && isset($_POST['loc_user'])) {
         // Obtenha os valores enviados do formulário
-        $editedDescUser = $_POST['desc_user'];
-        $editedLocUser = $_POST['loc_user'];
+        $editedDescUser = mysqli_real_escape_string($conn, $_POST['desc_user']);
+        $editedLocUser = mysqli_real_escape_string($conn, $_POST['loc_user']);
 
         // Verifique se os campos foram preenchidos
         if (!empty($editedDescUser) && !empty($editedLocUser)) {
@@ -255,7 +255,7 @@ if (isset($_POST['edit'])) {
                     <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
                         <form method="POST" action="">
                             <button class="profile-card__button button--blue" type="submit" name="save">Salvar</button>
-                            <button class="profile-card__button button--orange" type="submit" name="cancel">Cancelar</button>
+                            <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
                         </form>
                     <?php else: ?>
                         <button class="profile-card__button button--blue js-message-btn" onclick="myhref('chat.php');">Mensagem</button>
@@ -268,6 +268,14 @@ if (isset($_POST['edit'])) {
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
+
+                <script>
+                    function cancelEditing() {
+                        window.location.href = 'perfil.php?id=<?php echo $_SESSION['user_id']; ?>';
+                        <?php $_SESSION['editing'] = false; ?>
+                    }
+                </script>
+
             </div>
         </div>
     </div>
