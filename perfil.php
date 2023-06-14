@@ -1,5 +1,4 @@
 <?php
-
 include 'config.php';
 
 session_start();
@@ -9,23 +8,35 @@ if (isset($_POST['edit'])) {
     // Defina a variável de sessão 'editing' como true
     $_SESSION['editing'] = true;
 } elseif (isset($_POST['save'])) { // Verifique se o botão "Salvar" foi clicado
-    // Obtenha os valores enviados do formulário
-    $editedDescUser = $_POST['desc_user'];
-    $editedLocUser = $_POST['loc_user'];
+    // Verifique se os campos desc_user e loc_user estão definidos em $_POST
+    if (isset($_POST['desc_user']) && isset($_POST['loc_user'])) {
+        // Obtenha os valores enviados do formulário
+        $editedDescUser = $_POST['desc_user'];
+        $editedLocUser = $_POST['loc_user'];
 
-    // Verifique se os campos foram preenchidos
-    if (!empty($editedDescUser) && !empty($editedLocUser)) {
-        // Execute a lógica de atualização dos campos no banco de dados
-        $logged_in_user_id = $_SESSION['id_puser'];
-        $sql = "UPDATE per_user SET desc_user = '$editedDescUser', loc_user = '$editedLocUser' WHERE id_puser = $logged_in_user_id";
+        // Verifique se os campos foram preenchidos
+        if (!empty($editedDescUser) && !empty($editedLocUser)) {
+            // Execute a lógica de atualização dos campos no banco de dados
+            $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
 
-        if (mysqli_query($conn, $sql)) {
-            // Os dados foram atualizados com sucesso na base de dados
-            // Defina a variável de sessão 'editing' como false
-            $_SESSION['editing'] = false;
-        } else {
-            // Ocorreu um erro ao atualizar os dados na base de dados
-            // Exiba uma mensagem de erro ou realize outra ação apropriada
+            if ($employeeId !== null) {
+                // Execute a consulta SQL de atualização
+                $sql = "UPDATE users SET desc_user = '$editedDescUser', loc_user = '$editedLocUser' WHERE id_user = $employeeId";
+
+                if (mysqli_query($conn, $sql)) {
+                    // Os dados foram atualizados com sucesso na base de dados
+                    // Defina a variável de sessão 'editing' como false
+                    $_SESSION['editing'] = false;
+
+                    // Redirecione para a página do perfil do funcionário atualizado
+                    header("Location: perfil.php?id=$employeeId");
+                    exit();
+                } else {
+                    // Ocorreu um erro ao atualizar os dados na base de dados
+                    // Exiba uma mensagem de erro ou realize outra ação apropriada
+                    echo "Erro ao atualizar as informações do funcionário: " . mysqli_error($conn);
+                }
+            }
         }
     }
 } elseif (isset($_POST['cancel'])) { // Verifique se o botão "Cancelar" foi clicado
@@ -36,7 +47,6 @@ if (isset($_POST['edit'])) {
     header("Location: perfil.php");
     exit();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -178,43 +188,39 @@ if (isset($_POST['edit'])) {
             </script>
 
             <div class="profile-card__cnt js-profile-cnt">
-                <?php
-                    // Recupere o ID do funcionário da URL
-                    $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
+                
 
-                    if ($employeeId !== null) {
-                        $sql = "SELECT * FROM users WHERE id_user = $employeeId";
+            <?php
+                // Recupere o ID do funcionário da URL
+                $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
 
-                        if ($res = mysqli_query($conn, $sql)) {
-                            while ($reg = mysqli_fetch_assoc($res)) {
-                                $desc_user = $reg['desc_user'];
-                                $loc_user = $reg['loc_user'];
-                                $nome_user = $reg['nome_user'];
-                                ?>
+                if ($employeeId !== null) {
+                    $sql = "SELECT * FROM users WHERE id_user = $employeeId";
 
-                                <div class="profile-card__name"><?php echo $nome_user; ?></div>
+                    if ($res = mysqli_query($conn, $sql)) {
+                        while ($reg = mysqli_fetch_assoc($res)) {
+                            $desc_user = $reg['desc_user'];
+                            $loc_user = $reg['loc_user'];
+                            $nome_user = $reg['nome_user'];
+                            ?>
 
-                                <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
-                                    <input type="text" name="desc_user" value="<?php echo $desc_user; ?>">
-                                <?php else: ?>
-                                    <div class="profile-card__txt"><?php echo $desc_user; ?></div>
-                                <?php endif; ?>
+                            <div class="profile-card__name"><?php echo $nome_user; ?></div>
+                            <div class="profile-card__txt" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?>>
+                                <?php echo $desc_user; ?>
+                            </div>
+                            <div class="profile-card-loc">
+                                <span class="profile-card-loc__txt" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?>>
+                                    <?php echo $loc_user; ?>
+                                </span>
+                            </div>
 
-                                <div class="profile-card-loc">
-                                    <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
-                                        <input type="text" name="loc_user" value="<?php echo $loc_user; ?>">
-                                    <?php else: ?>
-                                        <span class="profile-card-loc__txt"><?php echo $loc_user; ?></span>
-                                    <?php endif; ?>
-                                </div>
-
-                            <?php
-                            }
+                        <?php
                         }
-                    } else {
-                        // Lógica para quando não há ID de funcionário fornecido na URL
-                        echo "ID de funcionário não fornecido.";
                     }
+                } else {
+                    // Lógica para quando não há ID de funcionário fornecido na URL
+                    echo "ID de funcionário não fornecido.";
+                }
                 ?>
 
                 <div class="profile-card-inf">
