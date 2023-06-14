@@ -140,47 +140,44 @@ if (isset($_POST['edit'])) {
             </div>
             </div>
 
-            <script>
-        // Adiciona um ouvinte de evento de clique ao botão "Editar"
-        const editButton = document.getElementById('edit-button');
-        editButton.addEventListener('click', () => {
+        <script>
             // Seleciona o elemento .profile-card__img
-            const profileImg = document.querySelector('.profile-card__img');
+        const profileImg = document.querySelector('.profile-card__img');
 
-            // Seleciona o elemento .icon-container
-            const iconContainer = document.querySelector('.icon-container');
+        // Seleciona o elemento .icon-container
+        const iconContainer = document.querySelector('.icon-container');
 
-            // Adiciona um ouvinte de evento de clique ao elemento .profile-card__img
-            profileImg.addEventListener('click', () => {
-                // Cria um elemento de entrada de arquivo
-                const input = document.createElement('input');
-                input.type = 'file';
-
-                // Adiciona um ouvinte de evento de alteração ao elemento de entrada de arquivo
-                input.addEventListener('change', (event) => {
-                    // Obtém a primeira imagem selecionada
-                    const selectedImage = event.target.files[0];
-
-                    // Define a imagem selecionada como a nova imagem de perfil
-                    const profileImg = document.querySelector('.profile-card__img img');
-                    profileImg.src = URL.createObjectURL(selectedImage);
-                });
-
-                // Dispara o clique no elemento de entrada de arquivo
-                input.click();
-            });
-
-            // Adiciona uma classe ao elemento .icon-container quando o mouse estiver sobre o elemento .profile-card__img
-            profileImg.addEventListener('mouseover', () => {
-                iconContainer.classList.add('show');
-            });
-
-            // Remove a classe do elemento .icon-container quando o mouse sair do elemento .profile-card__img
-            profileImg.addEventListener('mouseout', () => {
-                iconContainer.classList.remove('show');
-            });
+        // Adiciona um ouvinte de evento de clique ao elemento .profile-card__img
+        profileImg.addEventListener('click', () => {
+        // Cria um elemento de entrada de arquivo
+        const input = document.createElement('input');
+        input.type = 'file';
+        
+        // Adiciona um ouvinte de evento de alteração ao elemento de entrada de arquivo
+        input.addEventListener('change', (event) => {
+            // Obtém a primeira imagem selecionada
+            const selectedImage = event.target.files[0];
+            
+            // Define a imagem selecionada como a nova imagem de perfil
+            const profileImg = document.querySelector('.profile-card__img img');
+            profileImg.src = URL.createObjectURL(selectedImage);
         });
-    </script>
+        
+        // Dispara o clique no elemento de entrada de arquivo
+        input.click();
+        });
+
+        // Adiciona uma classe ao elemento .icon-container quando o mouse estiver sobre o elemento .profile-card__img
+        profileImg.addEventListener('mouseover', () => {
+        iconContainer.classList.add('show');
+        });
+
+        // Remove a classe do elemento .icon-container quando o mouse sair do elemento .profile-card__img
+        profileImg.addEventListener('mouseout', () => {
+        iconContainer.classList.remove('show');
+        });
+
+        </script>
 
             <div class="profile-card__cnt js-profile-cnt">
             <div class="profile-card__name"><?php echo $_SESSION["user_name"]; ?></div>
