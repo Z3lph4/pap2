@@ -178,9 +178,9 @@ if (isset($_POST['edit'])) {
             </script>
 
             <div class="profile-card__cnt js-profile-cnt">
-                <div class="profile-card__name"><?php echo $_SESSION["user_name"]; ?></div>
+                
 
-                <?php
+            <?php
                 // Recupere o ID do funcionário da URL
                 $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
 
@@ -191,8 +191,10 @@ if (isset($_POST['edit'])) {
                         while ($reg = mysqli_fetch_assoc($res)) {
                             $desc_user = $reg['desc_user'];
                             $loc_user = $reg['loc_user'];
+                            $nome_user = $reg['nome_user'];
                             ?>
 
+                            <div class="profile-card__name"><?php echo $nome_user; ?></div>
                             <div class="profile-card__txt"><?php echo $desc_user; ?></div>
                             <div class="profile-card-loc">
                                 <span class="profile-card-loc__txt">
@@ -245,9 +247,13 @@ if (isset($_POST['edit'])) {
                         </form>
                     <?php else: ?>
                         <button class="profile-card__button button--blue js-message-btn" onclick="myhref('chat.php');">Mensagem</button>
-                        <form method="POST" action="">
-                            <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
-                        </form>
+                        <?php if ($employeeId == $_SESSION['user_id']): ?>
+                            <form method="POST" action="">
+                                <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
+                            </form>
+                        <?php else: ?>
+                            <button class="profile-card__button button--orange" onclick="window.location.href = 'funcionarios.php';">Voltar</button>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
             </div>
