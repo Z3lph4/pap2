@@ -219,13 +219,29 @@ if (isset($_POST["action"])) {
         });
         </script>
 
+        <!-- ============ Perfil ========== -->
+
+        <?php
+                // Recupere o ID do usuário logado
+                $userId = $_SESSION["user_id"];
+
+                // Consulta para obter a imagem do usuário
+                $sql = "SELECT imagem FROM users WHERE id_user = $userId";
+                $result = mysqli_query($conn, $sql);
+
+                if ($result && mysqli_num_rows($result) > 0) {
+                    $row = mysqli_fetch_assoc($result);
+                    $img_user = $row['imagem'];
+                }
+            ?>
+
             <div onclick="myhref('perfil.php');" class="profile">
             <div class="info">
                 <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
             <div class="profile-photo">
-                <img src="./img/profile-1.jpg">
+                <img src="<?php echo $img_user ?>" alt="Imagem do utilizador">
             </div>
             </div>
 
@@ -241,44 +257,50 @@ if (isset($_POST["action"])) {
             <h2>Utilizadores Recentes</h2>              
             <div class="updates"> 
 
-        <?php
+            <?php
+    $sql = "SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users ORDER BY id_user DESC LIMIT 3";
 
-            $sql ="SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users order by id_user desc LIMIT 3";
+    if ($res = mysqli_query($conn, $sql)) {
+        while ($reg = mysqli_fetch_assoc($res)) {
+            $id_user = $reg['id_user'];
+            $full_name = $reg['nome_user'];
+            $data = $reg['data'];
 
-            if($res=mysqli_query($conn,$sql)){
+            // Consulta para obter a imagem do usuário
+            $img_sql = "SELECT imagem FROM users WHERE id_user = $id_user";
+            $img_result = mysqli_query($conn, $img_sql);
 
-            $id_user = array();
-            $full_name = array();
-            $data = array();
-
-            $iol= 0;
-            while($reg=mysqli_fetch_assoc($res)){
-
-                $id_user[$iol] = $reg['id_user'];
-                $full_name[$iol] = $reg['nome_user'];
-                $data[$iol] = $reg['data'];
-        ?>
-                <div class="recent-updates" onclick="myhref('funcionarios.php');">
+            if ($img_result && mysqli_num_rows($img_result) > 0) {
+                $img_row = mysqli_fetch_assoc($img_result);
+                $img_user = $img_row['imagem'];
+            } else {
+                // Imagem padrão caso não seja encontrada
+                $img_user = "caminho/para/uma/imagem/default.png";
+            }
+?>
+            <div class="recent-updates" onclick="myhref('funcionarios.php');">
                 <div class="update">
                     <div class="profile-photo">
-                        <img src="./img/profile-2.jpg">
+                        <img src="<?php echo $img_user; ?>" alt="Imagem do utilizador">
                     </div>
-                <div class="message">
-                    <p><b><?php echo $full_name[$iol]; ?></b> acabou de se juntar á nossa empresa!</p>
-                    <small class="text-muted"> <?php echo $reg['data']; ?> dias atrás</small>
+                    <div class="message">
+                        <p><b><?php echo $full_name; ?></b> acabou de se juntar à nossa empresa!</p>
+                        <small class="text-muted"><?php echo $data; ?> dias atrás</small>
+                    </div>
                 </div>
-                </div>
-                 <?php }} ?>
             </div>
-            
+            <?php
+                    }
+                }
+            ?>
+
             <script type="text/javascript">
                 function myhref(funcionarios){
                 window.location.href = funcionarios;}
             </script>
-
+               
             </div>
         </div>
-            </div>  
 
          <!--------------------- END OF RECENT UPDATES ------------------->
 
