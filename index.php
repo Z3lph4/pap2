@@ -83,13 +83,9 @@ session_start();
                 <h3>Definições</h3>    
             </a> -->
 
-            <a href="login.php">
+            <a >
             <span class="material-icons-sharp">logout</span>
-                <h3>Sair</h3>
-                <script type="text/javascript">
-                    function myhref(logout){
-                    window.location.href = logout;}
-                </script>
+                <h3 onClick="myhref('');">Sair</h3>
             </a>
             
             </div>
@@ -284,22 +280,16 @@ session_start();
             });
             </script>
 
+            <!-- ============= PERFIL ============== -->
+
             <div onclick="myhref('perfil.php');" class="profile">
             <div class="info">
                 <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
             <div class="profile-photo">
-                <img src="./img/profile-1.jpg">
+            <img src="<?php echo $img_user ?>" alt="Imagem do utilizador">
             </div>
-            <!-- <div class="profile-photo">
-                < ? php if (isset($_COOKIE["user_img"])){
-                echo "<img onclick='myhref('perfil.php');' src='". $_COOKIE["user_img"] . "'>";} ?>
-                <script type="text/javascript">
-                    function myhref(perfil){
-                    window.location.href = perfil;}
-                </script>
-            </div> -->
             </div>
 
             <script type="text/javascript">
@@ -400,6 +390,20 @@ session_start();
 
     <script src="js/index.js"></script>
     <script src="chat.js"></script>
+
+    <script type="text/javascript">
+                    function myhref(){
+                        const cookies = document.cookie.split(";");
+
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i];
+                            const eqPos = cookie.indexOf("=");
+                            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                        }
+                        window.location.href = "http://192.168.1.80:8080/pap2/login.php";
+                    }
+                </script>
 
 </body>
 </html>

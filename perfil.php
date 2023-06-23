@@ -39,6 +39,28 @@ if (isset($_POST['edit'])) {
             }
         }
     }
+
+    if (isset($_FILES["file_image"])) {
+
+        // Obter informações sobre o arquivo
+        $image_name = $_FILES["file_image"]["name"];
+        $image_tmp = $_FILES["file_image"]["tmp_name"];
+        
+        // Ler o conteúdo do arquivo
+        $image_data = file_get_contents($image_tmp);
+        
+        $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
+        
+        // Preparar a consulta SQL
+        $stmt = $conn->prepare("UPDATE users SET imagem = '$image_data' WHERE id_user = $employeeId");
+        
+        // Executar a consulta
+        if ($stmt->execute()) {
+            echo "Imagem enviada e salva com sucesso!";
+        } else {
+            echo "Erro ao salvar a imagem: " . $stmt->error;
+        }
+    }
 } elseif (isset($_POST['cancel'])) { // Verifique se o botão "Cancelar" foi clicado
     // Defina a variável de sessão 'editing' como false
     $_SESSION['editing'] = false;
@@ -47,6 +69,16 @@ if (isset($_POST['edit'])) {
     header("Location: perfil.php");
     exit();
 }
+
+function console_log($output, $with_script_tags = true) {
+    $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . 
+');';
+    if ($with_script_tags) {
+        $js_code = '<script>' . $js_code . '</script>';
+    }
+    echo $js_code;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -139,53 +171,30 @@ if (isset($_POST['edit'])) {
         <!-- ============= END OF ASIDE ============ -->
 
         <main>
+        <?php
+                // Recupere o ID do funcionário da URL
+                $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
+
+                if ($employeeId !== null) {
+                    $sql = "SELECT * FROM users WHERE id_user = $employeeId";
+
+                    if ($res = mysqli_query($conn, $sql)) {
+                        while ($reg = mysqli_fetch_assoc($res)) {
+                            $img_user = $reg['imagem'];
+                        }
+                    }
+                } 
+                ?>
+
     <div class="wrapper">
         <div class="profile-card js-profile-card">
             <div class="profile-card__img">
-                <img src="./img/profile-1.jpg" alt="profile card">
+                <img src="<?php echo $img_user ?>" alt="profile card">
                 <div class="overlay"></div>
                 <div class="icon-container">
                     <i class="fas fa-exchange-alt"></i>
                 </div>
             </div>
-
-            <script>
-                // Seleciona o elemento .profile-card__img
-                const profileImg = document.querySelector('.profile-card__img');
-
-                // Seleciona o elemento .icon-container
-                const iconContainer = document.querySelector('.icon-container');
-
-                // Adiciona um ouvinte de evento de clique ao elemento .profile-card__img
-                profileImg.addEventListener('click', () => {
-                // Cria um elemento de entrada de arquivo
-                const input = document.createElement('input');
-                input.type = 'file';
-
-                // Adiciona um ouvinte de evento de alteração ao elemento de entrada de arquivo
-                input.addEventListener('change', (event) => {
-                    // Obtém a primeira imagem selecionada
-                    const selectedImage = event.target.files[0];
-                    
-                    // Define a imagem selecionada como a nova imagem de perfil
-                    const profileImg = document.querySelector('.profile-card__img img');
-                    profileImg.src = URL.createObjectURL(selectedImage);
-                });
-
-                // Dispara o clique no elemento de entrada de arquivo
-                input.click();
-                });
-
-                // Adiciona uma classe ao elemento .icon-container quando o mouse estiver sobre o elemento .profile-card__img
-                profileImg.addEventListener('mouseover', () => {
-                iconContainer.classList.add('show');
-                });
-
-                // Remove a classe do elemento .icon-container quando o mouse sair do elemento .profile-card__img
-                profileImg.addEventListener('mouseout', () => {
-                iconContainer.classList.remove('show');
-                });
-            </script>
 
             <div class="profile-card__cnt js-profile-cnt">
                 
@@ -202,6 +211,7 @@ if (isset($_POST['edit'])) {
                             $desc_user = $reg['desc_user'];
                             $loc_user = $reg['loc_user'];
                             $nome_user = $reg['nome_user'];
+                            $img_user = $reg['imagem'];
                             ?>
 
                             <div class="profile-card__name"><?php echo $nome_user; ?></div>
@@ -252,29 +262,35 @@ if (isset($_POST['edit'])) {
                 </div>
 
                 <div class="profile-card-ctr">
-                    <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
+                <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
+                    <form method="POST" action="">
+                        <!-- INPUTS TEM DE ESTAR DENTRO DO FORMULÁRIO -->
+                        <input type="hidden" name="desc_user" value="Programador Full-Stack" />
+                        <input type="hidden" name="loc_user" value="Aguada de Cima" />
+
+                        <input type="file" name="file_image" />
+
+                        <button class="profile-card__button button--blue" type="submit" name="save">Salvar</button>
+                        <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
+                    </form>
+                <?php else: ?>
+                    <button class="profile-card__button button--blue js-message-btn" onclick="myhref('chat.php');">Mensagem</button>
+                    <?php if ($employeeId == $_SESSION['user_id']): ?>
                         <form method="POST" action="">
-                            <button class="profile-card__button button--blue" type="submit" name="save">Salvar</button>
-                            <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
+                            <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
                         </form>
                     <?php else: ?>
-                        <button class="profile-card__button button--blue js-message-btn" onclick="myhref('chat.php');">Mensagem</button>
-                        <?php if ($employeeId == $_SESSION['user_id']): ?>
-                            <form method="POST" action="">
-                                <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
-                            </form>
-                        <?php else: ?>
-                            <button class="profile-card__button button--orange" onclick="window.location.href = 'funcionarios.php';">Voltar</button>
-                        <?php endif; ?>
+                        <button class="profile-card__button button--orange" onclick="window.location.href = 'funcionarios.php';">Voltar</button>
                     <?php endif; ?>
-                </div>
+                <?php endif; ?>
+            </div>
 
-                <script>
-                    function cancelEditing() {
-                        window.location.href = 'perfil.php?id=<?php echo $_SESSION['user_id']; ?>';
-                        <?php $_SESSION['editing'] = false; ?>
-                    }
-                </script>
+            <script>
+                function cancelEditing() {
+                    window.location.href = 'perfil.php?id=<?php echo $_SESSION['user_id']; ?>';
+                    <?php $_SESSION['editing'] = false; ?>
+                }
+            </script>
 
             </div>
         </div>
@@ -327,13 +343,15 @@ if (isset($_POST['edit'])) {
         });
         </script>
 
+        <!-- ================ PERFIL ================= -->
+
             <div onclick="myhref('perfil.php');" class="profile">
             <div class="info">
                 <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
             <div class="profile-photo">
-                <img src="./img/profile-1.jpg">
+            <img src="<?php echo $img_user ?>" alt="Imagem do utilizador">
             </div>
             </div>
 

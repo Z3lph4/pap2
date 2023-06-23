@@ -1,5 +1,16 @@
 <?php
-include 'config.php';
+// Verifica o estado da sessão
+$sessionStatus = session_status();
+
+if ($sessionStatus == PHP_SESSION_ACTIVE) {
+    echo "Uma sessão está ativa.";
+    session_destroy();
+} 
+else
+{
+
+  include 'config.php';
+
 session_start();
 error_reporting(0);
 
@@ -27,6 +38,7 @@ if (isset($_POST["signin"])) {
   } else {
     echo "<script>alert('Dados incorretos.');</script>";
   }
+}
 }
 ?>
 
