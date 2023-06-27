@@ -21,7 +21,8 @@ if (isset($_POST["signup"])) {
     } elseif ($check_email > 0) {
         echo "<script>alert('Email já existe.');</script>";
     } else {
-        $sql = "INSERT INTO users (nome_user, email_user, tel_user, pass_user, rank_user, imagem, loc_user, desc_user) VALUES ('$full_name', '$email', '$tel', '$pass', '$rank', '$imagem_padrao', 'Inserir localizacao', 'Inserir descricao')";
+        $sql = "INSERT INTO users (nome_user, email_user, tel_user, pass_user, rank_user, imagem, loc_user, desc_user) 
+        VALUES ('$full_name', '$email', '$tel', '$pass', '$rank', '$imagem_padrao', 'Inserir localizacao', 'Inserir descricao')";
         $result = mysqli_query($conn, $sql);
         if ($result) {
             $_POST["signup_nome_user"] = "";

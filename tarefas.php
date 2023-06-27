@@ -186,12 +186,12 @@ if (isset($_POST["action"])) {
                            }
                             } else {
                        ?>
-                           <span class="">Nenhuma tarefa encontrada para a data pesquisada.</span>
+                           <span class="notfind">Nenhuma tarefa encontrada para a data pesquisada.</span>
                         <?php
                             }
                             } else {
                         ?>
-                        <span class="">Erro ao realizar a consulta.</span>
+                        <span class="notfind">Erro ao realizar a consulta.</span>
                         <?php
                             }
                         ?>

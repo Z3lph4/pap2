@@ -172,29 +172,92 @@ function console_log($output, $with_script_tags = true) {
 
         <main>
         <?php
-                // Recupere o ID do funcionário da URL
-                $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
+            // Recupere o ID do funcionário da URL
+            $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
 
-                if ($employeeId !== null) {
-                    $sql = "SELECT * FROM users WHERE id_user = $employeeId";
+            if ($employeeId !== null) {
+                $sql = "SELECT * FROM users WHERE id_user = $employeeId";
 
-                    if ($res = mysqli_query($conn, $sql)) {
-                        while ($reg = mysqli_fetch_assoc($res)) {
-                            $img_user = $reg['imagem'];
-                        }
+                if ($res = mysqli_query($conn, $sql)) {
+                    while ($reg = mysqli_fetch_assoc($res)) {
+                        $img_user = $reg['imagem'];
                     }
-                } 
-                ?>
+                }
+            }
 
-    <div class="wrapper">
-        <div class="profile-card js-profile-card">
-            <div class="profile-card__img">
-                <img src="<?php echo $img_user ?>" alt="profile card">
-                <div class="overlay"></div>
-                <div class="icon-container">
-                    <i class="fas fa-exchange-alt"></i>
-                </div>
-            </div>
+            // Verifique se um arquivo foi enviado e faça o upload
+            if (isset($_FILES['profile_image'])) {
+                $file = $_FILES['profile_image'];
+                $file_name = $file['name'];
+                $file_tmp = $file['tmp_name'];
+
+                // Diretório onde o arquivo será salvo
+                $upload_directory = './img/users/';
+
+                // Movendo o arquivo para o diretório desejado
+                move_uploaded_file($file_tmp, $upload_directory . $file_name);
+
+                // Atualize o caminho da imagem do usuário no banco de dados
+                $sql = "UPDATE users SET imagem = '" . $upload_directory . $file_name . "' WHERE id_user = $employeeId";
+                mysqli_query($conn, $sql);
+            }
+            ?>
+
+            <div class="wrapper">
+                <div class="profile-card js-profile-card">
+                    <div class="profile-card__img">
+                        <img src="<?php echo $img_user; ?>" alt="profile card">
+                        <div class="overlay"></div>
+                        <div class="icon-container">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                    </div>
+
+            <script>
+                // Seleciona o elemento .profile-card__img
+                const profileImg = document.querySelector('.profile-card__img');
+
+                // Seleciona o elemento .icon-container
+                const iconContainer = document.querySelector('.icon-container');
+
+                // Adiciona um ouvinte de evento de clique ao elemento .profile-card__img
+                profileImg.addEventListener('click', () => {
+                    // Cria um elemento de entrada de arquivo
+                    const input = document.createElement('input');
+                    input.type = 'file';
+
+                    // Adiciona um ouvinte de evento de alteração ao elemento de entrada de arquivo
+                    input.addEventListener('change', (event) => {
+                        // Obtém a primeira imagem selecionada
+                        const selectedImage = event.target.files[0];
+
+                        // Define a imagem selecionada como a nova imagem de perfil
+                        const profileImg = document.querySelector('.profile-card__img img');
+                        profileImg.src = URL.createObjectURL(selectedImage);
+                        
+                        // Envie o formulário para fazer o upload da imagem
+                        const form = new FormData();
+                        form.append('profile_image', selectedImage);
+                        fetch('?id=<?php echo $employeeId; ?>', {
+                            method: 'POST',
+                            body: form
+                        });
+                    });
+
+                    // Dispara o clique no elemento de entrada de arquivo
+                    input.click();
+                });
+
+                // Adiciona uma classe ao elemento .icon-container quando o mouse estiver sobre o elemento .profile-card__img
+                profileImg.addEventListener('mouseover', () => {
+                    iconContainer.classList.add('show');
+                });
+
+                // Remove a classe do elemento .icon-container quando o mouse sair do elemento .profile-card__img
+                profileImg.addEventListener('mouseout', () => {
+                    iconContainer.classList.remove('show');
+                });
+            </script>
 
             <div class="profile-card__cnt js-profile-cnt">
                 
@@ -261,29 +324,36 @@ function console_log($output, $with_script_tags = true) {
                     ?>
                 </div>
 
+                <?php
+                    // Verifica se o formulário foi enviado e se o botão "Salvar" foi clicado
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
+                        // Obtém os valores dos campos 'desc_user' e 'loc_user' do formulário
+                        /* $desc_user = $_POST['desc_user'];
+                        $loc_user = $_POST['loc_user']; */
+
+                        // Atualiza os valores na tabela do banco de dados
+                        $sql = "UPDATE users SET desc_user = '$desc_user', loc_user = '$loc_user' WHERE id_user = $employeeId";
+                    }
+                ?>
+
                 <div class="profile-card-ctr">
-                <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
-                    <form method="POST" action="">
-                        <!-- INPUTS TEM DE ESTAR DENTRO DO FORMULÁRIO -->
-                        <input type="hidden" name="desc_user" value="Programador Full-Stack" />
-                        <input type="hidden" name="loc_user" value="Aguada de Cima" />
-
-                        <input type="file" name="file_image" />
-
-                        <button class="profile-card__button button--blue" type="submit" name="save">Salvar</button>
-                        <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
-                    </form>
-                <?php else: ?>
-                    <button class="profile-card__button button--blue js-message-btn" onclick="myhref('chat.php');">Mensagem</button>
-                    <?php if ($employeeId == $_SESSION['user_id']): ?>
+                    <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
                         <form method="POST" action="">
-                            <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
+
+                            <button class="profile-card__button button--blue" type="submit" name="save">Salvar</button>
+                            <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
                         </form>
                     <?php else: ?>
-                        <button class="profile-card__button button--orange" onclick="window.location.href = 'funcionarios.php';">Voltar</button>
+                        <button class="profile-card__button button--blue js-message-btn" onclick="myhref('chat.php');">Mensagem</button>
+                        <?php if ($employeeId == $_SESSION['user_id']): ?>
+                            <form method="POST" action="">
+                                <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
+                            </form>
+                        <?php else: ?>
+                            <button class="profile-card__button button--orange" onclick="window.location.href = 'funcionarios.php';">Voltar</button>
+                        <?php endif; ?>
                     <?php endif; ?>
-                <?php endif; ?>
-            </div>
+                </div>
 
             <script>
                 function cancelEditing() {

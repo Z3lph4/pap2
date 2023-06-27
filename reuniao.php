@@ -179,7 +179,7 @@ if (isset($_POST["action"])) {
     <?php
             }
         } else { ?>
-            <span class=""><?php echo "Nenhuma reunião encontrada para esta data."; ?></span>
+            <span class="notfind"><?php echo "Nenhuma reunião encontrada para esta data."; ?></span>
     <?php
         }
     }

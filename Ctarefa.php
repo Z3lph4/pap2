@@ -136,7 +136,7 @@ if (isset($_POST["signup"])) {
           <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
 
           <div class="form__select-container">
-            <select id="inserir" name="inserir" class="form__selectprof">
+            <select id="inserir" name="signup_pass" class="form__selectprof">
                 <?php
                 // Estabelecer conexão com a Base de dados
                 $conn = mysqli_connect("localhost", "root", "", "pap2");
