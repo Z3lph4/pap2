@@ -409,6 +409,19 @@ main .insights small {
   color: var(--color-danger);
 }
 
+.invbtn {
+  background-color: transparent;
+  margin-top: 85px;
+  width: 150px;
+  height: 30px;
+  /* position: absolute; */
+}
+
+.invbtn:hover {
+  background-color: transparent;
+}
+
+
 /* ==================== RECENT ORDERS ================ */
 main .recent-orders {
     margin-top: 2rem;

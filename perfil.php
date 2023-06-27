@@ -161,10 +161,29 @@ function console_log($output, $with_script_tags = true) {
                 <h3>Definições</h3>    
             </a> -->
 
-            <a href="login.php">
-            <span class="material-icons-sharp">logout</span>
-                <h3>Sair</h3>    
-            </a>
+            <?php
+            // Verifica se o botão foi clicado
+            if(isset($_POST['delcookie'])) {
+                // Destroi a sessão atual
+                session_destroy();
+
+                // Remove a cookie PHPSESSID
+                if(isset($_COOKIE['PHPSESSID'])) {
+                    setcookie('PHPSESSID', '', time() - 3600, '/');
+                }
+
+                // Redireciona para outra página após remover a cookie
+                header('Location: login.php');
+                exit(); 
+            }
+            ?>
+
+            <form method="post" action="">
+                <button type="submit" name="delcookie" class="invbtn">
+                    <a><span class="material-icons-sharp">logout</span>
+                    <h3>Sair</h3></a>
+                </button>
+            </form>
             
             </div>
         </aside>

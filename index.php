@@ -83,10 +83,29 @@ session_start();
                 <h3>Definições</h3>    
             </a> -->
 
-            <a >
-            <span class="material-icons-sharp">logout</span>
-                <h3 onClick="myhref('');">Sair</h3>
-            </a>
+            <?php
+            // Verifica se o botão foi clicado
+            if(isset($_POST['delcookie'])) {
+                // Destroi a sessão atual
+                session_destroy();
+
+                // Remove a cookie PHPSESSID
+                if(isset($_COOKIE['PHPSESSID'])) {
+                    setcookie('PHPSESSID', '', time() - 3600, '/');
+                }
+
+                // Redireciona para outra página após remover a cookie
+                header('Location: login.php');
+                exit(); 
+            }
+            ?>
+
+            <form method="post" action="">
+                <button type="submit" name="delcookie" class="invbtn">
+                    <a><span class="material-icons-sharp">logout</span>
+                    <h3>Sair</h3></a>
+                </button>
+            </form>
             
             </div>
         </aside>
@@ -153,15 +172,15 @@ session_start();
                                     <td style="width: 230px; max-width: 230px;"><?php echo $data_tarefa; ?></td>
                                     <td style="width: 230px; max-width: 230px;" class="warning"><?php echo $utilizador_nome; ?></td>
                                     <td style="width: 230px; max-width: 230px;"><?php echo $desc_tarefa; ?></td>
-                                    <td class="primary pointer" onclick="myhref('tarefas.php');">Detalhes</td>
+                                    <td class="primary pointer" onclick="redirectTo('tarefas.php')">Detalhes</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
                     <script type="text/javascript">
-                        function myhref(tarefas) {
-                            window.location.href = tarefas;
+                        function redirectTo(url) {
+                            window.location.replace(url);
                         }
                     </script>
 
@@ -206,15 +225,16 @@ session_start();
                     <td style="width: 230px; max-width: 230px;"><?php echo $nome_material[$iol]; ?></td>
                     <td class="warning" style="width: 230px; max-width: 230px;"><?php echo $id_material[$iol]; ?></td>
                     <td style="width: 230px; max-width: 230px;"><?php echo $desc_material[$iol]; ?></td>
-                    <td class="primary pointer" onclick="myhref('material.php');">Detalhes</td>
+                    <td class="primary pointer" onclick="redirectTo('material.php')">Detalhes</td>
                 </tr>
                     </tbody>
                 </table>
                 
-            <script type="text/javascript">
-                function myhref(material){
-                window.location.href = material;}
-            </script>
+                <script type="text/javascript">
+                    function redirectTo(url) {
+                        window.location.replace(url);
+                    }
+                </script>
 
             </div>
 
@@ -338,7 +358,7 @@ session_start();
                 $img_user = "caminho/para/uma/imagem/default.png";
             }
 ?>
-            <div class="recent-updates" onclick="myhref('funcionarios.php');">
+            <div class="recent-updates" onclick="redirectTo('funcionarios.php')">
                 <div class="update">
                     <div class="profile-photo">
                         <img src="<?php echo $img_user; ?>" alt="Imagem do utilizador">
@@ -354,10 +374,11 @@ session_start();
                 }
             ?>
 
-            <script type="text/javascript">
-                function myhref(funcionarios){
-                window.location.href = funcionarios;}
-            </script>
+                    <script type="text/javascript">
+                        function redirectTo(url) {
+                            window.location.replace(url);
+                        }
+                    </script>
                
             </div>
         </div>  
@@ -388,7 +409,7 @@ session_start();
 
             ?>
 
-        <div class="item online" onclick="myhref('reuniao.php');">
+        <div class="item online" onclick="redirectTo('reuniao.php')">
             <div class="icon">
                 <span class="material-icons-sharp">video_camera_front</span>
             </div>
@@ -404,8 +425,9 @@ session_start();
         <?php }} ?>
 
         <script type="text/javascript">
-            function myhref(reuniao){
-            window.location.href = reuniao;}
+            function redirectTo(url) {
+                window.location.replace(url);
+            }
         </script>
 
     <script src="js/index.js"></script>
