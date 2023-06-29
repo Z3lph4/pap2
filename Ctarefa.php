@@ -6,28 +6,36 @@ session_start();
 
 error_reporting(0);
 
-if (isset($_POST["signup"])) {
-    $full_name = mysqli_real_escape_string($conn, $_POST["signup_nome_user"]);
-    $email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
-    $tel = mysqli_real_escape_string($conn, $_POST["signup_tel_user"]);
-    $uti = mysqli_real_escape_string($conn, $_POST["signup_pass"]);
+// Verificar se o formulário foi submetido
+if (isset($_POST['signup'])) {
+    // Obter os dados do formulário
+    $tarefa = $_POST['signup_nome_user'];
+    $data = $_POST['signup_tel_user'];
+    $descricao = $_POST['signup_email'];
+    $responsavel = $_POST['signup_pass'];
 
-    if($pass !== $cpass) {
-        echo "<script>alert('Password incorreta.');</script>";
-      } elseif ($check_email > 0) {
-        echo "<script>alert('Email já existe.');</script>";
-      } else {
-      $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador) VALUES ('$full_name', '$tel', '$email', '$uti')";
-      $result = mysqli_query($conn, $sql);
-      if ($result) {
-        $_POST["signup_nome_user"] = "";
-        $_POST["signup_email"] = "";
-        $_POST["signup_tel_user"] = "";
-        $_POST["signup_pass"] = "";
+    // Verificar se o responsável já possui tarefas marcadas para a data selecionada
+    $sql = "SELECT * FROM tarefas WHERE utilizador = '$responsavel' AND data_tarefa = '$data'";
+    $result = mysqli_query($conn, $sql);
 
+    if (mysqli_num_rows($result) > 0) {
+        // Funcionário já possui tarefas marcadas para a data selecionada
+        echo "<script>alert('Esse funcionário já possui tarefas marcadas para a data selecionada.');</script>";
+    } else {
+        // Inserir a nova tarefa no banco de dados
+        $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador) VALUES ('$tarefa', '$data', '$descricao', '$responsavel')";
+        if (mysqli_query($conn, $sql)) {
+            header("Location: tarefas.php");
+            exit();
+        }
     }
-  }
 }
+
+// Consulta SQL para selecionar os utilizadores na tabela "users"
+$sql = "SELECT id_user, nome_user FROM users";
+
+// Executa a consulta SQL e armazena o resultado em uma variável
+$result = mysqli_query($conn, $sql);
 
 ?>
 
@@ -145,46 +153,30 @@ if (isset($_POST["signup"])) {
 
         <main>
 
-        <div class="mainprof2">
-      
-      <div class="containerprof2 a-containerprof" id="a-container">
-        <form action="" class="formprof" id="a-form" method="post">
-          <h2 class="form_titleprof titleprof">Nova Tarefa</h2>
-          <input class="form__inputprof" type="text" placeholder="Tarefa" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
-          <input class="form__inputprof" type="date" placeholder="Data" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
-          <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
+            <div class="mainprof2">
+                <div class="containerprof2 a-containerprof" id="a-container">
+                    <form action="" class="formprof" id="a-form" method="post">
+                        <h2 class="form_titleprof titleprof">Nova Tarefa</h2>
+                        <input class="form__inputprof" type="text" placeholder="Tarefa" name="signup_nome_user" value="<?php echo isset($_POST["signup_nome_user"]) ? $_POST["signup_nome_user"] : ''; ?>" required/>
+                        <input class="form__inputprof" type="date" placeholder="Data" name="signup_tel_user" value="<?php echo isset($_POST["signup_tel_user"]) ? $_POST["signup_tel_user"] : ''; ?>" required/>
+                        <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo isset($_POST["signup_email"]) ? $_POST["signup_email"] : ''; ?>" required/>
 
-          <div class="form__select-container">
-            <select id="inserir" name="signup_pass" class="form__selectprof">
-                <?php
-                // Estabelecer conexão com a Base de dados
-                $conn = mysqli_connect("localhost", "root", "", "pap2");
+                        <div class="form__select-container">
+                            <select id="inserir" name="signup_pass" class="form__selectprof">
+                                <option value="" disabled selected hidden>Selecione um responsável</option>
+                                <?php
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    echo '<option value="' . $row['id_user'] . '">' . $row['nome_user'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                            <i class="fa fa-chevron-down form__select-icon" aria-hidden="true"></i>
+                        </div>
 
-                // Verificar se a conexão foi estabelecida com sucesso
-                if (!$conn) {
-                    die("Falha na conexão: " . mysqli_connect_error());
-                }
-
-                // Consulta SQL para selecionar os utilizadores na tabela "users"
-                $sql = "SELECT id_user, nome_user FROM users";
-
-                // Executa a consulta SQL e armazena o resultado em uma variável
-                $result = mysqli_query($conn, $sql);
-
-                // Exibe a opção padrão e as opções do banco de dados
-                echo '<option value="" disabled selected hidden>Selecione um responsável</option>';
-                while ($row = mysqli_fetch_assoc($result)) {
-                    echo '<option value="' . $row['id_user'] . '">' . $row['nome_user'] . '</option>';
-                }
-                ?>
-            </select>
-            <i class="fa fa-chevron-down form__select-icon" aria-hidden="true"></i>
-        </div>
-
-            <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
-        </form>
-      </div>
-    </div>
+                        <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
+                    </form>
+                </div>
+            </div>
 
         </main>
 

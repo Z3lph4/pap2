@@ -148,7 +148,7 @@ if (isset($_POST["action"])) {
                 $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
             }
         
-            $sql .= " ORDER BY data_tarefa DESC LIMIT 4";
+            $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
         } else {
             $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE()";
         
@@ -157,7 +157,7 @@ if (isset($_POST["action"])) {
                 $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
             }
         
-            $sql .= " ORDER BY data_tarefa DESC LIMIT 4";
+            $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
         }        
 
             if($res = mysqli_query($conn, $sql)){
