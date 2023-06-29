@@ -1244,7 +1244,7 @@ main .recent-orders a {
   .profile-card__txt {
     font-size: 18px;
     font-weight: 500;
-    color: #324e63;
+    font-weight: bold;
     margin-bottom: 15px;
   }
 
@@ -1282,12 +1282,13 @@ main .recent-orders a {
   .profile-card-inf__title {
     font-weight: 700;
     font-size: 27px;
-    color: #324e63;
+    font-weight: bold;
   }
 
   .profile-card-inf__txt {
     font-weight: 500;
     margin-top: 7px;
+    color: var(--color-dark-variant);
   }
   
   .profile-card-ctr {
@@ -1443,7 +1444,7 @@ main .recent-orders a {
     max-width: 340px;
     width: 40%;
     height: 100%;
-    background: #2c3e50;
+    background: #363949;
     color: #f5f5f5;
     overflow: hidden;
     position: relative;
@@ -1457,14 +1458,6 @@ main .recent-orders a {
   #frame #sidepanel #profile {
     width: 80%;
     margin: 25px auto;
-  }
-  @media screen and (max-width: 735px) {
-    #frame #sidepanel #profile {
-      width: 100%;
-      margin: 0 auto;
-      padding: 5px 0 0 0;
-      background: #32465a;
-    }
   }
   #frame #sidepanel #profile.expanded .wrap {
     height: 210px;
@@ -1498,8 +1491,8 @@ main .recent-orders a {
   #frame #sidepanel #profile .wrap img {
     width: 50px;
     border-radius: 50%;
-    padding: 3px;
-    border: 2px solid #e74c3c;
+    margin: 5px 0px 0px 10px;
+    box-shadow: 0px 0px 50px 0px var(--color-primary-variant), 0px 0px 0px 2px var(--color-primary);
     height: auto;
     float: left;
     cursor: pointer;
@@ -1529,6 +1522,8 @@ main .recent-orders a {
   #frame #sidepanel #profile .wrap p {
     float: left;
     margin-left: 15px;
+    color: #f5f5f5;
+    font-size: 1.2rem;
   }
   @media screen and (max-width: 735px) {
     #frame #sidepanel #profile .wrap p {
@@ -1707,14 +1702,14 @@ main .recent-orders a {
   }
   #frame #sidepanel #search label {
     position: absolute;
-    margin: 10px 0 0 20px;
+    margin: 5px 0 0 10px;
   }
   #frame #sidepanel #search input {
     font-family: "proxima-nova", "Source Sans Pro", sans-serif;
     padding: 10px 0 10px 46px;
-    width: calc(100% - 25px);
+    width: calc(100% - 0px);
     border: none;
-    background: #32465a;
+    background: #677483;
     color: #f5f5f5;
   }
   #frame #sidepanel #search input:focus {
@@ -1734,7 +1729,7 @@ main .recent-orders a {
     color: #f5f5f5;
   }
   #frame #sidepanel #contacts {
-    height: calc(100% - 177px);
+    height: calc(100% - 147px);
     overflow-y: scroll;
     overflow-x: hidden;
   }
@@ -1770,7 +1765,7 @@ main .recent-orders a {
     }
   }
   #frame #sidepanel #contacts ul li.contact:hover {
-    background: #32465a;
+    background: var(--color-dark-variant);
   }
   #frame #sidepanel #contacts ul li.contact.active {
     background: #32465a;
@@ -1813,6 +1808,7 @@ main .recent-orders a {
     border-radius: 50%;
     float: left;
     margin-right: 10px;
+    margin-top: -5px;
   }
   @media screen and (max-width: 735px) {
     #frame #sidepanel #contacts ul li.contact .wrap img {
@@ -1829,6 +1825,7 @@ main .recent-orders a {
   }
   #frame #sidepanel #contacts ul li.contact .wrap .meta .name {
     font-weight: 600;
+    color: #f5f5f5;
   }
   #frame #sidepanel #contacts ul li.contact .wrap .meta .preview {
     margin: 5px 0 0 0;
@@ -1916,19 +1913,15 @@ main .recent-orders a {
       min-width: 300px !important;
     }
   }
-  @media screen and (min-width: 900px) {
-    #frame .content {
-      width: calc(100% - 340px);
-    }
-  }
   #frame .content .contact-profile {
     width: 100%;
     height: 60px;
     line-height: 60px;
-    background: #f5f5f5;
+    background: #fff;
   }
   #frame .content .contact-profile img {
     width: 40px;
+    height: 40px;
     border-radius: 50%;
     float: left;
     margin: 9px 12px 0 9px;
@@ -2024,10 +2017,10 @@ main .recent-orders a {
     font-family: "proxima-nova", "Source Sans Pro", sans-serif;
     float: left;
     border: none;
-    width: calc(100% - 90px);
-    padding: 11px 32px 10px 8px;
-    font-size: 0.8em;
-    color: #32465a;
+    width: calc(100% - 50px);
+    padding: 13px 10px 13px 10px;
+    font-size: 1em;
+    background-color: #fff;
   }
   @media screen and (max-width: 735px) {
     #frame .content .message-input .wrap input {
@@ -2059,10 +2052,12 @@ main .recent-orders a {
   #frame .content .message-input .wrap button {
     float: right;
     border: none;
+    border-radius: 0%;
     width: 50px;
-    padding: 12px 0;
+    height: 40px;
+    padding: 9px;
     cursor: pointer;
-    background: #32465a;
+    background-color: #363949;
     color: #f5f5f5;
   }
   @media screen and (max-width: 735px) {
@@ -2070,13 +2065,18 @@ main .recent-orders a {
       padding: 16px 0;
     }
   }
-  #frame .content .message-input .wrap button:hover {
-    background: #435f7a;
-  }
   #frame .content .message-input .wrap button:focus {
     outline: none;
   }
 
   .contact {
     margin-top: 10px;
+  }
+
+  .chat_users {
+    margin-top: -10px;
+  }
+
+  .no-poiter {
+    pointer-events: none;
   }

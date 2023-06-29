@@ -22,7 +22,7 @@ if (isset($_POST["signup"])) {
         echo "<script>alert('Email já existe.');</script>";
     } else {
         $sql = "INSERT INTO users (nome_user, email_user, tel_user, pass_user, rank_user, imagem, loc_user, desc_user) 
-        VALUES ('$full_name', '$email', '$tel', '$pass', '$rank', '$imagem_padrao', 'Inserir localizacao', 'Inserir descricao')";
+        VALUES ('$full_name', '$email', '$tel', '$pass', '$rank', '$imagem_padrao', 'Inserir localização', 'Inserir descrição')";
         $result = mysqli_query($conn, $sql);
         if ($result) {
             $_POST["signup_nome_user"] = "";
@@ -153,7 +153,7 @@ if (isset($_POST["signup"])) {
           <h2 class="form_titleprof titleprof">Criar Conta</h2>
           <input class="form__inputprof" type="text" placeholder="Nome" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
           <input class="form__inputprof" type="email" placeholder="Email" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
-          <input class="form__inputprof" type="text" placeholder="Telemóvel" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
+          <input class="form__inputprof" type="number" placeholder="Telemóvel" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
           <input class="form__inputprof" type="password" placeholder="Palavra-pass" name="signup_pass" value="<?php echo $_POST["signup_pass"]; ?>" required/>
           <input class="form__inputprof" type="password" placeholder="Confirmar Palavra-pass" name="signup_cpass" value="<?php echo $_POST["signup_cpass"]; ?>" required/>
 
@@ -300,7 +300,7 @@ if (isset($_POST["signup"])) {
 
             <?php
 
-                $sql ="SELECT * FROM reunioes where data_reuniao > CURDATE() order by id_reuniao desc LIMIT 2";
+                $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) > CURDATE() LIMIT 2";
 
                 if($res=mysqli_query($conn,$sql)){
 

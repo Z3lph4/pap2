@@ -65,7 +65,7 @@ session_start();
                 <h3>Perfil</h3>    
             </a>
             
-            <a href="perfil.php" class="active">
+            <a href="chat.php" class="active">
             <span class="material-icons-sharp">chat</span>
                 <h3>Chat</h3>    
             </a>
@@ -113,8 +113,9 @@ session_start();
         <main class="chat-main">
         <div id="frame">
 	<div id="sidepanel">
+
 		<div id="profile">
-			<div class="wrap">
+			<div class="wrap no-poiter">
 
             <?php
                 // Recupere o ID do usuário logado
@@ -148,12 +149,12 @@ session_start();
 		</div>
 
 		<div id="search">
-			<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-			<input type="text" placeholder="Search contacts..." />
-		</div>
+            <label for=""><span class="material-icons-sharp">search</span></label>
+            <input type="text" placeholder="Procurar contacto..." oninput="filterContacts(this.value)" />
+        </div>
 
 		<div id="contacts">
-            <ul>
+            <ul class="chat_users">
                 <?php
                 // Obter o ID do usuário logado (supondo que você esteja armazenando o ID na sessão)
                 $userIdLogado = $_SESSION['user_id'];
@@ -190,6 +191,25 @@ session_start();
             </ul>
         </div>
 
+        <script>
+            function filterContacts(searchTerm) {
+                // Obtém todos os elementos <li> da lista de usuários
+                var contacts = document.querySelectorAll('#contacts .chat_users li');
+
+                for (var i = 0; i < contacts.length; i++) {
+                    var contact = contacts[i];
+                    var name = contact.querySelector('.name').textContent.toLowerCase();
+
+                    // Verifica se o nome do usuário contém o termo de pesquisa
+                    if (name.includes(searchTerm.toLowerCase())) {
+                        contact.style.display = 'block'; // Exibe o usuário
+                    } else {
+                        contact.style.display = 'none'; // Oculta o usuário
+                    }
+                }
+            }
+        </script>
+
 		<!-- <div id="bottom-bar">
 			<button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add contact</span></button>
 			<button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
@@ -198,32 +218,78 @@ session_start();
 	</div>
 
 	<div class="content">
+
 		<div class="contact-profile">
-
-			<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-			<p>Harvey Specter</p>
-
-			<!-- <div class="social-media">
-				<i class="fa fa-facebook" aria-hidden="true"></i>
-				<i class="fa fa-twitter" aria-hidden="true"></i>
-				 <i class="fa fa-instagram" aria-hidden="true"></i>
-			</div> -->
-
+            <img id="selected-user-img" src="" alt="" />
+            <p id="selected-user-name"></p>
 		</div>
 
-		<div class="messages">
-			<ul>
-				<li>test</li>
-			</ul>
-		</div>
+        <script>
+            var contactListItems = document.querySelectorAll("#contacts .contact");
 
-		<div class="message-input">
-			<div class="wrap">
-			<input type="text" placeholder="Write your message..." />
-			<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-			<button class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-			</div>
-		</div>
+            contactListItems.forEach(function(item) {
+                item.addEventListener("click", function() {
+                    var selectedUserImg = document.getElementById("selected-user-img");
+                    var selectedUserName = document.getElementById("selected-user-name");
+
+                    selectedUserImg.src = item.querySelector("img").src;
+                    selectedUserName.textContent = item.querySelector(".name").textContent;
+                });
+            });
+        </script>
+
+            <!-- ==== Chat Corpo ==== -->
+
+            <div class="messages">
+            <ul id="message-list">
+
+                
+
+            </ul>
+            </div>
+
+            <div class="message-input">
+            <div class="wrap">
+                <input type="text" id="message-input" placeholder="Escreva a sua mensagem..." />
+                <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+                <button class="submit" id="send-button"><span class="material-icons-sharp">send</span></button>
+            </div>
+            </div>
+
+            <?php
+                // Verifique se a variável de sessão existe e tem um valor
+                if (isset($_SESSION["user_img"])) {
+                    $img_log = $_SESSION["user_img"];
+                }
+            ?>
+
+            <script>
+            document.getElementById('send-button').addEventListener('click', function() {
+                var messageInput = document.getElementById('message-input').value;
+                var userImage = "<?php echo $img_log ?>";  
+
+                if (messageInput.trim() !== '') {
+                var messageList = document.getElementById('message-list');
+                var newMessage = document.createElement('li');
+                newMessage.className = 'replies';
+
+                var imageElement = document.createElement('img');
+                imageElement.src = userImage;
+                imageElement.alt = 'User Image';
+
+                var messageParagraph = document.createElement('p');
+                messageParagraph.textContent = messageInput;
+
+                newMessage.appendChild(imageElement);
+                newMessage.appendChild(messageParagraph);
+
+                messageList.appendChild(newMessage);
+
+                // Limpa o campo de entrada
+                document.getElementById('message-input').value = '';
+                }
+            });
+            </script>
 
 	</div>
 </div>
@@ -364,7 +430,7 @@ session_start();
 
             <?php
 
-                $sql ="SELECT * FROM reunioes where data_reuniao > CURDATE() order by id_reuniao desc LIMIT 2";
+                $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) > CURDATE() LIMIT 2";
 
                 if($res=mysqli_query($conn,$sql)){
 

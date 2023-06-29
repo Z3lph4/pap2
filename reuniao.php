@@ -139,13 +139,14 @@ if (isset($_POST["action"])) {
     </form>
 
     <?php
-    $sql = "SELECT * FROM reunioes ";
+    $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) > CURDATE()";
 
     if (isset($_POST['data_pesquisa'])) {
         $data_pesquisa = $_POST['data_pesquisa'];
-        $sql .= "WHERE DATE(data_reuniao) = '$data_pesquisa'";
+        $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) = '$data_pesquisa'";
     }
-    $sql .= " ORDER BY data_reuniao DESC LIMIT 4";
+    
+    $sql .= " ORDER BY data_reuniao DESC LIMIT 4";    
 
     if ($res = mysqli_query($conn, $sql)) {
         if (mysqli_num_rows($res) > 0) {
@@ -334,7 +335,7 @@ if (isset($_POST["action"])) {
 
             <?php
 
-                $sql ="SELECT * FROM reunioes where data_reuniao > CURDATE() order by id_reuniao desc LIMIT 2";
+            $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) > CURDATE() LIMIT 2";
 
                 if($res=mysqli_query($conn,$sql)){
 
