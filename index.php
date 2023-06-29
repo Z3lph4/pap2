@@ -134,7 +134,7 @@ session_start();
             <!-- </div> -->
             <!-- ========== End of Insights ========== -->
             
-            <h1>Tarefas Recentes</h1>
+            <h1>Tarefas em Desenvolvimento</h1>
 
             <?php
             $sql = "SELECT * FROM tarefas ORDER BY id_tarefa DESC LIMIT 2";
@@ -190,7 +190,7 @@ session_start();
 
                     <br>
 
-            <h1>Material Recente</h1>
+            <h1>Material Disponível</h1>
 
             <?php
 
@@ -382,7 +382,7 @@ session_start();
          <!--------------------- END OF RECENT UPDATES ------------------->
 
          <div class="sales-analytics">
-            <h2>Reuniões Recentes</h2>
+            <h2>Reuniões Marcadas</h2>
 
             <?php
 

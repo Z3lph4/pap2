@@ -496,7 +496,7 @@ function console_log($output, $with_script_tags = true) {
          <!--------------------- END OF RECENT UPDATES ------------------->
 
          <div class="sales-analytics">
-            <h2>Reuniões Recentes</h2>
+            <h2>Reuniões Marcadas</h2>
 
             <?php
 
