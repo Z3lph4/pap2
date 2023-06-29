@@ -192,47 +192,50 @@ function console_log($output, $with_script_tags = true) {
         <main>
         <?php
             // Recupere o ID do funcionário da URL
-                $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
+            $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
 
-                if ($employeeId !== null) {
-                    $sql = "SELECT * FROM users WHERE id_user = $employeeId";
+            if ($employeeId !== null) {
+                $sql = "SELECT * FROM users WHERE id_user = $employeeId";
 
-                    if ($res = mysqli_query($conn, $sql)) {
-                        while ($reg = mysqli_fetch_assoc($res)) {
-                            $img_user = $reg['imagem'];
-                        }
+                if ($res = mysqli_query($conn, $sql)) {
+                    while ($reg = mysqli_fetch_assoc($res)) {
+                        $img_user = $reg['imagem'];
                     }
                 }
+            }
 
-                // Verifique se um arquivo foi enviado e faça o upload
-                if (isset($_FILES['profile_image'])) {
-                    $file = $_FILES['profile_image'];
-                    $file_name = $file['name'];
-                    $file_tmp = $file['tmp_name'];
+            // Verifique se um arquivo foi enviado e faça o upload
+            if (isset($_FILES['profile_image'])) {
+                $file = $_FILES['profile_image'];
+                $file_name = $file['name'];
+                $file_tmp = $file['tmp_name'];
 
-                    // Diretório onde o arquivo será salvo
-                    $upload_directory = './img/users/';
+                // Diretório onde o arquivo será salvo
+                $upload_directory = './img/users/';
 
-                    // Movendo o arquivo para o diretório desejado
-                    move_uploaded_file($file_tmp, $upload_directory . $file_name);
+                // Movendo o arquivo para o diretório desejado
+                move_uploaded_file($file_tmp, $upload_directory . $file_name);
 
-                    // Atualize o caminho da imagem do usuário no banco de dados
-                    $sql = "UPDATE users SET imagem = '" . $upload_directory . $file_name . "' WHERE id_user = $employeeId";
-                    mysqli_query($conn, $sql);
-                }
+                // Atualize o caminho da imagem do usuário no banco de dados
+                $sql = "UPDATE users SET imagem = '" . $upload_directory . $file_name . "' WHERE id_user = $employeeId";
+                mysqli_query($conn, $sql);
 
-                if (isset($_POST['edit'])) {
-                    $_SESSION['editing'] = true;
-                }
+                // Atualize a variável de sessão "user_img" com o novo caminho da imagem
+                $_SESSION["user_img"] = $upload_directory . $file_name;
+            }
 
-                if (isset($_POST['save'])) {
-                    unset($_SESSION['editing']);
-                }
+            if (isset($_POST['edit'])) {
+                $_SESSION['editing'] = true;
+            }
 
-                if (isset($_POST['cancel'])) {
-                    unset($_SESSION['editing']);
-                }
-            ?>
+            if (isset($_POST['save'])) {
+                unset($_SESSION['editing']);
+            }
+
+            if (isset($_POST['cancel'])) {
+                unset($_SESSION['editing']);
+            }
+        ?>
 
             <div class="wrapper">
                 <div class="profile-card js-profile-card">
@@ -459,8 +462,9 @@ function console_log($output, $with_script_tags = true) {
             <div class="profile-photo">
             <img src="<?php echo $img_log ?>" alt="Imagem do utilizador">
             </div>
-            </div></a>
-
+            </div>
+        
+        </a>
         </div>
 
         <!-- END OF TOP -->
