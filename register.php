@@ -230,7 +230,8 @@ if (isset($_POST["signup"])) {
                 }
             ?>
 
-            <div onclick="myhref('perfil.php');" class="profile">
+            <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>">
+            <div class="profile">
             <div class="info">
                 <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
@@ -238,12 +239,7 @@ if (isset($_POST["signup"])) {
             <div class="profile-photo">
                 <img src="<?php echo $img_user ?>" alt="Imagem do utilizador">
             </div>
-            </div>
-
-            <script type="text/javascript">
-                function myhref(perfil){
-                window.location.href = perfil;}
-            </script>
+            </div></a>
 
         </div>
         <!-- END OF TOP -->

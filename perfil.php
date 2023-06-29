@@ -224,6 +224,7 @@ function console_log($output, $with_script_tags = true) {
 
             <div class="wrapper">
                 <div class="profile-card js-profile-card">
+
                     <div class="profile-card__img">
                         <img src="<?php echo $img_user; ?>" alt="profile card">
                         <div class="overlay"></div>
@@ -266,21 +267,10 @@ function console_log($output, $with_script_tags = true) {
                     // Dispara o clique no elemento de entrada de arquivo
                     input.click();
                 });
-
-                // Adiciona uma classe ao elemento .icon-container quando o mouse estiver sobre o elemento .profile-card__img
-                profileImg.addEventListener('mouseover', () => {
-                    iconContainer.classList.add('show');
-                });
-
-                // Remove a classe do elemento .icon-container quando o mouse sair do elemento .profile-card__img
-                profileImg.addEventListener('mouseout', () => {
-                    iconContainer.classList.remove('show');
-                });
             </script>
 
             <div class="profile-card__cnt js-profile-cnt">
                 
-
             <?php
                 // Recupere o ID do funcionário da URL
                 $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
@@ -297,11 +287,11 @@ function console_log($output, $with_script_tags = true) {
                             ?>
 
                             <div class="profile-card__name"><?php echo $nome_user; ?></div>
-                            <div class="profile-card__txt" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?>>
+                            <div class="profile-card__txt" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="desc_user">
                                 <?php echo $desc_user; ?>
                             </div>
                             <div class="profile-card-loc">
-                                <span class="profile-card-loc__txt" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?>>
+                                <span class="profile-card-loc__txt" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="loc_user">
                                     <?php echo $loc_user; ?>
                                 </span>
                             </div>
@@ -309,9 +299,6 @@ function console_log($output, $with_script_tags = true) {
                         <?php
                         }
                     }
-                } else {
-                    // Lógica para quando não há ID de funcionário fornecido na URL
-                    echo "ID de funcionário não fornecido.";
                 }
                 ?>
 
@@ -326,6 +313,7 @@ function console_log($output, $with_script_tags = true) {
                         if ($res = mysqli_query($conn, $sql)) {
                             while ($reg = mysqli_fetch_assoc($res)) {
                                 $data = $reg['data'];
+                                $rank = $reg['rank_user'];
                                 ?>
 
                                 <div class="profile-card-inf__item">
@@ -333,33 +321,23 @@ function console_log($output, $with_script_tags = true) {
                                     <div class="profile-card-inf__txt">Dias na Empresa</div>
                                 </div>
 
+                                <div class="profile-card-inf__item">
+                                    <div class="profile-card-inf__title"><?php echo $rank; ?></div>
+                                    <div class="profile-card-inf__txt">Cargo na Empresa</div>
+                                </div>
+
                             <?php
                             }
                         }
-                    } else {
-                        // Lógica para quando não há ID de funcionário fornecido na URL
-                        echo "ID de funcionário não fornecido.";
                     }
                     ?>
                 </div>
-
-                <?php
-                    // Verifica se o formulário foi enviado e se o botão "Salvar" foi clicado
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
-                        // Obtém os valores dos campos 'desc_user' e 'loc_user' do formulário
-                        /* $desc_user = $_POST['desc_user'];
-                        $loc_user = $_POST['loc_user']; */
-
-                        // Atualiza os valores na tabela do banco de dados
-                        $sql = "UPDATE users SET desc_user = '$desc_user', loc_user = '$loc_user' WHERE id_user = $employeeId";
-                    }
-                ?>
 
                 <div class="profile-card-ctr">
                     <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
                         <form method="POST" action="">
 
-                            <button class="profile-card__button button--blue" type="submit" name="save">Salvar</button>
+                            <button class="profile-card__button button--blue" type="button" name="save" onclick="saveData();">Salvar</button>
                             <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
                         </form>
                     <?php else: ?>
@@ -380,6 +358,23 @@ function console_log($output, $with_script_tags = true) {
                     <?php $_SESSION['editing'] = false; ?>
                 }
             </script>
+
+                <script>
+                    function saveData() {
+                        var desc_user = document.getElementById('desc_user').innerText;
+                        var loc_user = document.getElementById('loc_user').innerText;
+
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", "update_user_data.php", true);
+                        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                        xhr.onreadystatechange = function() {
+                            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                                window.location.href = 'perfil.php?id=<?php echo $_SESSION['user_id']; ?>'; // Redirecionar para a página de perfil atualizada
+                            }
+                        };
+                        xhr.send("employeeId=" + <?php echo $employeeId; ?> + "&desc_user=" + encodeURIComponent(desc_user) + "&loc_user=" + encodeURIComponent(loc_user));
+                    }
+                </script>
 
             </div>
         </div>
@@ -434,20 +429,17 @@ function console_log($output, $with_script_tags = true) {
 
         <!-- ================ PERFIL ================= -->
 
-            <div onclick="myhref('perfil.php');" class="profile">
+        <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>">
+            <div class="profile">
             <div class="info">
                 <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
+
             <div class="profile-photo">
             <img src="<?php echo $img_user ?>" alt="Imagem do utilizador">
             </div>
-            </div>
-
-            <script type="text/javascript">
-                function myhref(perfil){
-                window.location.href = perfil;}
-            </script>
+            </div></a>
 
         </div>
 
