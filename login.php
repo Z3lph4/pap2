@@ -31,6 +31,7 @@ if (isset($_POST["signin"])) {
     $_SESSION["user_name"] = $row['nome_user'];
     $_SESSION["user_desc"] = $row['desc_user'];
     $_SESSION["user_loc"] = $row['loc_user'];
+    $_SESSION["user_img"] = $row['imagem'];
     setcookie("rank_user", $row['rank_user']);
     setcookie("user_img", $row['imagem']);
     header("Location: index.php"); 

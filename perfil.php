@@ -436,8 +436,15 @@ function console_log($output, $with_script_tags = true) {
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
 
+            <?php
+                // Verifique se a variável de sessão existe e tem um valor
+                if (isset($_SESSION["user_img"])) {
+                    $img_log = $_SESSION["user_img"];
+                }
+            ?>
+
             <div class="profile-photo">
-            <img src="<?php echo $img_user ?>" alt="Imagem do utilizador">
+            <img src="<?php echo $img_log ?>" alt="Imagem do utilizador">
             </div>
             </div></a>
 
