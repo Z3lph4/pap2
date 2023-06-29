@@ -192,34 +192,46 @@ function console_log($output, $with_script_tags = true) {
         <main>
         <?php
             // Recupere o ID do funcionário da URL
-            $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
+                $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
 
-            if ($employeeId !== null) {
-                $sql = "SELECT * FROM users WHERE id_user = $employeeId";
+                if ($employeeId !== null) {
+                    $sql = "SELECT * FROM users WHERE id_user = $employeeId";
 
-                if ($res = mysqli_query($conn, $sql)) {
-                    while ($reg = mysqli_fetch_assoc($res)) {
-                        $img_user = $reg['imagem'];
+                    if ($res = mysqli_query($conn, $sql)) {
+                        while ($reg = mysqli_fetch_assoc($res)) {
+                            $img_user = $reg['imagem'];
+                        }
                     }
                 }
-            }
 
-            // Verifique se um arquivo foi enviado e faça o upload
-            if (isset($_FILES['profile_image'])) {
-                $file = $_FILES['profile_image'];
-                $file_name = $file['name'];
-                $file_tmp = $file['tmp_name'];
+                // Verifique se um arquivo foi enviado e faça o upload
+                if (isset($_FILES['profile_image'])) {
+                    $file = $_FILES['profile_image'];
+                    $file_name = $file['name'];
+                    $file_tmp = $file['tmp_name'];
 
-                // Diretório onde o arquivo será salvo
-                $upload_directory = './img/users/';
+                    // Diretório onde o arquivo será salvo
+                    $upload_directory = './img/users/';
 
-                // Movendo o arquivo para o diretório desejado
-                move_uploaded_file($file_tmp, $upload_directory . $file_name);
+                    // Movendo o arquivo para o diretório desejado
+                    move_uploaded_file($file_tmp, $upload_directory . $file_name);
 
-                // Atualize o caminho da imagem do usuário no banco de dados
-                $sql = "UPDATE users SET imagem = '" . $upload_directory . $file_name . "' WHERE id_user = $employeeId";
-                mysqli_query($conn, $sql);
-            }
+                    // Atualize o caminho da imagem do usuário no banco de dados
+                    $sql = "UPDATE users SET imagem = '" . $upload_directory . $file_name . "' WHERE id_user = $employeeId";
+                    mysqli_query($conn, $sql);
+                }
+
+                if (isset($_POST['edit'])) {
+                    $_SESSION['editing'] = true;
+                }
+
+                if (isset($_POST['save'])) {
+                    unset($_SESSION['editing']);
+                }
+
+                if (isset($_POST['cancel'])) {
+                    unset($_SESSION['editing']);
+                }
             ?>
 
             <div class="wrapper">
@@ -233,15 +245,16 @@ function console_log($output, $with_script_tags = true) {
                         </div>
                     </div>
 
-            <script>
-                // Seleciona o elemento .profile-card__img
-                const profileImg = document.querySelector('.profile-card__img');
+                    <script>
+            // Seleciona o elemento .profile-card__img
+            const profileImg = document.querySelector('.profile-card__img');
 
-                // Seleciona o elemento .icon-container
-                const iconContainer = document.querySelector('.icon-container');
+            // Seleciona o elemento .icon-container
+            const iconContainer = document.querySelector('.icon-container');
 
-                // Adiciona um ouvinte de evento de clique ao elemento .profile-card__img
-                profileImg.addEventListener('click', () => {
+            // Adiciona um ouvinte de evento de clique ao elemento .profile-card__img
+            profileImg.addEventListener('click', () => {
+                <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
                     // Cria um elemento de entrada de arquivo
                     const input = document.createElement('input');
                     input.type = 'file';
@@ -254,7 +267,7 @@ function console_log($output, $with_script_tags = true) {
                         // Define a imagem selecionada como a nova imagem de perfil
                         const profileImg = document.querySelector('.profile-card__img img');
                         profileImg.src = URL.createObjectURL(selectedImage);
-                        
+
                         // Envie o formulário para fazer o upload da imagem
                         const form = new FormData();
                         form.append('profile_image', selectedImage);
@@ -266,8 +279,9 @@ function console_log($output, $with_script_tags = true) {
 
                     // Dispara o clique no elemento de entrada de arquivo
                     input.click();
-                });
-            </script>
+                <?php endif; ?>
+            });
+        </script>
 
             <div class="profile-card__cnt js-profile-cnt">
                 
@@ -336,7 +350,6 @@ function console_log($output, $with_script_tags = true) {
                 <div class="profile-card-ctr">
                     <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
                         <form method="POST" action="">
-
                             <button class="profile-card__button button--blue" type="button" name="save" onclick="saveData();">Salvar</button>
                             <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
                         </form>
