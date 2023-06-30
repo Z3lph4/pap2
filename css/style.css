@@ -1154,7 +1154,6 @@ main .recent-orders a {
   /* Estilizando o select e adicionando margem para a seta */
   .form__inputprof {
     padding-right: 30px;
-    margin-right: 10px;
   }
 
 
@@ -2079,4 +2078,23 @@ main .recent-orders a {
 
   .no-poiter {
     pointer-events: none;
+  }
+
+  .profile-card__tarefa {
+    margin-top: 35px;
+    text-align: center;
+    padding: 0 20px;
+    padding-bottom: 40px;
+    transition: all 0.3s;
+  }
+
+  .profile-card-tarefa {
+    width: 100%;
+    height: 520px;
+    margin: auto;
+    box-shadow: 0px 8px 60px -10px var(--box-shadow);
+    background: var(--color-white);
+    border-radius: 12px;
+    max-width: 700px;
+    position: relative;
   }

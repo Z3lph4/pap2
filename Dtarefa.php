@@ -1,20 +1,83 @@
 <?php
-
 include 'config.php';
 
 session_start();
 
-if (isset($_POST["action"])) {
-    switch(strtoupper($_POST["action"])) {
-      case "DELETEMATERIAL":
-        if (isset($_POST["MaterialId"])) {
-          $deleteTarefa = "DELETE FROM tarefas WHERE id_tarefa = " . $_POST["MaterialId"];
-  
-          mysqli_query($conn, $deleteTarefa);
+// Verifique se o botão "Editar" foi clicado
+if (isset($_POST['edit'])) {
+    // Defina a variável de sessão 'editing' como true
+    $_SESSION['editing'] = true;
+} elseif (isset($_POST['save'])) { // Verifique se o botão "Salvar" foi clicado
+    // Verifique se os campos desc_user e loc_user estão definidos em $_POST
+    if (isset($_POST['desc_user']) && isset($_POST['loc_user'])) {
+        // Obtenha os valores enviados do formulário
+        $editedDescUser = mysqli_real_escape_string($conn, $_POST['desc_user']);
+        $editedLocUser = mysqli_real_escape_string($conn, $_POST['loc_user']);
+
+        // Verifique se os campos foram preenchidos
+        if (!empty($editedDescUser) && !empty($editedLocUser)) {
+            // Execute a lógica de atualização dos campos no banco de dados
+            $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
+
+            if ($employeeId !== null) {
+                // Execute a consulta SQL de atualização
+                $sql = "UPDATE users SET desc_user = '$editedDescUser', loc_user = '$editedLocUser' WHERE id_user = $employeeId";
+
+                if (mysqli_query($conn, $sql)) {
+                    // Os dados foram atualizados com sucesso na base de dados
+                    // Defina a variável de sessão 'editing' como false
+                    $_SESSION['editing'] = false;
+
+                    // Redirecione para a página do perfil do funcionário atualizado
+                    header("Location: perfil.php?id=$employeeId");
+                    exit();
+                } else {
+                    // Ocorreu um erro ao atualizar os dados na base de dados
+                    // Exiba uma mensagem de erro ou realize outra ação apropriada
+                    echo "Erro ao atualizar as informações do funcionário: " . mysqli_error($conn);
+                }
+            }
         }
-        break;
     }
-  }
+
+    if (isset($_FILES["file_image"])) {
+
+        // Obter informações sobre o arquivo
+        $image_name = $_FILES["file_image"]["name"];
+        $image_tmp = $_FILES["file_image"]["tmp_name"];
+        
+        // Ler o conteúdo do arquivo
+        $image_data = file_get_contents($image_tmp);
+        
+        $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
+        
+        // Preparar a consulta SQL
+        $stmt = $conn->prepare("UPDATE users SET imagem = '$image_data' WHERE id_user = $employeeId");
+        
+        // Executar a consulta
+        if ($stmt->execute()) {
+            echo "Imagem enviada e salva com sucesso!";
+        } else {
+            echo "Erro ao salvar a imagem: " . $stmt->error;
+        }
+    }
+} elseif (isset($_POST['cancel'])) { // Verifique se o botão "Cancelar" foi clicado
+    // Defina a variável de sessão 'editing' como false
+    $_SESSION['editing'] = false;
+
+    // Redirecione de volta para a página inicial
+    header("Location: perfil.php");
+    exit();
+}
+
+function console_log($output, $with_script_tags = true) {
+    $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . 
+');';
+    if ($with_script_tags) {
+        $js_code = '<script>' . $js_code . '</script>';
+    }
+    echo $js_code;
+}
 
 ?>
 
@@ -125,129 +188,122 @@ if (isset($_POST["action"])) {
             </div>
         </aside>
         <!-- ============= END OF ASIDE ============ -->
+
         <main>
-        <h1>Tarefas</h1>
+            <div class="wrapper">
+                <div class="profile-card-tarefa js-profile-card">
 
-            <form method="POST">
-                <div class="date">
-                    <input type="date" name="data_pesquisa">
-                    <button type="submit" class="buttonreun">Pesquisar</button>
-                </div>
-            </form>
 
+            <div class="profile-card__tarefa js-profile-cnt">
+                
             <?php
-           // Verifica se o usuário possui classificação 'func' (funcionário)
-           if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] == 'Func') {
-            // Obtém o ID do usuário logado
-            $user_id = $_SESSION["user_id"];
-        
-            $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE() AND utilizador = $user_id";
-        
-            if (isset($_POST['data_pesquisa'])) {
-                $data_pesquisa = $_POST['data_pesquisa'];
-                $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
-            }
-        
-            $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
-        } else {
-            $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE()";
-        
-            if (isset($_POST['data_pesquisa'])) {
-                $data_pesquisa = $_POST['data_pesquisa'];
-                $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
-            }
-        
-            $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
-        }        
+                // Recupere o ID do funcionário da URL
+                $tarefaid = isset($_GET['id']) ? $_GET['id'] : null;
 
-        if ($res = mysqli_query($conn, $sql)) {
-            if (mysqli_num_rows($res) > 0) {
-                while ($reg = mysqli_fetch_assoc($res)) {
-                    $utilizador_id = $reg['utilizador'];
-        
-                    // Consulta SQL para obter o nome do utilizador correspondente
-                    $sql_utilizador = "SELECT nome_user FROM users WHERE id_user = $utilizador_id";
-                    $res_utilizador = mysqli_query($conn, $sql_utilizador);
-                    $row_utilizador = mysqli_fetch_assoc($res_utilizador);
-                    $utilizador_nome = $row_utilizador['nome_user'];
-        
-                    $material_id = $reg['material'];
-        
-                    // Consulta SQL para obter o nome do material correspondente
-                    $sql_material = "SELECT nome_material FROM material WHERE id_material = $material_id";
-                    $res_material = mysqli_query($conn, $sql_material);
-                    
-                    if ($res_material && mysqli_num_rows($res_material) > 0) {
-                        $row_material = mysqli_fetch_assoc($res_material);
-                        $material_nome = $row_material['nome_material'];
-                    } else {
-                        $material_nome = "Nenhum material necessário";
+                if ($tarefaid !== null) {
+                    $sql = "SELECT * FROM tarefas WHERE id_tarefa = $tarefaid";
+
+                    if ($res = mysqli_query($conn, $sql)) {
+                        while ($reg = mysqli_fetch_assoc($res)) {
+                            $nome_tarefa = $reg['nome_tarefa'];
+                            $data = $reg['data_tarefa'];
+                            $desc = $reg['desc_tarefa'];
+                            ?>
+
+                            <div class="profile-card__name"><?php echo $nome_tarefa; ?></div>
+                            <div class="profile-card__txt" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="desc_user">
+                                <?php echo $desc; ?>
+                            </div>
+                            <!-- <div class="profile-card-loc">
+                                <span class="profile-card-loc__txt" < ?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="loc_user">
+                                    < ?php echo $loc_user; ?>
+                                </span>
+                            </div> -->
+
+                        <?php
+                        }
+                    }
+                }
+                ?>
+
+                <div class="profile-card-inf">
+                    <?php
+                    // Recupere novamente o ID do funcionário da URL
+                    $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
+
+                    if ($employeeId !== null) {
+                        $sql = "SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users WHERE id_user = $employeeId";
+
+                        if ($res = mysqli_query($conn, $sql)) {
+                            while ($reg = mysqli_fetch_assoc($res)) {
+                                $data = $reg['data'];
+                                $rank = $reg['rank_user'];
+                                ?>
+
+                                <div class="profile-card-inf__item">
+                                    <div class="profile-card-inf__title"><?php echo $data; ?></div>
+                                    <div class="profile-card-inf__txt">Data de Conclusão</div>
+                                </div>
+
+                                <div class="profile-card-inf__item">
+                                    <div class="profile-card-inf__title"><?php echo $rank; ?></div>
+                                    <div class="profile-card-inf__txt">Cargo na Empresa</div>
+                                </div>
+
+                            <?php
+                            }
+                        }
                     }
                     ?>
-            
-            <div class="recent-orders">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nome da tarefa</th>
-                            <th>Responsável</th>
-                            <th>Descrição</th>
-                        </tr>
-                    </thead>
-                
-                    <tbody>
-                        <tr>
-                            <td style="width: 260px; max-width: 260px;"><?php echo $reg['nome_tarefa']; ?></td>
-                            <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $utilizador_nome; ?></td>
-                            <td style="width: 330px; max-width: 330px;"><?php echo $reg['desc_tarefa']; ?></td>
-                            <td class="primary pointer" style="padding-right: 15px;">
-                                <a style="color: #007bff; padding: 10px;" href="Dtarefa.php?id=<?php echo $reg['id_tarefa']; ?>">Detalhes</a>
-                            </td>
-                            <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
-                                <td>
-                                <div class="productdel pointer">
-                                    <?php
-                                    $form_id = "DeleteMaterial" . $reg['id_tarefa'];
-                                    ?>
-                                    <form method="post" action="tarefas.php" id="<?php echo $form_id ?>">
-                                        <input type="hidden" name="MaterialId" value="<?php echo $reg['id_tarefa'] ?>" />
-                                        <input type="hidden" name="action" value="DeleteMaterial" />
-                                        <a class="tm-product-delete-link" onClick="showConfirmation('<?php echo $form_id ?>');">
-                                            <i class="material-icons-sharp">delete</i>
-                                        </a>
-                                    </form>
-                                </div>
-                            </td>
+                </div>
 
-                            <script>
-                                function showConfirmation(formId) {
-                                    if (confirm("Tem certeza de que deseja excluir esta tarefa?")) {
-                                        document.getElementById(formId).submit();
-                                    }
-                                }
-                                </script>
+                <div class="profile-card-ctr">
+                    <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
+                        <form method="POST" action="">
+                            <button class="profile-card__button button--blue" type="button" name="save" onclick="saveData();">Salvar</button>
+                            <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
+                        </form>
+                    <?php else: ?>
+                        <button class="profile-card__button button--blue js-message-btn" onclick="myhref('chat.php');">Mensagem</button>
+                        <?php if ($employeeId == $_SESSION['user_id']): ?>
+                            <form method="POST" action="">
+                                <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
+                            </form>
+                        <?php else: ?>
+                            <button class="profile-card__button button--orange" onclick="window.location.href = 'funcionarios.php';">Voltar</button>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
 
-                            <?php } ?>
-                        </tr>
-                    </tbody>
-
-                </table>
-                    </div>
-
-                    <?php
+            <script>
+                function cancelEditing() {
+                    window.location.href = 'perfil.php?id=<?php echo $_SESSION['user_id']; ?>';
+                    <?php $_SESSION['editing'] = false; ?>
                 }
-            } else {
-                ?>
-                <span class="notfind">Nenhuma tarefa encontrada para a data pesquisada.</span>
-                <?php
-            }
-        } else {
-            ?>
-            <span class="notfind">Erro ao realizar a consulta.</span>
-            <?php
-        }             
-            ?>
+            </script>
 
+                <script>
+                    function saveData() {
+                        var desc_user = document.getElementById('desc_user').innerText;
+                        var loc_user = document.getElementById('loc_user').innerText;
+
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", "update_user_data.php", true);
+                        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                        xhr.onreadystatechange = function() {
+                            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                                window.location.href = 'perfil.php?id=<?php echo $_SESSION['user_id']; ?>'; // Redirecionar para a página de perfil atualizada
+                            }
+                        };
+                        xhr.send("employeeId=" + <?php echo $employeeId; ?> + "&desc_user=" + encodeURIComponent(desc_user) + "&loc_user=" + encodeURIComponent(loc_user));
+                    }
+                </script>
+
+            </div>
+        </div>
+    </div>
+    <!-- Resto do seu código -->
+    <script src="./profile.js"></script>
 </main>
 
         <!-- ============== END OF MAIN ============ -->
@@ -257,8 +313,8 @@ if (isset($_POST["action"])) {
             <button id="menu-btn">
                 <span class="material-icons-sharp">menu</span>
             </button>
-
-        <!-- =========== Mudança de tema ======== -->
+            
+            <!-- =========== Mudança de tema ======== -->
         <div class="theme-toggler">
             <span class="material-icons-sharp active" id="light-mode-btn" onclick="setTheme('light')">light_mode</span>
             <span class="material-icons-sharp" id="dark-mode-btn" onclick="setTheme('dark')">dark_mode</span>
@@ -294,35 +350,30 @@ if (isset($_POST["action"])) {
         });
         </script>
 
-        <!-- ============ Perfil =========== -->
+        <!-- ================ PERFIL ================= -->
 
-            <?php
-                // Recupere o ID do usuário logado
-                $userId = $_SESSION["user_id"];
-
-                // Consulta para obter a imagem do usuário
-                $sql = "SELECT imagem FROM users WHERE id_user = $userId";
-                $result = mysqli_query($conn, $sql);
-
-                if ($result && mysqli_num_rows($result) > 0) {
-                    $row = mysqli_fetch_assoc($result);
-                    $img_user = $row['imagem'];
-                }
-            ?>
-
-
-            <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>">
+        <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>">
             <div class="profile">
             <div class="info">
                 <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
-            <div class="profile-photo">
-                <img src="<?php echo $img_user ?>" alt="Imagem do utilizador">
-            </div>
-            </div></a>
 
+            <?php
+                // Verifique se a variável de sessão existe e tem um valor
+                if (isset($_SESSION["user_img"])) {
+                    $img_log = $_SESSION["user_img"];
+                }
+            ?>
+
+            <div class="profile-photo">
+            <img src="<?php echo $img_log ?>" alt="Imagem do utilizador">
+            </div>
+            </div>
+        
+        </a>
         </div>
+
         <!-- END OF TOP -->
         <div class="recent-updates">  
             <h2>Utilizadores Recentes</h2>              
@@ -418,20 +469,6 @@ if (isset($_POST["action"])) {
         </script>
 
         <?php }} ?>
-
-        <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
-        <div class="item add-product" onclick="myhref('Ctarefa.php');">
-                <div>
-                    <span class="material-icons-sharp">add</span>
-                <h3>Adicionar Tarefas</h3>
-            </div>
-        </div>
-        <?php } ?>
-
-        <script type="text/javascript">
-            function myhref(Ctarefa){
-            window.location.href = Ctarefa;}
-        </script>
 
     <script src="js/index.js"></script>
 
