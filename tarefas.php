@@ -190,7 +190,9 @@ if (isset($_POST["action"])) {
                     <thead>
                         <tr>
                             <th>Nome da tarefa</th>
+                            <th>Data da tarefa</th>
                             <th>Responsável</th>
+                            <th>Material</th>
                             <th>Descrição</th>
                         </tr>
                     </thead>
@@ -198,11 +200,10 @@ if (isset($_POST["action"])) {
                     <tbody>
                         <tr>
                             <td style="width: 260px; max-width: 260px;"><?php echo $reg['nome_tarefa']; ?></td>
+                            <td style="width: 260px; max-width: 260px;"><?php echo $reg['data_tarefa']; ?></td>
                             <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $utilizador_nome; ?></td>
+                            <td style="width: 330px; max-width: 330px;"><?php echo $material_nome; ?></td>
                             <td style="width: 330px; max-width: 330px;"><?php echo $reg['desc_tarefa']; ?></td>
-                            <td class="primary pointer" style="padding-right: 15px;">
-                                <a style="color: #007bff; padding: 10px;" href="Dtarefa.php?id=<?php echo $reg['id_tarefa']; ?>">Detalhes</a>
-                            </td>
                             <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                                 <td>
                                 <div class="productdel pointer">
