@@ -1,5 +1,4 @@
 <?php
-
 include 'config.php';
 
 session_start();
@@ -13,23 +12,48 @@ if (isset($_POST["signup"])) {
     $uti = mysqli_real_escape_string($conn, $_POST["signup_pass"]);
     $kit = mysqli_real_escape_string($conn, $_POST["material"]);
 
-    if($pass !== $cpass) {
-        echo "<script>alert('Password incorreta.');</script>";
-      } elseif ($check_email > 0) {
-        echo "<script>alert('Email já existe.');</script>";
-      } else {
-      $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador, material) VALUES ('$full_name', '$tel', '$email', '$uti', '$kit')";
-      $result = mysqli_query($conn, $sql);
-      if ($result) {
-        $_POST["signup_nome_user"] = "";
-        $_POST["signup_email"] = "";
-        $_POST["signup_tel_user"] = "";
-        $_POST["signup_pass"] = "";
-        $_POST["material"] = "";
-    }
-  }
-}
+    $material_id = $_POST["material"];
 
+    // Consulta SQL para obter a quantidade disponível do material selecionado
+    $sql_material = "SELECT qnt_material FROM material WHERE id_material = $material_id";
+    $result_material = mysqli_query($conn, $sql_material);
+    $row_material = mysqli_fetch_assoc($result_material);
+    $qnt_material_disponivel = $row_material["qnt_material"];
+
+    // Consulta SQL para contar o número de tarefas que estão utilizando o mesmo material
+    $sql_contagem_tarefas = "SELECT COUNT(*) AS qnt_tarefas FROM tarefas WHERE material = $material_id";
+    $result_contagem_tarefas = mysqli_query($conn, $sql_contagem_tarefas);
+    $row_contagem_tarefas = mysqli_fetch_assoc($result_contagem_tarefas);
+    $qnt_tarefas_utilizando_material = $row_contagem_tarefas["qnt_tarefas"];
+
+    if ($qnt_tarefas_utilizando_material >= $qnt_material_disponivel) {
+        echo "<script>alert('Material indisponível ou fora de stock!');</script>";
+    } else {
+        if ($uti !== $_POST["cpass"]) {
+            $email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
+
+            // Consulta SQL para verificar se o email já existe na tabela de usuários
+            $sql_check_email = "SELECT COUNT(*) AS email_exists FROM users WHERE email = '$email'";
+            $result_check_email = mysqli_query($conn, $sql_check_email);
+            $row_check_email = mysqli_fetch_assoc($result_check_email);
+            $email_exists = $row_check_email["email_exists"];
+
+            if ($email_exists > 0) {
+                echo "<script>alert('Email já existe.');</script>";
+            } else {
+                $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador, material) VALUES ('$full_name', '$tel', '$email', '$uti', '$kit')";
+                $result = mysqli_query($conn, $sql);
+                if ($result) {
+                    $_POST["signup_nome_user"] = "";
+                    $_POST["signup_email"] = "";
+                    $_POST["signup_tel_user"] = "";
+                    $_POST["signup_pass"] = "";
+                    $_POST["material"] = "";
+                }
+            }
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -202,7 +226,15 @@ if (isset($_POST["signup"])) {
                 // Exibe a opção padrão e as opções do banco de dados
                 echo '<option value="" disabled selected hidden>Material necessário</option>';
                 while ($row = mysqli_fetch_assoc($result)) {
-                    echo '<option value="' . $row['id_material'] . '">' . $row['nome_material'] . '</option>';
+                    $material_id = $row["id_material"];
+                    $material_nome = $row["nome_material"];
+                    $qnt_material = $row["qnt_material"];
+        
+                    if ($qnt_material <= 0) {
+                        echo '<option value="' . $material_id . '" disabled>' . $material_nome . ' - Indisponível</option>';
+                    } else {
+                        echo '<option value="' . $material_id . '">' . $material_nome . '</option>';
+                    }
                 }
                 ?>
             </select>
