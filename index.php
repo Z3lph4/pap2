@@ -149,7 +149,7 @@ session_start();
                 $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
             }
         
-            $sql .= " ORDER BY data_tarefa DESC LIMIT 4";
+            $sql .= " ORDER BY data_tarefa ASC LIMIT 2";
         } else {
             $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE()";
         
@@ -158,7 +158,7 @@ session_start();
                 $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
             }
         
-            $sql .= " ORDER BY data_tarefa DESC LIMIT 4";
+            $sql .= " ORDER BY data_tarefa ASC LIMIT 2";
         }        
 
             if ($res = mysqli_query($conn, $sql)) {

@@ -146,7 +146,7 @@ if (isset($_POST["action"])) {
         $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) = '$data_pesquisa'";
     }
     
-    $sql .= " ORDER BY data_reuniao DESC LIMIT 4";    
+    $sql .= " ORDER BY data_reuniao ASC LIMIT 4";    
 
     if ($res = mysqli_query($conn, $sql)) {
         if (mysqli_num_rows($res) > 0) {
