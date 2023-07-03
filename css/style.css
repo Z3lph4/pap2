@@ -1284,6 +1284,13 @@ main .recent-orders a {
     font-weight: bold;
   }
 
+  .profile-card-inf__title2 {
+    font-weight: 700;
+    font-size: 15px;
+    max-width: 130px;
+    font-weight: bold;
+  }
+
   .profile-card-inf__txt {
     font-weight: 500;
     margin-top: 7px;

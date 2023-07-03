@@ -208,53 +208,56 @@ function console_log($output, $with_script_tags = true) {
                             $nome_tarefa = $reg['nome_tarefa'];
                             $data = $reg['data_tarefa'];
                             $desc = $reg['desc_tarefa'];
+                            $utilizador = $reg['utilizador'];
+                            $material = $reg['material'];
+
+                            $sql_user = "SELECT nome_user FROM users WHERE id_user = $utilizador";
+
+                            if ($res_user = mysqli_query($conn, $sql_user)) {
+                                while ($reg_user = mysqli_fetch_assoc($res_user)) {
+                                    $nome_user = $reg_user['nome_user'];
+                                }
+                            }
+
+                            $sql_material = "SELECT nome_material FROM material WHERE id_material = $material";
+
+                            if ($res_material = mysqli_query($conn, $sql_material)) {
+                                while ($reg_material = mysqli_fetch_assoc($res_material)) {
+                                    $nome_material = $reg_material['nome_material'];
+                                }
+                            }
+
                             ?>
 
-                            <div class="profile-card__name"><?php echo $nome_tarefa; ?></div>
-                            <div class="profile-card__txt" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="desc_user">
-                                <?php echo $desc; ?>
-                            </div>
-                            <!-- <div class="profile-card-loc">
-                                <span class="profile-card-loc__txt" < ?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="loc_user">
-                                    < ?php echo $loc_user; ?>
-                                </span>
-                            </div> -->
+                        <div class="profile-card__name"><?php echo $nome_tarefa; ?></div>
+                            <div class="profile-card-inf">
+                                <div class="profile-card-inf__item">
+                                    <div class="profile-card-inf__title2"><?php echo $desc; ?></div>
+                                    <div class="profile-card-inf__txt">Descrição da tarefa</div>
+                                </div>
 
-                        <?php
+
+                                <div class="profile-card-inf__item">
+                                    <div class="profile-card-inf__title2"><?php echo $material !== null ? $nome_material : 'Sem material associado a esta tarefa'; ?></div>
+                                    <div class="profile-card-inf__txt">Material atribuído</div>
+                                </div>
+                            
+                            <?php
                         }
                     }
                 }
                 ?>
 
                 <div class="profile-card-inf">
-                    <?php
-                    // Recupere novamente o ID do funcionário da URL
-                    $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
-
-                    if ($employeeId !== null) {
-                        $sql = "SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users WHERE id_user = $employeeId";
-
-                        if ($res = mysqli_query($conn, $sql)) {
-                            while ($reg = mysqli_fetch_assoc($res)) {
-                                $data = $reg['data'];
-                                $rank = $reg['rank_user'];
-                                ?>
+                                <div class="profile-card-inf__item">
+                                    <div class="profile-card-inf__title"><?php echo $nome_user; ?></div>
+                                    <div class="profile-card-inf__txt">Responsável</div>
+                                </div>
 
                                 <div class="profile-card-inf__item">
                                     <div class="profile-card-inf__title"><?php echo $data; ?></div>
-                                    <div class="profile-card-inf__txt">Data de Conclusão</div>
+                                    <div class="profile-card-inf__txt">Data de finalização</div>
                                 </div>
-
-                                <div class="profile-card-inf__item">
-                                    <div class="profile-card-inf__title"><?php echo $rank; ?></div>
-                                    <div class="profile-card-inf__txt">Cargo na Empresa</div>
-                                </div>
-
-                            <?php
-                            }
-                        }
-                    }
-                    ?>
                 </div>
 
                 <div class="profile-card-ctr">
@@ -264,15 +267,11 @@ function console_log($output, $with_script_tags = true) {
                             <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
                         </form>
                     <?php else: ?>
-                        <button class="profile-card__button button--blue js-message-btn" onclick="myhref('chat.php');">Mensagem</button>
-                        <?php if ($employeeId == $_SESSION['user_id']): ?>
+                        <button class="profile-card__button button--blue js-message-btn" onclick="myhref('tarefas.php');">Voltar</button>
                             <form method="POST" action="">
                                 <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
                             </form>
-                        <?php else: ?>
-                            <button class="profile-card__button button--orange" onclick="window.location.href = 'funcionarios.php';">Voltar</button>
                         <?php endif; ?>
-                    <?php endif; ?>
                 </div>
 
             <script>

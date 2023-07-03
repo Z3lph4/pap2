@@ -133,37 +133,38 @@ if (isset($_POST["action"])) {
                     <input type="date" name="data_pesquisa">
                     <button type="submit" class="buttonreun">Pesquisar</button>
                 </div>
-            </form>
+            </form> 
 
             <?php
-           // Verifica se o usuário possui classificação 'func' (funcionário)
-           if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] == 'Func') {
-            // Obtém o ID do usuário logado
-            $user_id = $_SESSION["user_id"];
-        
-            $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE() AND utilizador = $user_id";
-        
-            if (isset($_POST['data_pesquisa'])) {
-                $data_pesquisa = $_POST['data_pesquisa'];
-                $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
-            }
-        
-            $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
-        } else {
-            $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE()";
-        
-            if (isset($_POST['data_pesquisa'])) {
-                $data_pesquisa = $_POST['data_pesquisa'];
-                $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
-            }
-        
-            $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
-        }        
-
-        if ($res = mysqli_query($conn, $sql)) {
-            if (mysqli_num_rows($res) > 0) {
-                while ($reg = mysqli_fetch_assoc($res)) {
-                    $utilizador_id = $reg['utilizador'];
+               // Verifica se o usuário possui classificação 'func' (funcionário)
+               if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] == 'Func') {
+                   // Obtém o ID do usuário logado
+                   $user_id = $_SESSION["user_id"];
+               
+                   $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE() AND utilizador = $user_id";
+               
+                   if (isset($_POST['data_pesquisa'])) {
+                       $data_pesquisa = $_POST['data_pesquisa'];
+                       $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
+                   }
+               
+                   $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
+               } else {
+                   $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE()";
+               
+                   if (isset($_POST['data_pesquisa'])) {
+                       $data_pesquisa = $_POST['data_pesquisa'];
+                       $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
+                   }
+               
+                   $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
+               }
+               
+               if ($res = mysqli_query($conn, $sql)) {
+                   if (mysqli_num_rows($res) > 0) {
+                       while ($reg = mysqli_fetch_assoc($res)) {
+                           $id_tarefa = $reg['id_tarefa'];
+                           $utilizador_id = $reg['utilizador'];
         
                     // Consulta SQL para obter o nome do utilizador correspondente
                     $sql_utilizador = "SELECT nome_user FROM users WHERE id_user = $utilizador_id";
@@ -192,8 +193,6 @@ if (isset($_POST["action"])) {
                             <th>Nome da tarefa</th>
                             <th>Data da tarefa</th>
                             <th>Responsável</th>
-                            <th>Material</th>
-                            <th>Descrição</th>
                         </tr>
                     </thead>
                 
@@ -202,9 +201,9 @@ if (isset($_POST["action"])) {
                             <td style="width: 260px; max-width: 260px;"><?php echo $reg['nome_tarefa']; ?></td>
                             <td style="width: 260px; max-width: 260px;"><?php echo $reg['data_tarefa']; ?></td>
                             <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $utilizador_nome; ?></td>
-                            <td style="width: 330px; max-width: 330px;"><?php echo $material_nome; ?></td>
-                            <td style="width: 330px; max-width: 330px;"><?php echo $reg['desc_tarefa']; ?></td>
-                            
+                            <td class="primary pointer" style="padding-right: 15px;">
+                                <a style="color: #007bff; padding: 10px;" href="Dtarefa.php?id=<?php echo $id_tarefa; ?>">Detalhes</a>
+                            </td>
 
                             <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                                 <td>

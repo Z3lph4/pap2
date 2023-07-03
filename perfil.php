@@ -344,7 +344,7 @@ function console_log($output, $with_script_tags = true) {
                                 </div>
 
                             <?php
-                            }
+                            } 
                         }
                     }
                     ?>
