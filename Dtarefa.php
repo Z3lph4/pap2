@@ -9,19 +9,19 @@ if (isset($_POST['edit'])) {
     $_SESSION['editing'] = true;
 } elseif (isset($_POST['save'])) { // Verifique se o botão "Salvar" foi clicado
     // Verifique se os campos desc_user e loc_user estão definidos em $_POST
-    if (isset($_POST['desc_user']) && isset($_POST['loc_user'])) {
+    if (isset($_POST['desc_tarefa']) && isset($_POST['data_tarefa'])) {
         // Obtenha os valores enviados do formulário
-        $editedDescUser = mysqli_real_escape_string($conn, $_POST['desc_user']);
-        $editedLocUser = mysqli_real_escape_string($conn, $_POST['loc_user']);
+        $editedDescUser = mysqli_real_escape_string($conn, $_POST['desc_tarefa']);
+        $editedLocUser = mysqli_real_escape_string($conn, $_POST['data_tarefa']);
 
         // Verifique se os campos foram preenchidos
         if (!empty($editedDescUser) && !empty($editedLocUser)) {
             // Execute a lógica de atualização dos campos no banco de dados
-            $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
+            $tarefaid = isset($_GET['id_tarefa']) ? $_GET['id_tarefa'] : null;
 
-            if ($employeeId !== null) {
+            if ($tarefaid !== null) {
                 // Execute a consulta SQL de atualização
-                $sql = "UPDATE users SET desc_user = '$editedDescUser', loc_user = '$editedLocUser' WHERE id_user = $employeeId";
+                $sql = "UPDATE tarefas SET desc_tarefa = '$editedDescTarefa', data_tarefa = '$editedDataTarefa' WHERE id_tarefa = $tarefaid";
 
                 if (mysqli_query($conn, $sql)) {
                     // Os dados foram atualizados com sucesso na base de dados
@@ -29,7 +29,7 @@ if (isset($_POST['edit'])) {
                     $_SESSION['editing'] = false;
 
                     // Redirecione para a página do perfil do funcionário atualizado
-                    header("Location: perfil.php?id=$employeeId");
+                    header("Location: perfil.php?id=$tarefaid");
                     exit();
                 } else {
                     // Ocorreu um erro ao atualizar os dados na base de dados
@@ -39,44 +39,6 @@ if (isset($_POST['edit'])) {
             }
         }
     }
-
-    if (isset($_FILES["file_image"])) {
-
-        // Obter informações sobre o arquivo
-        $image_name = $_FILES["file_image"]["name"];
-        $image_tmp = $_FILES["file_image"]["tmp_name"];
-        
-        // Ler o conteúdo do arquivo
-        $image_data = file_get_contents($image_tmp);
-        
-        $employeeId = isset($_GET['id']) ? $_GET['id'] : null;
-        
-        // Preparar a consulta SQL
-        $stmt = $conn->prepare("UPDATE users SET imagem = '$image_data' WHERE id_user = $employeeId");
-        
-        // Executar a consulta
-        if ($stmt->execute()) {
-            echo "Imagem enviada e salva com sucesso!";
-        } else {
-            echo "Erro ao salvar a imagem: " . $stmt->error;
-        }
-    }
-} elseif (isset($_POST['cancel'])) { // Verifique se o botão "Cancelar" foi clicado
-    // Defina a variável de sessão 'editing' como false
-    $_SESSION['editing'] = false;
-
-    // Redirecione de volta para a página inicial
-    header("Location: perfil.php");
-    exit();
-}
-
-function console_log($output, $with_script_tags = true) {
-    $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . 
-');';
-    if ($with_script_tags) {
-        $js_code = '<script>' . $js_code . '</script>';
-    }
-    echo $js_code;
 }
 
 ?>
@@ -232,7 +194,8 @@ function console_log($output, $with_script_tags = true) {
                         <div class="profile-card__name"><?php echo $nome_tarefa; ?></div>
                             <div class="profile-card-inf">
                                 <div class="profile-card-inf__item">
-                                    <div class="profile-card-inf__title2"><?php echo $desc; ?></div>
+                                    <div class="profile-card-inf__title2" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="desc_tarefa">
+                                        <?php echo $desc; ?></div>
                                     <div class="profile-card-inf__txt">Descrição da tarefa</div>
                                 </div>
 
@@ -255,7 +218,8 @@ function console_log($output, $with_script_tags = true) {
                                 </div>
 
                                 <div class="profile-card-inf__item">
-                                    <div class="profile-card-inf__title"><?php echo $data; ?></div>
+                                    <div class="profile-card-inf__title" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="data_tarefa">
+                                        <?php echo $data; ?></div>
                                     <div class="profile-card-inf__txt">Data de finalização</div>
                                 </div>
                 </div>
