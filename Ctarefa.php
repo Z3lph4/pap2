@@ -230,7 +230,19 @@ if (isset($_POST["signup"])) {
                     $material_nome = $row["nome_material"];
                     $qnt_material = $row["qnt_material"];
         
-                    if ($qnt_material <= 0) {
+                    // Consulta SQL para obter a quantidade disponível do material selecionado
+                    $sql_material = "SELECT qnt_material FROM material WHERE id_material = $material_id";
+                    $result_material = mysqli_query($conn, $sql_material);
+                    $row_material = mysqli_fetch_assoc($result_material);
+                    $qnt_material_disponivel = $row_material["qnt_material"];
+
+                    // Consulta SQL para contar o número de tarefas que estão utilizando o mesmo material
+                    $sql_contagem_tarefas = "SELECT COUNT(*) AS qnt_tarefas FROM tarefas WHERE material = $material_id";
+                    $result_contagem_tarefas = mysqli_query($conn, $sql_contagem_tarefas);
+                    $row_contagem_tarefas = mysqli_fetch_assoc($result_contagem_tarefas);
+                    $qnt_tarefas_utilizando_material = $row_contagem_tarefas["qnt_tarefas"];
+
+                    if ($qnt_tarefas_utilizando_material > $qnt_material_disponivel) {
                         echo '<option value="' . $material_id . '" disabled>' . $material_nome . ' - Indisponível</option>';
                     } else {
                         echo '<option value="' . $material_id . '">' . $material_nome . '</option>';

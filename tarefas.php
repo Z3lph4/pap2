@@ -204,6 +204,8 @@ if (isset($_POST["action"])) {
                             <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $utilizador_nome; ?></td>
                             <td style="width: 330px; max-width: 330px;"><?php echo $material_nome; ?></td>
                             <td style="width: 330px; max-width: 330px;"><?php echo $reg['desc_tarefa']; ?></td>
+                            
+
                             <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                                 <td>
                                 <div class="productdel pointer">
