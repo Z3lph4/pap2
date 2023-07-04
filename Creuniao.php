@@ -138,22 +138,89 @@ if (isset($_POST["signup"])) {
         <!-- ============= END OF ASIDE ============ -->
 
         <main>
+  <div class="mainprof2">
+    <div class="containerprof2 a-containerprof" id="a-container">
+      <form action="" class="formprof" id="a-form" method="post">
+        <h2 class="form_titleprof titleprof">Nova Reunião</h2>
+        <input class="form__inputprof" type="text" placeholder="Assunto" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
+        <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
+        <input class="form__inputprof" type="date" placeholder="Data" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
+        <input class="form__inputprof" type="time" placeholder="Hora" name="signup_hora_reuniao" value="<?php echo $_POST["signup_hora_reuniao"]; ?>" required/>
+        <input class="form__inputprof" type="number" id="participant_count" name="participant_count" placeholder="Número de Participantes" min="2">
 
-        <div class="mainprof2">
-      
-      <div class="containerprof2 a-containerprof" id="a-container">
-        <form action="" class="formprof" id="a-form" method="post">
-          <h2 class="form_titleprof titleprof">Nova Reunião</h2>
-          <input class="form__inputprof" type="text" placeholder="Assunto" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
-          <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
-          <input class="form__inputprof" type="date" placeholder="Data" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
-          <input class="form__inputprof" type="time" placeholder="Hora" name="signup_hora_reuniao" value="<?php echo $_POST["signup_hora_reuniao"]; ?>" required/>
-          <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
-        </form>
-      </div>
+        <div id="participants_fields"></div>
+
+        <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
+      </form>
     </div>
+  </div>
+</main>
 
-        </main>
+<script>
+  document.getElementById('participant_count').addEventListener('input', function() {
+    var count = parseInt(this.value);
+    var participantsFieldsDiv = document.getElementById('participants_fields');
+
+    participantsFieldsDiv.innerHTML = '';
+
+    <?php
+      // Consulta SQL para selecionar os utilizadores na tabela "users"
+      $sql = "SELECT id_user, nome_user FROM users";
+
+      // Executa a consulta SQL e armazena o resultado em uma variável
+      $result = mysqli_query($conn, $sql);
+
+      // Armazena os nomes dos utilizadores em um array
+      $users = array();
+      while ($row = mysqli_fetch_assoc($result)) {
+          $users[] = $row['nome_user'];
+      }
+    ?>
+
+    var selectedParticipants = [];
+
+    for (var i = 0; i < count; i++) {
+      var selectContainerDiv = document.createElement('div');
+      selectContainerDiv.className = 'form__select-container';
+
+      var selectElement = document.createElement('select');
+      selectElement.className = 'form__selectprof';
+      selectElement.name = 'participant_' + i;
+
+      <?php
+        // Preenche as opções do select com os utilizadores
+        echo 'selectElement.innerHTML += \'<option value="" disabled selected hidden>Selecione um responsável</option>\';';
+        foreach ($users as $user) {
+          echo 'if (!selectedParticipants.includes("' . $user . '")) {';
+          echo 'selectElement.innerHTML += \'<option value="' . $user . '">' . $user . '</option>\';';
+          echo '}';
+        }
+      ?>
+
+      var selectIcon = document.createElement('i');
+      selectIcon.className = 'fa fa-chevron-down form__select-icon';
+      selectIcon.setAttribute('aria-hidden', 'true');
+
+      selectContainerDiv.appendChild(selectElement);
+      selectContainerDiv.appendChild(selectIcon);
+
+      participantsFieldsDiv.appendChild(selectContainerDiv);
+
+      // Armazena o participante selecionado para evitar repetição
+      selectElement.addEventListener('change', function() {
+        var selectedOption = this.options[this.selectedIndex].value;
+        if (selectedOption) {
+          if (selectedParticipants.includes(selectedOption)) {
+            alert('O funcionário já faz parte desta reunião!');
+            this.value = '';
+          } else {
+            selectedParticipants.push(selectedOption);
+          }
+        }
+      });
+    }
+  });
+</script>
 
         <!-- ============== END OF MAIN ============ -->
 
