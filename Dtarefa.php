@@ -208,8 +208,9 @@ if (isset($_POST['edit'])) {
                             </div>
 
                             <div class="profile-card-inf__item">
-                                <div class="profile-card-inf__title2"><?php echo $material !== null ? $nome_material : 'Sem material associado a esta tarefa'; ?></div>
-                                <div class="profile-card-inf__txt">Material atribuído</div>
+                                <div class="profile-card-inf__title2" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="data_tarefa">
+                                    <?php echo $data; ?></div>
+                                <div class="profile-card-inf__txt">Data de finalização</div>
                             </div>
 
                             <div class="profile-card-inf">
@@ -219,9 +220,8 @@ if (isset($_POST['edit'])) {
                                 </div>
 
                                 <div class="profile-card-inf__item">
-                                    <div class="profile-card-inf__title" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="data_tarefa">
-                                        <?php echo $data; ?></div>
-                                    <div class="profile-card-inf__txt">Data de finalização</div>
+                                    <div class="profile-card-inf__title2"><?php echo $material !== null ? $nome_material : 'Sem material associado a esta tarefa'; ?></div>
+                                    <div class="profile-card-inf__txt">Material atribuído</div>
                                 </div>
                             </div>
 
