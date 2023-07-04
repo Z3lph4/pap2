@@ -26,8 +26,16 @@ if (isset($_POST["signup"])) {
     $row_contagem_tarefas = mysqli_fetch_assoc($result_contagem_tarefas);
     $qnt_tarefas_utilizando_material = $row_contagem_tarefas["qnt_tarefas"];
 
-    if ($qnt_tarefas_utilizando_material >= $qnt_material_disponivel) {
-        echo "<script>alert('Material indisponível ou fora de stock!');</script>";
+    // Consulta SQL para verificar se o usuário já tem uma tarefa para a data especificada
+    $sql_verificar_tarefa = "SELECT COUNT(*) AS tarefa_exists FROM tarefas WHERE utilizador = '$uti' AND data_tarefa = '$tel'";
+    $result_verificar_tarefa = mysqli_query($conn, $sql_verificar_tarefa);
+    $row_verificar_tarefa = mysqli_fetch_assoc($result_verificar_tarefa);
+    $tarefa_exists = $row_verificar_tarefa["tarefa_exists"];
+
+    if ($tarefa_exists > 0) {
+        echo "<script>alert('O responsável selecionado já tem tarefas atribuídas para esse dia!');</script>";    
+    } elseif ($qnt_tarefas_utilizando_material >= $qnt_material_disponivel) {
+        echo "<script>alert('Material indisponível ou fora de estoque!');</script>";
     } else {
         if ($uti !== $_POST["cpass"]) {
             $email = mysqli_real_escape_string($conn, $_POST["signup_email"]);

@@ -11,23 +11,25 @@ if (isset($_POST["signup"])) {
     $email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
     $qnt = mysqli_real_escape_string($conn, $_POST["quantidade"]);
 
-    if($pass !== $cpass) {
+    if ($qnt == 0) {
+        echo "<script>alert('A quantidade deve ser maior que zero.');</script>";
+    } elseif ($pass !== $cpass) {
         echo "<script>alert('Password incorreta.');</script>";
-      } elseif ($check_email > 0) {
+    } elseif ($check_email > 0) {
         echo "<script>alert('Email já existe.');</script>";
-      } else {
-      $sql = "INSERT INTO material (nome_material, desc_material, qnt_material) VALUES ('$full_name', '$email', '$qnt')";
-      $result = mysqli_query($conn, $sql);
-      if ($result) {
-        $_POST["signup_nome_user"] = "";
-        $_POST["signup_email"] = "";
-        $_POST["quantidade"] = "";
-
+    } else {
+        $sql = "INSERT INTO material (nome_material, desc_material, qnt_material) VALUES ('$full_name', '$email', '$qnt')";
+        $result = mysqli_query($conn, $sql);
+        if ($result) {
+            $_POST["signup_nome_user"] = "";
+            $_POST["signup_email"] = "";
+            $_POST["quantidade"] = "";
+        }
     }
-  }
 }
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
