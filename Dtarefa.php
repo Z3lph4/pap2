@@ -215,12 +215,12 @@ if (isset($_POST['edit'])) {
 
                             <div class="profile-card-inf">
                                 <div class="profile-card-inf__item">
-                                    <div class="profile-card-inf__title"><?php echo $nome_user; ?></div>
+                                    <div class="profile-card-inf__title warning"><?php echo $nome_user; ?></div>
                                     <div class="profile-card-inf__txt">Responsável</div>
                                 </div>
 
                                 <div class="profile-card-inf__item">
-                                    <div class="profile-card-inf__title2"><?php echo $material !== null ? $nome_material : 'Sem material associado a esta tarefa'; ?></div>
+                                    <div class="profile-card-inf__title"><?php echo $material !== null ? $nome_material : 'Sem material associado a esta tarefa'; ?></div>
                                     <div class="profile-card-inf__txt">Material atribuído</div>
                                 </div>
                             </div>
@@ -233,9 +233,11 @@ if (isset($_POST['edit'])) {
                                     </form>
                                 <?php else: ?>
                                     <button class="profile-card__button button--blue js-message-btn" onclick="myhref('tarefas.php');">Voltar</button>
+                                    <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                                     <form method="POST" action="">
                                         <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
                                     </form>
+                                    <?php } ?>
                                 <?php endif; ?>
                             </div>
 
