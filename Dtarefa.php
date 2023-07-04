@@ -9,34 +9,44 @@ if (isset($_POST['edit'])) {
     $_SESSION['editing'] = true;
 } elseif (isset($_POST['save'])) { // Verifique se o botão "Salvar" foi clicado
     // Verifique se os campos desc_tarefa e data_tarefa estão definidos em $_POST
-    if (isset($_POST['desc_tarefa']) && isset($_POST['data_tarefa'])) {
+    if (isset($_POST['desc_tarefa']) && isset($_POST['data_tarefa']) && isset($_POST['responsavel'])) {
         // Obtenha os valores enviados do formulário
         $editedDescTarefa = mysqli_real_escape_string($conn, $_POST['desc_tarefa']);
+        $editedDataTarefa = mysqli_real_escape_string($conn, $_POST['data_tarefa']);
 
         // Verifique se os campos foram preenchidos
         if (!empty($editedDescTarefa) && !empty($editedDataTarefa)) {
-            // Execute a lógica de atualização dos campos no banco de dados
-            $tarefaid = isset($_GET['id_tarefa']) ? $_GET['id_tarefa'] : null;
+            // Obtenha o ID do responsável
+            $responsavel = mysqli_real_escape_string($conn, $_POST['responsavel']);
+            $sql_user = "SELECT id_user FROM users WHERE nome_user = '$responsavel'";
 
-            if ($tarefaid !== null) {
-                // Execute a consulta SQL de atualização
-                $sql = "UPDATE tarefas SET desc_tarefa = '$editedDescTarefa' WHERE id_tarefa = $tarefaid";
+            if ($res_user = mysqli_query($conn, $sql_user)) {
+                $reg_user = mysqli_fetch_assoc($res_user);
+                $responsavelId = $reg_user['id_user'];
 
-                if (mysqli_query($conn, $sql)) {
-                    // Os dados foram atualizados com sucesso na base de dados
-                    // Defina a variável de sessão 'editing' como false
-                    $_SESSION['editing'] = false;
+                // Execute a lógica de atualização dos campos no banco de dados
+                $tarefaid = isset($_GET['id_tarefa']) ? $_GET['id_tarefa'] : null;
 
-                    // Redirecione para a página da tarefa atualizada
-                    if ($tarefaid !== null) {
+                if ($tarefaid !== null) {
+                    // Execute a consulta SQL de atualização
+                    $sql = "UPDATE tarefas SET desc_tarefa = '$editedDescTarefa', utilizador = $responsavelId WHERE id_tarefa = $tarefaid";
+
+                    if (mysqli_query($conn, $sql)) {
+                        // Os dados foram atualizados com sucesso na base de dados
+                        // Defina a variável de sessão 'editing' como false
+                        $_SESSION['editing'] = false;
+
                         // Redirecione para a página da tarefa atualizada
-                        header("Location: Dtarefa.php?id_tarefa=$tarefaid");
-                        exit();
-                    }                    
-                } else {
-                    // Ocorreu um erro ao atualizar os dados na base de dados
-                    // Exiba uma mensagem de erro ou realize outra ação apropriada
-                    echo "Erro ao atualizar as informações da tarefa: " . mysqli_error($conn);
+                        if ($tarefaid !== null) {
+                            // Redirecione para a página da tarefa atualizada
+                            header("Location: Dtarefa.php?id_tarefa=$tarefaid");
+                            exit();
+                        }
+                    } else {
+                        // Ocorreu um erro ao atualizar os dados na base de dados
+                        // Exiba uma mensagem de erro ou realize outra ação apropriada
+                        echo "Erro ao atualizar as informações da tarefa: " . mysqli_error($conn);
+                    }
                 }
             }
         }
@@ -153,132 +163,112 @@ if (isset($_POST['edit'])) {
         <!-- ============= END OF ASIDE ============ -->
 
         <main>
-            <div class="wrapper">
-                <div class="profile-card-tarefa js-profile-card">
-
-
+    <div class="wrapper">
+        <div class="profile-card-tarefa js-profile-card">
             <div class="profile-card__tarefa js-profile-cnt">
                 
             <?php
-                // Recupere o ID do funcionário da URL
-                $tarefaid = isset($_GET['id']) ? $_GET['id'] : null;
+            // Recupere o ID da tarefa da URL
+            $tarefaid = isset($_GET['id']) ? $_GET['id'] : null;
 
-                if ($tarefaid !== null) {
-                    $sql = "SELECT * FROM tarefas WHERE id_tarefa = $tarefaid";
+            if ($tarefaid !== null) {
+                $sql = "SELECT * FROM tarefas WHERE id_tarefa = $tarefaid";
 
-                    if ($res = mysqli_query($conn, $sql)) {
-                        while ($reg = mysqli_fetch_assoc($res)) {
-                            $nome_tarefa = $reg['nome_tarefa'];
-                            $data = $reg['data_tarefa'];
-                            $desc = $reg['desc_tarefa'];
-                            $utilizador = $reg['utilizador'];
-                            $material = $reg['material'];
+                if ($res = mysqli_query($conn, $sql)) {
+                    while ($reg = mysqli_fetch_assoc($res)) {
+                        $nome_tarefa = $reg['nome_tarefa'];
+                        $data = $reg['data_tarefa'];
+                        $desc = $reg['desc_tarefa'];
+                        $utilizador = $reg['utilizador'];
+                        $material = $reg['material'];
 
-                            $sql_user = "SELECT nome_user FROM users WHERE id_user = $utilizador";
+                        $sql_user = "SELECT nome_user FROM users WHERE id_user = $utilizador";
 
-                            if ($res_user = mysqli_query($conn, $sql_user)) {
-                                while ($reg_user = mysqli_fetch_assoc($res_user)) {
-                                    $nome_user = $reg_user['nome_user'];
-                                }
+                        if ($res_user = mysqli_query($conn, $sql_user)) {
+                            while ($reg_user = mysqli_fetch_assoc($res_user)) {
+                                $nome_user = $reg_user['nome_user'];
                             }
+                        }
 
-                            $sql_material = "SELECT nome_material FROM material WHERE id_material = $material";
+                        $sql_material = "SELECT nome_material FROM material WHERE id_material = $material";
 
-                            if ($res_material = mysqli_query($conn, $sql_material)) {
-                                while ($reg_material = mysqli_fetch_assoc($res_material)) {
-                                    $nome_material = $reg_material['nome_material'];
-                                }
+                        if ($res_material = mysqli_query($conn, $sql_material)) {
+                            while ($reg_material = mysqli_fetch_assoc($res_material)) {
+                                $nome_material = $reg_material['nome_material'];
                             }
-
-                            ?>
+                        }
+                    ?>
 
                         <div class="profile-card__name"><?php echo $nome_tarefa; ?></div>
+                        <div class="profile-card-inf">
+                            <div class="profile-card-inf__item">
+                                <div class="profile-card-inf__title2" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="desc_tarefa">
+                                    <?php echo $desc; ?></div>
+                                <div class="profile-card-inf__txt">Descrição da tarefa</div>
+                            </div>
+
+                            <div class="profile-card-inf__item">
+                                <div class="profile-card-inf__title2"><?php echo $material !== null ? $nome_material : 'Sem material associado a esta tarefa'; ?></div>
+                                <div class="profile-card-inf__txt">Material atribuído</div>
+                            </div>
+
                             <div class="profile-card-inf">
                                 <div class="profile-card-inf__item">
-                                    <div class="profile-card-inf__title2" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="desc_tarefa">
-                                        <?php echo $desc; ?></div>
-                                    <div class="profile-card-inf__txt">Descrição da tarefa</div>
+                                    <div class="profile-card-inf__title"><?php echo $nome_user; ?></div>
+                                    <div class="profile-card-inf__txt">Responsável</div>
                                 </div>
-
 
                                 <div class="profile-card-inf__item">
-                                    <div class="profile-card-inf__title2"><?php echo $material !== null ? $nome_material : 'Sem material associado a esta tarefa'; ?></div>
-                                    <div class="profile-card-inf__txt">Material atribuído</div>
+                                    <div class="profile-card-inf__title" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="data_tarefa">
+                                        <?php echo $data; ?></div>
+                                    <div class="profile-card-inf__txt">Data de finalização</div>
                                 </div>
-                            
+                            </div>
+
+                            <div class="profile-card-ctr">
+                                <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
+                                    <form method="POST" action="">
+                                        <button class="profile-card__button button--blue" type="button" name="save" onclick="saveData();">Salvar</button>
+                                        <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
+                                    </form>
+                                <?php else: ?>
+                                    <button class="profile-card__button button--blue js-message-btn" onclick="myhref('tarefas.php');">Voltar</button>
+                                    <form method="POST" action="">
+                                        <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
+                                    </form>
+                                <?php endif; ?>
+                            </div>
+
                             <?php
                         }
                     }
                 }
                 ?>
 
-                <div class="profile-card-inf">
-                    <div class="profile-card-inf__item">
-                        <div class="profile-card-inf__title"><?php echo $nome_user; ?></div>
-                        <div class="profile-card-inf__txt">Responsável</div>
-                    </div>
+                <script>
+                    function cancelEditing() {
+                        window.location.href = 'Dtarefa.php?id_tarefa=<?php echo $tarefaid; ?>';
+                        <?php $_SESSION['editing'] = false; ?>
+                    }
+                </script>
 
-                    <div class="profile-card-inf__item">
-                        <div class="profile-card-inf__title" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="data_tarefa">
-                            <?php echo $data; ?></div>
-                        <div class="profile-card-inf__txt">Data de finalização</div>
-                    </div>
-                </div>
+                
+                <script>
+                    function saveData() {
+                        var desc_tarefa = document.getElementById('desc_tarefa').innerText;
+                        var data_tarefa = document.getElementById('data_tarefa').innerText;
 
-                <div class="profile-card-ctr">
-                    <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
-                        <form method="POST" action="">
-                            <button class="profile-card__button button--blue" type="button" name="save" onclick="saveData();">Salvar</button>
-                            <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
-                        </form>
-                    <?php else: ?>
-                        <button class="profile-card__button button--blue js-message-btn" onclick="myhref('tarefas.php');">Voltar</button>
-                            <form method="POST" action="">
-                                <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
-                            </form>
-                        <?php endif; ?>
-                </div>
-
-                <?php
-
-                $sql = "SELECT * FROM tarefas";
-
-                if($res=mysqli_query($conn,$sql)){
-
-                $id_tarefa = array();
-
-                $iol= 0;
-                while($reg=mysqli_fetch_assoc($res)){
-
-                    $id_tarefa = $reg['id_tarefa'];
-
-            ?>
-
-            <script>
-                function cancelEditing() {
-                    window.location.href = 'Dtarefa.php?id_tarefa=<?php echo $tarefaid; ?>';
-                    <?php $_SESSION['editing'] = false; ?>
-                }
-            </script>
-
-            <?php }} ?>
-
-            <script>
-                function saveData() {
-                    var desc_tarefa = document.getElementById('desc_tarefa').innerText;
-                    var data_tarefa = document.getElementById('data_tarefa').innerText;
-
-                    var xhr = new XMLHttpRequest();
-                    xhr.open("POST", "update_tarefa_data.php", true);
-                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                    xhr.onreadystatechange = function() {
-                        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                            window.location.href = 'Dtarefa.php?id_tarefa=<?php echo $tarefaid; ?>';
-                        }
-                    };
-                    xhr.send("tarefaId=<?php echo $tarefaid; ?>&desc_tarefa=" + encodeURIComponent(desc_tarefa) + "&data_tarefa=" + encodeURIComponent(data_tarefa));
-                }
-            </script>
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", "update_tarefa_data.php", true);
+                        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                        xhr.onreadystatechange = function() {
+                            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                                window.location.href = 'Dtarefa.php?id=<?php echo $tarefaid; ?>';
+                            }
+                        };
+                        xhr.send("tarefaId=<?php echo $tarefaid; ?>&desc_tarefa=" + encodeURIComponent(desc_tarefa) + "&data_tarefa=" + encodeURIComponent(data_tarefa));
+                    }
+                </script>
 
             </div>
         </div>
