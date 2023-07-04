@@ -8,39 +8,40 @@ if (isset($_POST['edit'])) {
     // Defina a variável de sessão 'editing' como true
     $_SESSION['editing'] = true;
 } elseif (isset($_POST['save'])) { // Verifique se o botão "Salvar" foi clicado
-    // Verifique se os campos desc_user e loc_user estão definidos em $_POST
+    // Verifique se os campos desc_tarefa e data_tarefa estão definidos em $_POST
     if (isset($_POST['desc_tarefa']) && isset($_POST['data_tarefa'])) {
         // Obtenha os valores enviados do formulário
-        $editedDescUser = mysqli_real_escape_string($conn, $_POST['desc_tarefa']);
-        $editedLocUser = mysqli_real_escape_string($conn, $_POST['data_tarefa']);
+        $editedDescTarefa = mysqli_real_escape_string($conn, $_POST['desc_tarefa']);
 
         // Verifique se os campos foram preenchidos
-        if (!empty($editedDescUser) && !empty($editedLocUser)) {
+        if (!empty($editedDescTarefa) && !empty($editedDataTarefa)) {
             // Execute a lógica de atualização dos campos no banco de dados
             $tarefaid = isset($_GET['id_tarefa']) ? $_GET['id_tarefa'] : null;
 
             if ($tarefaid !== null) {
                 // Execute a consulta SQL de atualização
-                $sql = "UPDATE tarefas SET desc_tarefa = '$editedDescTarefa', data_tarefa = '$editedDataTarefa' WHERE id_tarefa = $tarefaid";
+                $sql = "UPDATE tarefas SET desc_tarefa = '$editedDescTarefa' WHERE id_tarefa = $tarefaid";
 
                 if (mysqli_query($conn, $sql)) {
                     // Os dados foram atualizados com sucesso na base de dados
                     // Defina a variável de sessão 'editing' como false
                     $_SESSION['editing'] = false;
 
-                    // Redirecione para a página do perfil do funcionário atualizado
-                    header("Location: perfil.php?id=$tarefaid");
-                    exit();
+                    // Redirecione para a página da tarefa atualizada
+                    if ($tarefaid !== null) {
+                        // Redirecione para a página da tarefa atualizada
+                        header("Location: Dtarefa.php?id_tarefa=$tarefaid");
+                        exit();
+                    }                    
                 } else {
                     // Ocorreu um erro ao atualizar os dados na base de dados
                     // Exiba uma mensagem de erro ou realize outra ação apropriada
-                    echo "Erro ao atualizar as informações do funcionário: " . mysqli_error($conn);
+                    echo "Erro ao atualizar as informações da tarefa: " . mysqli_error($conn);
                 }
             }
         }
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -212,16 +213,16 @@ if (isset($_POST['edit'])) {
                 ?>
 
                 <div class="profile-card-inf">
-                                <div class="profile-card-inf__item">
-                                    <div class="profile-card-inf__title"><?php echo $nome_user; ?></div>
-                                    <div class="profile-card-inf__txt">Responsável</div>
-                                </div>
+                    <div class="profile-card-inf__item">
+                        <div class="profile-card-inf__title"><?php echo $nome_user; ?></div>
+                        <div class="profile-card-inf__txt">Responsável</div>
+                    </div>
 
-                                <div class="profile-card-inf__item">
-                                    <div class="profile-card-inf__title" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="data_tarefa">
-                                        <?php echo $data; ?></div>
-                                    <div class="profile-card-inf__txt">Data de finalização</div>
-                                </div>
+                    <div class="profile-card-inf__item">
+                        <div class="profile-card-inf__title" <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true) echo 'contenteditable="true"'; ?> id="data_tarefa">
+                            <?php echo $data; ?></div>
+                        <div class="profile-card-inf__txt">Data de finalização</div>
+                    </div>
                 </div>
 
                 <div class="profile-card-ctr">
@@ -238,34 +239,50 @@ if (isset($_POST['edit'])) {
                         <?php endif; ?>
                 </div>
 
+                <?php
+
+                $sql = "SELECT * FROM tarefas";
+
+                if($res=mysqli_query($conn,$sql)){
+
+                $id_tarefa = array();
+
+                $iol= 0;
+                while($reg=mysqli_fetch_assoc($res)){
+
+                    $id_tarefa = $reg['id_tarefa'];
+
+            ?>
+
             <script>
                 function cancelEditing() {
-                    window.location.href = 'perfil.php?id=<?php echo $_SESSION['user_id']; ?>';
+                    window.location.href = 'Dtarefa.php?id_tarefa=<?php echo $tarefaid; ?>';
                     <?php $_SESSION['editing'] = false; ?>
                 }
             </script>
 
-                <script>
-                    function saveData() {
-                        var desc_user = document.getElementById('desc_user').innerText;
-                        var loc_user = document.getElementById('loc_user').innerText;
+            <?php }} ?>
 
-                        var xhr = new XMLHttpRequest();
-                        xhr.open("POST", "update_user_data.php", true);
-                        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                        xhr.onreadystatechange = function() {
-                            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                                window.location.href = 'perfil.php?id=<?php echo $_SESSION['user_id']; ?>'; // Redirecionar para a página de perfil atualizada
-                            }
-                        };
-                        xhr.send("employeeId=" + <?php echo $employeeId; ?> + "&desc_user=" + encodeURIComponent(desc_user) + "&loc_user=" + encodeURIComponent(loc_user));
-                    }
-                </script>
+            <script>
+                function saveData() {
+                    var desc_tarefa = document.getElementById('desc_tarefa').innerText;
+                    var data_tarefa = document.getElementById('data_tarefa').innerText;
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "update_tarefa_data.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function() {
+                        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                            window.location.href = 'Dtarefa.php?id_tarefa=<?php echo $tarefaid; ?>';
+                        }
+                    };
+                    xhr.send("tarefaId=<?php echo $tarefaid; ?>&desc_tarefa=" + encodeURIComponent(desc_tarefa) + "&data_tarefa=" + encodeURIComponent(data_tarefa));
+                }
+            </script>
 
             </div>
         </div>
     </div>
-    <!-- Resto do seu código -->
     <script src="./profile.js"></script>
 </main>
 
