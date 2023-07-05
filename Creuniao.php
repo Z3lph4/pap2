@@ -1,5 +1,4 @@
 <?php
-
 include 'config.php';
 
 session_start();
@@ -12,23 +11,54 @@ if (isset($_POST["signup"])) {
     $tel = mysqli_real_escape_string($conn, $_POST["signup_tel_user"]);
     $hora = mysqli_real_escape_string($conn, $_POST["signup_hora_reuniao"]);
 
-    if($pass !== $cpass) {
+    // Verifique se a senha corresponde à confirmação da senha
+    if ($pass !== $cpass) {
         echo "<script>alert('Password incorreta.');</script>";
-      } elseif ($check_email > 0) {
-        echo "<script>alert('Email já existe.');</script>";
-      } else {
-      $sql = "INSERT INTO reunioes (nome_reuniao, desc_reuniao, data_reuniao, hora_reuniao) VALUES ('$full_name', '$email', '$tel', '$hora')";
-      $result = mysqli_query($conn, $sql);
-      if ($result) {
-        $_POST["signup_nome_user"] = "";
-        $_POST["signup_email"] = "";
-        $_POST["signup_tel_user"] = "";
-        $_POST["singup_hora_reuniao"] = "";
+    } else {
+        // Verifique se o email já existe
+        $sql = "SELECT COUNT(*) as count FROM users WHERE email = '$email'";
+        $result = mysqli_query($conn, $sql);
+        $row = mysqli_fetch_assoc($result);
+        $check_email = $row['count'];
 
+        if ($check_email > 0) {
+            echo "<script>alert('Email já existe.');</script>";
+        } else {
+            // Inserir a nova reunião na tabela 'reunioes'
+            $sql = "INSERT INTO reunioes (nome_reuniao, desc_reuniao, data_reuniao, hora_reuniao) VALUES ('$full_name', '$email', '$tel', '$hora')";
+            $result = mysqli_query($conn, $sql);
+
+            if ($result) {
+                $reuniaoId = mysqli_insert_id($conn); // Obtém o ID da reunião recém-inserida
+
+                // Verifica se existem participantes selecionados
+                if (isset($_POST["participant_count"]) && isset($_POST["participants"])) {
+                    $participantCount = intval($_POST["participant_count"]);
+                    $participants = $_POST["participants"];
+
+                    // Insere os participantes na tabela 'reunioes_participantes'
+                    for ($i = 0; $i < $participantCount; $i++) {
+                        $participant = mysqli_real_escape_string($conn, $participants[$i]);
+                        $sql = "INSERT INTO user_reunioes (id_user, id_reuniao) VALUES ('$reuniaoId', '$participant')";
+                        $result = mysqli_query($conn, $sql);
+
+                        if (!$result) {
+                            echo "<script>alert('Erro ao adicionar participantes à reunião.');</script>";
+                            break; // Aborta o loop caso ocorra um erro
+                        }
+                    }
+                }
+
+                $_POST["signup_nome_user"] = "";
+                $_POST["signup_email"] = "";
+                $_POST["signup_tel_user"] = "";
+                $_POST["signup_hora_reuniao"] = "";
+            } else {
+                echo "<script>alert('Erro ao criar a reunião.');</script>";
+            }
+        }
     }
-  }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -138,88 +168,74 @@ if (isset($_POST["signup"])) {
         <!-- ============= END OF ASIDE ============ -->
 
         <main>
-  <div class="mainprof2">
-    <div class="containerprof2 a-containerprof" id="a-container">
-      <form action="" class="formprof" id="a-form" method="post">
-        <h2 class="form_titleprof titleprof">Nova Reunião</h2>
-        <input class="form__inputprof" type="text" placeholder="Assunto" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
-        <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
-        <input class="form__inputprof" type="date" placeholder="Data" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
-        <input class="form__inputprof" type="time" placeholder="Hora" name="signup_hora_reuniao" value="<?php echo $_POST["signup_hora_reuniao"]; ?>" required/>
-        <input class="form__inputprof" type="number" id="participant_count" name="participant_count" placeholder="Número de Participantes" min="2">
+    <div class="mainprof2">
+        <div class="containerprof2 a-containerprof" id="a-container">
+            <form action="" class="formprof" id="a-form" method="post">
+                <h2 class="form_titleprof titleprof">Nova Reunião</h2>
+                <input class="form__inputprof" type="text" placeholder="Assunto" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
+                <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
+                <input class="form__inputprof" type="date" placeholder="Data" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
+                <input class="form__inputprof" type="time" placeholder="Hora" name="signup_hora_reuniao" value="<?php echo $_POST["signup_hora_reuniao"]; ?>" required/>
+                <input class="form__inputprof" type="number" id="participant_count" name="participant_count" placeholder="Número de Participantes" min="2" onchange="createParticipantFields(this.value)" required>
 
-        <div id="participants_fields"></div>
+                <div id="participants_fields"></div>
 
-        <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
-      </form>
+                <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
+            </form>
+        </div>
     </div>
-  </div>
 </main>
 
 <script>
-  document.getElementById('participant_count').addEventListener('input', function() {
-    var count = parseInt(this.value);
-    var participantsFieldsDiv = document.getElementById('participants_fields');
+    document.getElementById('participant_count').addEventListener('input', function() {
+        var count = parseInt(this.value);
+        var participantsFieldsDiv = document.getElementById('participants_fields');
 
-    participantsFieldsDiv.innerHTML = '';
+        participantsFieldsDiv.innerHTML = '';
 
-    <?php
-      // Consulta SQL para selecionar os utilizadores na tabela "users"
-      $sql = "SELECT id_user, nome_user FROM users";
+        var selectedParticipants = [];
 
-      // Executa a consulta SQL e armazena o resultado em uma variável
-      $result = mysqli_query($conn, $sql);
+        for (var i = 0; i < count; i++) {
+            var selectContainerDiv = document.createElement('div');
+            selectContainerDiv.className = 'form__select-container';
 
-      // Armazena os nomes dos utilizadores em um array
-      $users = array();
-      while ($row = mysqli_fetch_assoc($result)) {
-          $users[] = $row['nome_user'];
-      }
-    ?>
+            var selectElement = document.createElement('select');
+            selectElement.className = 'form__selectprof';
+            selectElement.name = 'participants[]';
 
-    var selectedParticipants = [];
+            <?php
+            // Consulta SQL para selecionar os utilizadores na tabela "users"
+            $sql = "SELECT id_user, nome_user FROM users";
+            $result = mysqli_query($conn, $sql);
+            while ($row = mysqli_fetch_assoc($result)) {
+                $user = $row['nome_user'];
+                echo "selectElement.innerHTML += '<option value=\"$user\">$user</option>';";
+            }
+            ?>
 
-    for (var i = 0; i < count; i++) {
-      var selectContainerDiv = document.createElement('div');
-      selectContainerDiv.className = 'form__select-container';
+            var selectIcon = document.createElement('i');
+            selectIcon.className = 'fa fa-chevron-down form__select-icon';
+            selectIcon.setAttribute('aria-hidden', 'true');
 
-      var selectElement = document.createElement('select');
-      selectElement.className = 'form__selectprof';
-      selectElement.name = 'participant_' + i;
+            selectContainerDiv.appendChild(selectElement);
+            selectContainerDiv.appendChild(selectIcon);
 
-      <?php
-        // Preenche as opções do select com os utilizadores
-        echo 'selectElement.innerHTML += \'<option value="" disabled selected hidden>Selecione um responsável</option>\';';
-        foreach ($users as $user) {
-          echo 'if (!selectedParticipants.includes("' . $user . '")) {';
-          echo 'selectElement.innerHTML += \'<option value="' . $user . '">' . $user . '</option>\';';
-          echo '}';
+            participantsFieldsDiv.appendChild(selectContainerDiv);
+
+            // Armazena o participante selecionado para evitar repetição
+            selectElement.addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex].value;
+                if (selectedOption) {
+                    if (selectedParticipants.includes(selectedOption)) {
+                        alert('O funcionário já faz parte desta reunião!');
+                        this.value = '';
+                    } else {
+                        selectedParticipants.push(selectedOption);
+                    }
+                }
+            });
         }
-      ?>
-
-      var selectIcon = document.createElement('i');
-      selectIcon.className = 'fa fa-chevron-down form__select-icon';
-      selectIcon.setAttribute('aria-hidden', 'true');
-
-      selectContainerDiv.appendChild(selectElement);
-      selectContainerDiv.appendChild(selectIcon);
-
-      participantsFieldsDiv.appendChild(selectContainerDiv);
-
-      // Armazena o participante selecionado para evitar repetição
-      selectElement.addEventListener('change', function() {
-        var selectedOption = this.options[this.selectedIndex].value;
-        if (selectedOption) {
-          if (selectedParticipants.includes(selectedOption)) {
-            alert('O funcionário já faz parte desta reunião!');
-            this.value = '';
-          } else {
-            selectedParticipants.push(selectedOption);
-          }
-        }
-      });
-    }
-  });
+    });
 </script>
 
         <!-- ============== END OF MAIN ============ -->
