@@ -24,6 +24,7 @@ session_start();
     <div class="container">
         <aside>
             <div class="top">
+            <a href="index.php">
                 <div class="logo"> 
                     <img src="img/logo2.png">
                     <h2>Em<span class="clogo">Tec</span></h2>
@@ -31,6 +32,7 @@ session_start();
                 <div class="close" id="close-btn">
                 <span class="material-icons-sharp">close</span>
                 </div>
+                </a>
             </div>
 
             <div class="sidebar">
