@@ -373,7 +373,7 @@ session_start();
                 $img_user = $img_row['imagem'];
             } else {
                 // Imagem padrão caso não seja encontrada
-                $img_user = "caminho/para/uma/imagem/default.png";
+                $img_user = "./img/users/padrao.png";
             }
 ?>
             <div class="recent-updates" onclick="redirectTo('funcionarios.php')">
