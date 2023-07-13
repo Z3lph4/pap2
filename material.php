@@ -26,6 +26,8 @@ if (isset($_POST["action"])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmTec</title>
+    <link rel="shortcut icon" href="img/logo2.png" type="image/x-icon" />
+    <link rel="icon" href="img/logo2.png" type="image/x-icon" />
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -74,9 +76,14 @@ if (isset($_POST["action"])) {
                 <h3>Material</h3>    
             </a>
             
-            <a href="perfil.php">
-            <span class="material-icons-sharp">account_circle</span>
+            <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>">
+                <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
+            </a>
+
+            <a href="chat.php">
+            <span class="material-icons-sharp">chat</span>
+                <h3>Chat</h3>    
             </a>
             
             <!-- ======== Consuante o rank ========= -->
@@ -92,10 +99,29 @@ if (isset($_POST["action"])) {
                 <h3>Definições</h3>    
             </a> -->
 
-            <a href="login.php">
-            <span class="material-icons-sharp">logout</span>
-                <h3>Sair</h3>    
-            </a>
+            <?php
+            // Verifica se o botão foi clicado
+            if(isset($_POST['delcookie'])) {
+                // Destroi a sessão atual
+                session_destroy();
+
+                // Remove a cookie PHPSESSID
+                if(isset($_COOKIE['PHPSESSID'])) {
+                    setcookie('PHPSESSID', '', time() - 3600, '/');
+                }
+
+                // Redireciona para outra página após remover a cookie
+                header('Location: login.php');
+                exit(); 
+            }
+            ?>
+
+            <form method="post" action="">
+                <button type="submit" name="delcookie" class="invbtn">
+                    <a><span class="material-icons-sharp">logout</span>
+                    <h3>Sair</h3></a>
+                </button>
+            </form>
             
             </div>
         </aside>
@@ -114,6 +140,7 @@ if (isset($_POST["action"])) {
             $id_material = array();
             $nome_material = array();
             $desc_material = array();
+            $qnt_material = array();
 
             $iol= 0;
             while($reg=mysqli_fetch_assoc($res)){
@@ -121,6 +148,7 @@ if (isset($_POST["action"])) {
                 $id_material[$iol] = $reg['id_material'];
                 $nome_material[$iol] = $reg['nome_material'];
                 $desc_material[$iol] = $reg['desc_material'];
+                $qnt_material[$iol] = $reg['qnt_material'];
 
             ?>
 
@@ -129,28 +157,39 @@ if (isset($_POST["action"])) {
                         <thead>
                             <tr>
                                 <th style="width: 350px; max-width: 350px;">Nome do Material</th>
-                                <th style="width: 350px; max-width: 350px;">Nº do Material</th>
+                                <th style="width: 350px; max-width: 350px;">Quantidade</th>
                                 <th style="width: 350px; max-width: 350px;">Descrição</th>
                             </tr>
                     </thead>
                 <tbody>
                 <tr>
                     <td><?php echo $nome_material[$iol]; ?></td>
-                    <td class="warning"><?php echo $id_material[$iol]; ?></td>
+                    <td class="warning"><?php echo $qnt_material[$iol]; ?></td>
                     <td><?php echo $desc_material[$iol]; ?></td>
                     <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
-                    <td><div class="productsdel pointer">
-                        <?php
+                        <td>
+                            <div class="productsdel pointer">
+                                <?php
                                 $form_id = "DeleteMaterial" . $id_material[$iol];
-                            ?>
-                            <form method="post" action="material.php" id="<?php echo $form_id ?>">
-                                <input type="hidden" name="MaterialId" value="<?php echo $id_material[$iol] ?>" />
-                                <input type="hidden" name="action" value="DeleteMaterial" />  
-                            <a class="tm-product-delete-link" onClick="document.getElementById('<?php echo $form_id ?>').submit();">
-                                <i class="material-icons-sharp">delete</i></a>
+                                ?>
+                                <form method="post" action="material.php" id="<?php echo $form_id ?>">
+                                    <input type="hidden" name="MaterialId" value="<?php echo $id_material[$iol] ?>" />
+                                    <input type="hidden" name="action" value="DeleteMaterial" />  
+                                    <a class="tm-product-delete-link" onClick="showConfirmation('<?php echo $form_id ?>');">
+                                        <i class="material-icons-sharp">delete</i>
+                                    </a>
+                                </form>
                             </div>
-                        </form>
-                    </td> <?php } ?>
+                        </td>
+
+                        <script>
+                            function showConfirmation(formId) {
+                                if (confirm("Tem certeza de que deseja excluir este material?")) {
+                                    document.getElementById(formId).submit();
+                                }
+                            }
+                        </script>
+                    <?php } ?>
                 </tr>
                     </tbody>
                 </table>
@@ -204,20 +243,33 @@ if (isset($_POST["action"])) {
         });
         </script>
 
-            <div onclick="myhref('perfil.php');" class="profile">
+        <!-- ==== Perfil ==== -->
+
+        <?php
+                // Recupere o ID do usuário logado
+                $userId = $_SESSION["user_id"];
+
+                // Consulta para obter a imagem do usuário
+                $sql = "SELECT imagem FROM users WHERE id_user = $userId";
+                $result = mysqli_query($conn, $sql);
+
+                if ($result && mysqli_num_rows($result) > 0) {
+                    $row = mysqli_fetch_assoc($result);
+                    $img_user = $row['imagem'];
+                }
+            ?>
+
+
+            <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>">
+            <div class="profile">
             <div class="info">
                 <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
             <div class="profile-photo">
-                <img src="./img/profile-1.jpg">
+                <img src="<?php echo $img_user ?>" alt="Imagem do utilizador">
             </div>
-            </div>
-
-            <script type="text/javascript">
-                function myhref(perfil){
-                window.location.href = perfil;}
-            </script>
+            </div></a>
 
         </div>
 
@@ -226,53 +278,59 @@ if (isset($_POST["action"])) {
             <h2>Utilizadores Recentes</h2>              
             <div class="updates"> 
 
-        <?php
+            <?php
+    $sql = "SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users ORDER BY id_user DESC LIMIT 3";
 
-            $sql ="SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users order by id_user desc LIMIT 2";
+    if ($res = mysqli_query($conn, $sql)) {
+        while ($reg = mysqli_fetch_assoc($res)) {
+            $id_user = $reg['id_user'];
+            $full_name = $reg['nome_user'];
+            $data = $reg['data'];
 
-            if($res=mysqli_query($conn,$sql)){
+            // Consulta para obter a imagem do usuário
+            $img_sql = "SELECT imagem FROM users WHERE id_user = $id_user";
+            $img_result = mysqli_query($conn, $img_sql);
 
-            $id_user = array();
-            $full_name = array();
-            $data = array();
-
-            $iol= 0;
-            while($reg=mysqli_fetch_assoc($res)){
-
-                $id_user[$iol] = $reg['id_user'];
-                $full_name[$iol] = $reg['nome_user'];
-                $data[$iol] = $reg['data'];
-        ?>
-                <div class="recent-updates" onclick="myhref('funcionarios.php');">
+            if ($img_result && mysqli_num_rows($img_result) > 0) {
+                $img_row = mysqli_fetch_assoc($img_result);
+                $img_user = $img_row['imagem'];
+            } else {
+                // Imagem padrão caso não seja encontrada
+                $img_user = "caminho/para/uma/imagem/default.png";
+            }
+?>
+            <div class="recent-updates" onclick="myhref('funcionarios.php');">
                 <div class="update">
                     <div class="profile-photo">
-                        <img src="./img/profile-2.jpg">
+                        <img src="<?php echo $img_user; ?>" alt="Imagem do utilizador">
                     </div>
-                <div class="message">
-                    <p><b><?php echo $full_name[$iol]; ?></b> acabou de se juntar á nossa empresa!</p>
-                    <small class="text-muted"> <?php echo $reg['data']; ?> dias atrás</small>
+                    <div class="message">
+                        <p><b><?php echo $full_name; ?></b> acabou de se juntar à nossa empresa!</p>
+                        <small class="text-muted"><?php echo $data; ?> dias atrás</small>
+                    </div>
                 </div>
-                </div>
-                 <?php }} ?>
             </div>
-            
+            <?php
+                    }
+                }
+            ?>
+
             <script type="text/javascript">
                 function myhref(funcionarios){
                 window.location.href = funcionarios;}
             </script>
-
+               
             </div>
         </div>
-            </div>  
 
          <!--------------------- END OF RECENT UPDATES ------------------->
 
          <div class="sales-analytics">
-            <h2>Reuniões Recentes</h2>
+            <h2>Reuniões Marcadas</h2>
 
             <?php
 
-                $sql ="SELECT * FROM reunioes where data_reuniao > CURDATE() order by id_reuniao desc LIMIT 2";
+                $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) > CURDATE() LIMIT 2";
 
                 if($res=mysqli_query($conn,$sql)){
 

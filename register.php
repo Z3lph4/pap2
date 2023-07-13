@@ -21,7 +21,8 @@ if (isset($_POST["signup"])) {
     } elseif ($check_email > 0) {
         echo "<script>alert('Email já existe.');</script>";
     } else {
-        $sql = "INSERT INTO users (nome_user, email_user, tel_user, pass_user, rank_user, imagem) VALUES ('$full_name', '$email', '$tel', '$pass', '$rank', '$imagem_padrao')";
+        $sql = "INSERT INTO users (nome_user, email_user, tel_user, pass_user, rank_user, imagem, loc_user, desc_user) 
+        VALUES ('$full_name', '$email', '$tel', '$pass', '$rank', '$imagem_padrao', 'Inserir localização', 'Inserir descrição')";
         $result = mysqli_query($conn, $sql);
         if ($result) {
             $_POST["signup_nome_user"] = "";
@@ -39,9 +40,6 @@ if (isset($_POST["signup"])) {
 }
 ?>
 
-<!-- Resto do seu código HTML -->
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,6 +47,8 @@ if (isset($_POST["signup"])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmTec</title>
+    <link rel="shortcut icon" href="img/logo2.png" type="image/x-icon" />
+    <link rel="icon" href="img/logo2.png" type="image/x-icon" />
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -96,9 +96,14 @@ if (isset($_POST["signup"])) {
                 <h3>Material</h3>    
             </a>
 
-            <a href="perfil.php">
-            <span class="material-icons-sharp">account_circle</span>
+            <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>">
+                <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
+            </a>
+
+            <a href="chat.php">
+            <span class="material-icons-sharp">chat</span>
+                <h3>Chat</h3>    
             </a>
             
             <!-- ======== Consuante o rank ========= -->
@@ -112,14 +117,29 @@ if (isset($_POST["signup"])) {
                 <h3>Definições</h3>    
             </a> -->
 
-            <a href="login.php">
-            <span class="material-icons-sharp">logout</span>
-                <h3>Sair</h3>
-                <script type="text/javascript">
-                    function myhref(logout){
-                    window.location.href = logout;}
-                </script>
-            </a>
+            <?php
+            // Verifica se o botão foi clicado
+            if(isset($_POST['delcookie'])) {
+                // Destroi a sessão atual
+                session_destroy();
+
+                // Remove a cookie PHPSESSID
+                if(isset($_COOKIE['PHPSESSID'])) {
+                    setcookie('PHPSESSID', '', time() - 3600, '/');
+                }
+
+                // Redireciona para outra página após remover a cookie
+                header('Location: login.php');
+                exit(); 
+            }
+            ?>
+
+            <form method="post" action="">
+                <button type="submit" name="delcookie" class="invbtn">
+                    <a><span class="material-icons-sharp">logout</span>
+                    <h3>Sair</h3></a>
+                </button>
+            </form>
             
             </div>
         </aside>
@@ -133,7 +153,7 @@ if (isset($_POST["signup"])) {
           <h2 class="form_titleprof titleprof">Criar Conta</h2>
           <input class="form__inputprof" type="text" placeholder="Nome" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
           <input class="form__inputprof" type="email" placeholder="Email" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
-          <input class="form__inputprof" type="text" placeholder="Telemóvel" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
+          <input class="form__inputprof" type="number" placeholder="Telemóvel" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
           <input class="form__inputprof" type="password" placeholder="Palavra-pass" name="signup_pass" value="<?php echo $_POST["signup_pass"]; ?>" required/>
           <input class="form__inputprof" type="password" placeholder="Confirmar Palavra-pass" name="signup_cpass" value="<?php echo $_POST["signup_cpass"]; ?>" required/>
 
@@ -194,29 +214,32 @@ if (isset($_POST["signup"])) {
         });
         </script>
 
-        <!-- ============= Perfil ============== -->
+        <!-- ==== Perfil ==== -->
 
-        <div onclick="myhref('perfil.php');" class="profile">
+        <?php
+                // Recupere o ID do usuário logado
+                $userId = $_SESSION["user_id"];
+
+                // Consulta para obter a imagem do usuário
+                $sql = "SELECT imagem FROM users WHERE id_user = $userId";
+                $result = mysqli_query($conn, $sql);
+
+                if ($result && mysqli_num_rows($result) > 0) {
+                    $row = mysqli_fetch_assoc($result);
+                    $img_user = $row['imagem'];
+                }
+            ?>
+
+            <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>">
+            <div class="profile">
             <div class="info">
                 <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
-                <small class="text-muted">Admin</small>
+                <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small> <!-- echo $rank[$iol]; ?> --> 
             </div>
             <div class="profile-photo">
-                <?php
-                $imagem_usuario = $_SESSION["imagem"];
-                if (!empty($imagem_usuario)) {
-                    echo '<img onclick="myhref(\'perfil.php\');" src="./img/users/' . $imagem_usuario . '">';
-                } else {
-                    echo '<img onclick="myhref(\'perfil.php\');" src="./img/users/padrao.png">';
-                }
-                ?>
-                <script type="text/javascript">
-                    function myhref(perfil) {
-                        window.location.href = perfil;
-                    }
-                </script>
+                <img src="<?php echo $img_user ?>" alt="Imagem do utilizador">
             </div>
-        </div>
+            </div></a>
 
         </div>
         <!-- END OF TOP -->
@@ -225,35 +248,42 @@ if (isset($_POST["signup"])) {
             <h2>Utilizadores Recentes</h2>              
             <div class="updates"> 
 
-        <?php
+            <?php
+    $sql = "SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users ORDER BY id_user DESC LIMIT 3";
 
-            $sql ="SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users order by id_user desc LIMIT 3";
+    if ($res = mysqli_query($conn, $sql)) {
+        while ($reg = mysqli_fetch_assoc($res)) {
+            $id_user = $reg['id_user'];
+            $full_name = $reg['nome_user'];
+            $data = $reg['data'];
 
-            if($res=mysqli_query($conn,$sql)){
+            // Consulta para obter a imagem do usuário
+            $img_sql = "SELECT imagem FROM users WHERE id_user = $id_user";
+            $img_result = mysqli_query($conn, $img_sql);
 
-            $id_user = array();
-            $full_name = array();
-            $data = array();
-
-            $iol= 0;
-            while($reg=mysqli_fetch_assoc($res)){
-
-                $id_user[$iol] = $reg['id_user'];
-                $full_name[$iol] = $reg['nome_user'];
-                $data[$iol] = $reg['data'];
-        ?>
-                <div class="recent-updates" onclick="myhref('funcionarios.php');">
+            if ($img_result && mysqli_num_rows($img_result) > 0) {
+                $img_row = mysqli_fetch_assoc($img_result);
+                $img_user = $img_row['imagem'];
+            } else {
+                // Imagem padrão caso não seja encontrada
+                $img_user = "caminho/para/uma/imagem/default.png";
+            }
+?>
+            <div class="recent-updates" onclick="myhref('funcionarios.php');">
                 <div class="update">
                     <div class="profile-photo">
-                        <img src="./img/profile-2.jpg">
+                        <img src="<?php echo $img_user; ?>" alt="Imagem do utilizador">
                     </div>
-                <div class="message">
-                    <p><b><?php echo $full_name[$iol]; ?></b> acabou de se juntar á nossa empresa!</p>
-                    <small class="text-muted"> <?php echo $reg['data']; ?> dias atrás</small>
+                    <div class="message">
+                        <p><b><?php echo $full_name; ?></b> acabou de se juntar à nossa empresa!</p>
+                        <small class="text-muted"><?php echo $data; ?> dias atrás</small>
+                    </div>
                 </div>
-                </div>
-                 <?php }} ?>
             </div>
+            <?php
+                    }
+                }
+            ?>
 
             <script type="text/javascript">
                 function myhref(funcionarios){
@@ -262,7 +292,6 @@ if (isset($_POST["signup"])) {
                
             </div>
         </div>
-            </div>  
 
          <!--------------------- END OF RECENT UPDATES ------------------->
 
@@ -271,7 +300,7 @@ if (isset($_POST["signup"])) {
 
             <?php
 
-                $sql ="SELECT * FROM reunioes where data_reuniao > CURDATE() order by id_reuniao desc LIMIT 2";
+                $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) > CURDATE() LIMIT 2";
 
                 if($res=mysqli_query($conn,$sql)){
 

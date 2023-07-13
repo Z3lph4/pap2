@@ -13,6 +13,8 @@ session_start();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmTec</title>
+    <link rel="shortcut icon" href="img/logo2.png" type="image/x-icon" />
+    <link rel="icon" href="img/logo2.png" type="image/x-icon" />
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -64,6 +66,11 @@ session_start();
             <a href="perfil.php">
             <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
+            </a>
+
+            <a href="chat.php">
+            <span class="material-icons-sharp">chat</span>
+                <h3>Chat</h3>    
             </a>
             
             <!-- ======== Consuante o rank ========= -->

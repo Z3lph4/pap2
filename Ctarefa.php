@@ -1,5 +1,4 @@
 <?php
-
 include 'config.php';
 
 session_start();
@@ -11,26 +10,58 @@ if (isset($_POST["signup"])) {
     $email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
     $tel = mysqli_real_escape_string($conn, $_POST["signup_tel_user"]);
     $uti = mysqli_real_escape_string($conn, $_POST["signup_pass"]);
-    $mat = mysqli_real_escape_string($conn, $_POST["material"]);
+    $kit = mysqli_real_escape_string($conn, $_POST["material"]);
 
-    if($pass !== $cpass) {
-        echo "<script>alert('Password incorreta.');</script>";
-      } elseif ($check_email > 0) {
-        echo "<script>alert('Email já existe.');</script>";
-      } else {
-      $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador, material) VALUES ('$full_name', '$tel', '$email', '$uti', '$mat')";
-      $result = mysqli_query($conn, $sql);
-      if ($result) {
-        $_POST["signup_nome_user"] = "";
-        $_POST["signup_email"] = "";
-        $_POST["signup_tel_user"] = "";
-        $_POST["signup_pass"] = "";
-        $_POST["material"] = "";
+    $material_id = $_POST["material"];
 
+    // Consulta SQL para obter a quantidade disponível do material selecionado
+    $sql_material = "SELECT qnt_material FROM material WHERE id_material = $material_id";
+    $result_material = mysqli_query($conn, $sql_material);
+    $row_material = mysqli_fetch_assoc($result_material);
+    $qnt_material_disponivel = $row_material["qnt_material"];
+
+    // Consulta SQL para contar o número de tarefas que estão utilizando o mesmo material
+    $sql_contagem_tarefas = "SELECT COUNT(*) AS qnt_tarefas FROM tarefas WHERE material = $material_id";
+    $result_contagem_tarefas = mysqli_query($conn, $sql_contagem_tarefas);
+    $row_contagem_tarefas = mysqli_fetch_assoc($result_contagem_tarefas);
+    $qnt_tarefas_utilizando_material = $row_contagem_tarefas["qnt_tarefas"];
+
+    // Consulta SQL para verificar se o usuário já tem uma tarefa para a data especificada
+    $sql_verificar_tarefa = "SELECT COUNT(*) AS tarefa_exists FROM tarefas WHERE utilizador = '$uti' AND data_tarefa = '$tel'";
+    $result_verificar_tarefa = mysqli_query($conn, $sql_verificar_tarefa);
+    $row_verificar_tarefa = mysqli_fetch_assoc($result_verificar_tarefa);
+    $tarefa_exists = $row_verificar_tarefa["tarefa_exists"];
+
+    if ($tarefa_exists > 0) {
+        echo "<script>alert('O responsável selecionado já tem tarefas atribuídas para esse dia!');</script>";    
+    } elseif ($qnt_tarefas_utilizando_material >= $qnt_material_disponivel) {
+        echo "<script>alert('Material indisponível ou fora de estoque!');</script>";
+    } else {
+        if ($uti !== $_POST["cpass"]) {
+            $email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
+
+            // Consulta SQL para verificar se o email já existe na tabela de usuários
+            $sql_check_email = "SELECT COUNT(*) AS email_exists FROM users WHERE email = '$email'";
+            $result_check_email = mysqli_query($conn, $sql_check_email);
+            $row_check_email = mysqli_fetch_assoc($result_check_email);
+            $email_exists = $row_check_email["email_exists"];
+
+            if ($email_exists > 0) {
+                echo "<script>alert('Email já existe.');</script>";
+            } else {
+                $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador, material) VALUES ('$full_name', '$tel', '$email', '$uti', '$kit')";
+                $result = mysqli_query($conn, $sql);
+                if ($result) {
+                    $_POST["signup_nome_user"] = "";
+                    $_POST["signup_email"] = "";
+                    $_POST["signup_tel_user"] = "";
+                    $_POST["signup_pass"] = "";
+                    $_POST["material"] = "";
+                }
+            }
+        }
     }
-  }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -40,6 +71,8 @@ if (isset($_POST["signup"])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmTec</title>
+    <link rel="shortcut icon" href="img/logo2.png" type="image/x-icon" />
+    <link rel="icon" href="img/logo2.png" type="image/x-icon" />
     <!-- === MATERIAL ICON === -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- === Style sheet === -->
@@ -94,9 +127,14 @@ if (isset($_POST["signup"])) {
                 <h3>Material</h3>    
             </a>
             
-            <a href="perfil.php">
-            <span class="material-icons-sharp">account_circle</span>
+            <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>">
+                <span class="material-icons-sharp">account_circle</span>
                 <h3>Perfil</h3>    
+            </a>
+
+            <a href="chat.php">
+            <span class="material-icons-sharp">chat</span>
+                <h3>Chat</h3>    
             </a>
             
             <!-- ======== Consuante o rank ========= -->
@@ -110,10 +148,29 @@ if (isset($_POST["signup"])) {
                 <h3>Definições</h3>    
             </a> -->
 
-            <a href="login.php">
-            <span class="material-icons-sharp">logout</span>
-                <h3>Sair</h3>    
-            </a>
+            <?php
+            // Verifica se o botão foi clicado
+            if(isset($_POST['delcookie'])) {
+                // Destroi a sessão atual
+                session_destroy();
+
+                // Remove a cookie PHPSESSID
+                if(isset($_COOKIE['PHPSESSID'])) {
+                    setcookie('PHPSESSID', '', time() - 3600, '/');
+                }
+
+                // Redireciona para outra página após remover a cookie
+                header('Location: login.php');
+                exit(); 
+            }
+            ?>
+
+            <form method="post" action="">
+                <button type="submit" name="delcookie" class="invbtn">
+                    <a><span class="material-icons-sharp">logout</span>
+                    <h3>Sair</h3></a>
+                </button>
+            </form>
             
             </div>
         </aside>
@@ -125,12 +182,14 @@ if (isset($_POST["signup"])) {
       
       <div class="containerprof2 a-containerprof" id="a-container">
         <form action="" class="formprof" id="a-form" method="post">
-          <h2 class="form_titleprof titleprof">Criar Tarefa</h2>
+          <h2 class="form_titleprof titleprof">Nova Tarefa</h2>
           <input class="form__inputprof" type="text" placeholder="Tarefa" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
-          <input class="form__inputprof" type="date" placeholder="Data" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
+          <input class="form__inputprof" type="date" placeholder="Data de Conclusão" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
           <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
 
-          <?php
+          <div class="form__select-container">
+            <select id="inserir" name="signup_pass" class="form__selectprof">
+                <?php
                 // Estabelecer conexão com a Base de dados
                 $conn = mysqli_connect("localhost", "root", "", "pap2");
 
@@ -145,17 +204,19 @@ if (isset($_POST["signup"])) {
                 // Executa a consulta SQL e armazena o resultado em uma variável
                 $result = mysqli_query($conn, $sql);
 
-                // Exibe a caixa de seleção
-                echo '<select class="form__inputprof" name="signup_pass" required>';
+                // Exibe a opção padrão e as opções do banco de dados
+                echo '<option value="" disabled selected hidden>Selecione um responsável</option>';
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo '<option value="' . $row['id_user'] . '">' . $row['nome_user'] . '</option>';
                 }
-                echo '</select>';
-                echo '<span class="select-arrow"></span>';
+                ?>
+            </select>
+            <i class="fa fa-chevron-down form__select-icon" aria-hidden="true"></i>
+        </div>
 
-            ?>
-
-            <?php
+        <div class="form__select-container">
+            <select id="inserir" name="material" class="form__selectprof">
+                <?php
                 // Estabelecer conexão com a Base de dados
                 $conn = mysqli_connect("localhost", "root", "", "pap2");
 
@@ -165,20 +226,40 @@ if (isset($_POST["signup"])) {
                 }
 
                 // Consulta SQL para selecionar os utilizadores na tabela "users"
-                $sql = "SELECT id_material, nome_material FROM material";
+                $sql = "SELECT id_material, nome_material, qnt_material FROM material";
 
                 // Executa a consulta SQL e armazena o resultado em uma variável
                 $result = mysqli_query($conn, $sql);
 
-                // Exibe a caixa de seleção
-                echo '<select class="form__inputprof" name="material" required>';
+                // Exibe a opção padrão e as opções do banco de dados
+                echo '<option value="" disabled selected hidden>Material necessário</option>';
                 while ($row = mysqli_fetch_assoc($result)) {
-                    echo '<option value="' . $row['id_material'] . '">' . $row['nome_material'] . '</option>';
-                }
-                echo '</select>';
-                echo '<span class="select-arrow"></span>';
+                    $material_id = $row["id_material"];
+                    $material_nome = $row["nome_material"];
+                    $qnt_material = $row["qnt_material"];
+        
+                    // Consulta SQL para obter a quantidade disponível do material selecionado
+                    $sql_material = "SELECT qnt_material FROM material WHERE id_material = $material_id";
+                    $result_material = mysqli_query($conn, $sql_material);
+                    $row_material = mysqli_fetch_assoc($result_material);
+                    $qnt_material_disponivel = $row_material["qnt_material"];
 
-            ?>
+                    // Consulta SQL para contar o número de tarefas que estão utilizando o mesmo material
+                    $sql_contagem_tarefas = "SELECT COUNT(*) AS qnt_tarefas FROM tarefas WHERE material = $material_id";
+                    $result_contagem_tarefas = mysqli_query($conn, $sql_contagem_tarefas);
+                    $row_contagem_tarefas = mysqli_fetch_assoc($result_contagem_tarefas);
+                    $qnt_tarefas_utilizando_material = $row_contagem_tarefas["qnt_tarefas"];
+
+                    if ($qnt_tarefas_utilizando_material > $qnt_material_disponivel) {
+                        echo '<option value="' . $material_id . '" disabled>' . $material_nome . ' - Indisponível</option>';
+                    } else {
+                        echo '<option value="' . $material_id . '">' . $material_nome . '</option>';
+                    }
+                }
+                ?>
+            </select>
+            <i class="fa fa-chevron-down form__select-icon" aria-hidden="true"></i>
+        </div>
 
             <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
         </form>
@@ -231,56 +312,76 @@ if (isset($_POST["signup"])) {
         });
         </script>
 
-            <div onclick="myhref('perfil.php');" class="profile">
+        <!-- ============= Perfil ============= -->
+
+        <?php
+                // Recupere o ID do usuário logado
+                $userId = $_SESSION["user_id"];
+
+                // Consulta para obter a imagem do usuário
+                $sql = "SELECT imagem FROM users WHERE id_user = $userId";
+                $result = mysqli_query($conn, $sql);
+
+                if ($result && mysqli_num_rows($result) > 0) {
+                    $row = mysqli_fetch_assoc($result);
+                    $img_user = $row['imagem'];
+                }
+            ?>
+
+            <a href="perfil.php?id=<?php echo $_SESSION['user_id']; ?>">
+            <div class="profile">
             <div class="info">
                 <p>Olá, <b><?php echo $_SESSION["user_name"]; ?></b></p>
                 <small class="text-muted"><?php echo $_COOKIE["rank_user"]; ?></small>
             </div>
             <div class="profile-photo">
-                <img src="./img/profile-1.jpg">
+                <img src="<?php echo $img_user ?>" alt="Imagem do utilizador">
             </div>
-            </div>
-
-            <script type="text/javascript">
-                function myhref(perfil){
-                window.location.href = perfil;}
-            </script>
+            </div></a>
 
         </div>
+
         <!-- END OF TOP -->
         <div class="recent-updates">  
             <h2>Utilizadores Recentes</h2>              
             <div class="updates"> 
 
-        <?php
+            <?php
+    $sql = "SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users ORDER BY id_user DESC LIMIT 3";
 
-            $sql ="SELECT *, DATEDIFF(CURRENT_DATE, data_criacao) as data FROM users order by id_user desc LIMIT 3";
+    if ($res = mysqli_query($conn, $sql)) {
+        while ($reg = mysqli_fetch_assoc($res)) {
+            $id_user = $reg['id_user'];
+            $full_name = $reg['nome_user'];
+            $data = $reg['data'];
 
-            if($res=mysqli_query($conn,$sql)){
+            // Consulta para obter a imagem do usuário
+            $img_sql = "SELECT imagem FROM users WHERE id_user = $id_user";
+            $img_result = mysqli_query($conn, $img_sql);
 
-            $id_user = array();
-            $full_name = array();
-            $data = array();
-
-            $iol= 0;
-            while($reg=mysqli_fetch_assoc($res)){
-
-                $id_user[$iol] = $reg['id_user'];
-                $full_name[$iol] = $reg['nome_user'];
-                $data[$iol] = $reg['data'];
-        ?>
-                <div class="recent-updates" onclick="myhref('funcionarios.php');">
+            if ($img_result && mysqli_num_rows($img_result) > 0) {
+                $img_row = mysqli_fetch_assoc($img_result);
+                $img_user = $img_row['imagem'];
+            } else {
+                // Imagem padrão caso não seja encontrada
+                $img_user = "caminho/para/uma/imagem/default.png";
+            }
+?>
+            <div class="recent-updates" onclick="myhref('funcionarios.php');">
                 <div class="update">
                     <div class="profile-photo">
-                        <img src="./img/profile-2.jpg">
+                        <img src="<?php echo $img_user; ?>" alt="Imagem do utilizador">
                     </div>
-                <div class="message">
-                    <p><b><?php echo $full_name[$iol]; ?></b> acabou de se juntar á nossa empresa!</p>
-                    <small class="text-muted"> <?php echo $reg['data']; ?> dias atrás</small>
+                    <div class="message">
+                        <p><b><?php echo $full_name; ?></b> acabou de se juntar à nossa empresa!</p>
+                        <small class="text-muted"><?php echo $data; ?> dias atrás</small>
+                    </div>
                 </div>
-                </div>
-                 <?php }} ?>
             </div>
+            <?php
+                    }
+                }
+            ?>
 
             <script type="text/javascript">
                 function myhref(funcionarios){
@@ -289,16 +390,15 @@ if (isset($_POST["signup"])) {
                
             </div>
         </div>
-            </div>  
-
+        
          <!--------------------- END OF RECENT UPDATES ------------------->
 
          <div class="sales-analytics">
-            <h2>Reuniões Recentes</h2>
+            <h2>Reuniões Marcadas</h2>
 
             <?php
 
-                $sql ="SELECT * FROM reunioes where data_reuniao > CURDATE() order by id_reuniao desc LIMIT 2";
+                $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) > CURDATE() LIMIT 2";
 
                 if($res=mysqli_query($conn,$sql)){
 
