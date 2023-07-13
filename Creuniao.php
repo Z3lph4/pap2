@@ -12,23 +12,25 @@ if (isset($_POST["signup"])) {
     $tel = mysqli_real_escape_string($conn, $_POST["signup_tel_user"]);
     $hora = mysqli_real_escape_string($conn, $_POST["signup_hora_reuniao"]);
 
-    if($pass !== $cpass) {
-        echo "<script>alert('Password incorreta.');</script>";
-      } elseif ($check_email > 0) {
-        echo "<script>alert('Email já existe.');</script>";
-      } else {
-      $sql = "INSERT INTO reunioes (nome_reuniao, desc_reuniao, data_reuniao, hora_reuniao) VALUES ('$full_name', '$email', '$tel', '$hora')";
-      $result = mysqli_query($conn, $sql);
-      if ($result) {
-        $_POST["signup_nome_user"] = "";
-        $_POST["signup_email"] = "";
-        $_POST["signup_tel_user"] = "";
-        $_POST["singup_hora_reuniao"] = "";
-
+    // Verifica se já existe uma reunião marcada para a mesma data e hora
+    $sql_check = "SELECT * FROM reunioes WHERE data_reuniao = '$tel' AND hora_reuniao = '$hora'";
+    $result_check = mysqli_query($conn, $sql_check);
+    $num_rows = mysqli_num_rows($result_check);
+    
+    if ($num_rows > 0) {
+        echo "<script>alert('Já existe uma reunião marcada para essa data e hora.');</script>";
+    } else {
+        $sql = "INSERT INTO reunioes (nome_reuniao, desc_reuniao, data_reuniao, hora_reuniao) VALUES ('$full_name', '$email', '$tel', '$hora')";
+        $result = mysqli_query($conn, $sql);
+        
+        if ($result) {
+            $_POST["signup_nome_user"] = "";
+            $_POST["signup_email"] = "";
+            $_POST["signup_tel_user"] = "";
+            $_POST["singup_hora_reuniao"] = "";
+        }
     }
-  }
 }
-
 ?>
 
 <!DOCTYPE html>
