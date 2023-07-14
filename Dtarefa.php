@@ -230,6 +230,21 @@ if (isset($_POST['edit'])) { // Verifique se o botão "Editar" foi clicado
 
                             ?>
 
+                            <?php
+
+                                // Verificar se o formulário foi submetido
+                                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reopen'])) {
+
+                                    // Atualizar o campo 'estado' para 'Em Desenvolvimento'
+                                    $sql = "UPDATE tarefas SET estado = 'Em Desenvolvimento' WHERE id_tarefa = $tarefaid";
+                                    if ($conn->query($sql) === TRUE) {
+                                        echo '<script>window.location.href = "tarefas.php";</script>';
+                                    }
+
+                                }
+
+                            ?>
+
                             <div class="profile-card-ctr">
                                 <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
                                     <form method="POST" action="">
@@ -237,14 +252,20 @@ if (isset($_POST['edit'])) { // Verifique se o botão "Editar" foi clicado
                                         <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
                                     </form>
                                 <?php else: ?>
-                                    <form method="POST" action="">
-                                        <button class="profile-card__button button--green" name="finish" type="submit">Finalizar</button>
-                                    </form>
+                                    <?php if ($reg['estado'] === 'Concluída'): ?>
+                                        <form method="POST" action="">
+                                            <button class="profile-card__button yellow" name="reopen">Reabrir</button>
+                                        </form>
+                                    <?php else: ?>
+                                        <form method="POST" action="">
+                                            <button class="profile-card__button green" name="finish" type="submit">Finalizar</button>
+                                        </form>
+                                    <?php endif; ?>
                                     <button class="profile-card__button button--blue js-message-btn" onclick="myhref('tarefas.php');">Voltar</button>
                                     <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
-                                    <form method="POST" action="">
-                                        <button class="profile-card__button button--orange" type="submit" name="edit" >Editar</button>
-                                    </form>
+                                        <form method="POST" action="">
+                                            <button class="profile-card__button button--orange" type="submit" name="edit" >Editar</button>
+                                        </form>
                                     <?php } ?>
                                 <?php endif; ?>
                             </div>

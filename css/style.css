@@ -1347,12 +1347,18 @@ main .recent-orders a {
   .profile-card__button.button--orange:hover {
     box-shadow: 0px 7px 30px rgba(223, 45, 70, 0.75);
   }
-  .profile-card__button.button--green {
+  .profile-card__button.yellow {
+    background: linear-gradient(45deg, #f5ca27, #f05924);
+    box-shadow: 0px 4px 30px rgba(245, 202, 39, 0.35);
+}
+.profile-card__button.yellow:hover {
+    box-shadow: 0px 7px 30px rgba(245, 202, 39, 0.75);
+}
+  .profile-card__button.green {
     background: linear-gradient(45deg, #28a745, #218838); /* Cor verde */
     box-shadow: 0px 4px 30px rgba(72, 180, 97, 0.35); /* Sombra verde */
 }
-
-.profile-card__button.button--orange:hover {
+.profile-card__button.green:hover {
     box-shadow: 0px 7px 30px rgba(72, 180, 97, 0.75); /* Sombra verde ao passar o mouse */
 }
 
