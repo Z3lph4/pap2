@@ -24,6 +24,10 @@ if (isset($_POST["signup"])) {
             $_POST["signup_nome_user"] = "";
             $_POST["signup_email"] = "";
             $_POST["quantidade"] = "";
+
+            // Redirecionamento após a inserção do material
+            header("Location: material.php");
+            exit();
         }
     }
 }

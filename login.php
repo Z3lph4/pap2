@@ -74,6 +74,9 @@ if (isset($_POST["signin"])) {
           <div class="switch__circleprof"></div>
           <div class="switch__circleprof switch__circle--tprof"></div>
           <div class="switch__containerprof" id="switch-c1">
+                <div class="logo" style="margin-top: -50px;"> 
+                    <img src="img/logo2.png">
+                </div>
             <h2 class="switch__titleprof titleprof">Bem-vindo!</h2>
             <p class="switch__descriptionprof descriptionprof">É sempre um prazer poder revê-lo aqui conosco!</p>
           </div>

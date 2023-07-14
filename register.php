@@ -32,7 +32,10 @@ if (isset($_POST["signup"])) {
             $_POST["signup_cpass"] = "";
             $_POST["rank_user"] = "";
 
-            echo "<script>alert('Registado com sucesso.');</script>";
+            // Redirecionamento após a inserção da nova tarefa
+            header("Location: funcionarios.php");
+            exit();
+
         } else {
             echo "<script>alert('Falha no registo. Tente novamente!');</script>";
         }

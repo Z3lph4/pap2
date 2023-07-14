@@ -57,6 +57,10 @@ if (isset($_POST["signup"])) {
                     $_POST["signup_tel_user"] = "";
                     $_POST["signup_pass"] = "";
                     $_POST["material"] = "";
+
+                    // Redirecionamento após a inserção da nova tarefa
+                    header("Location: tarefas.php");
+                    exit();
                 }
             }
         }
@@ -261,7 +265,8 @@ if (isset($_POST["signup"])) {
             <i class="fa fa-chevron-down form__select-icon" aria-hidden="true"></i>
         </div>
 
-            <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
+            <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter"/>
+
         </form>
       </div>
     </div>
