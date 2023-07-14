@@ -3,50 +3,40 @@ include 'config.php';
 
 session_start();
 
-// Verifique se o botão "Editar" foi clicado
-if (isset($_POST['edit'])) {
+if (isset($_POST['edit'])) { // Verifique se o botão "Editar" foi clicado
     // Defina a variável de sessão 'editing' como true
     $_SESSION['editing'] = true;
 } elseif (isset($_POST['save'])) { // Verifique se o botão "Salvar" foi clicado
     // Verifique se os campos desc_tarefa e data_tarefa estão definidos em $_POST
-    if (isset($_POST['desc_tarefa']) && isset($_POST['data_tarefa']) && isset($_POST['responsavel'])) {
+    if (isset($_POST['desc_tarefa']) && isset($_POST['data_tarefa'])) {
         // Obtenha os valores enviados do formulário
         $editedDescTarefa = mysqli_real_escape_string($conn, $_POST['desc_tarefa']);
         $editedDataTarefa = mysqli_real_escape_string($conn, $_POST['data_tarefa']);
 
         // Verifique se os campos foram preenchidos
         if (!empty($editedDescTarefa) && !empty($editedDataTarefa)) {
-            // Obtenha o ID do responsável
-            $responsavel = mysqli_real_escape_string($conn, $_POST['responsavel']);
-            $sql_user = "SELECT id_user FROM users WHERE nome_user = '$responsavel'";
+            // Execute a lógica de atualização dos campos no banco de dados
+            $tarefaid = isset($_GET['id_tarefa']) ? $_GET['id_tarefa'] : null;
 
-            if ($res_user = mysqli_query($conn, $sql_user)) {
-                $reg_user = mysqli_fetch_assoc($res_user);
-                $responsavelId = $reg_user['id_user'];
+            if ($tarefaid !== null) {
+                // Execute a consulta SQL de atualização
+                $sql = "UPDATE tarefas SET desc_tarefa = '$editedDescTarefa' WHERE id_tarefa = $tarefaid";
 
-                // Execute a lógica de atualização dos campos no banco de dados
-                $tarefaid = isset($_GET['id_tarefa']) ? $_GET['id_tarefa'] : null;
+                if (mysqli_query($conn, $sql)) {
+                    // Os dados foram atualizados com sucesso na base de dados
+                    // Defina a variável de sessão 'editing' como false
+                    $_SESSION['editing'] = false;
 
-                if ($tarefaid !== null) {
-                    // Execute a consulta SQL de atualização
-                    $sql = "UPDATE tarefas SET desc_tarefa = '$editedDescTarefa', utilizador = $responsavelId WHERE id_tarefa = $tarefaid";
-
-                    if (mysqli_query($conn, $sql)) {
-                        // Os dados foram atualizados com sucesso na base de dados
-                        // Defina a variável de sessão 'editing' como false
-                        $_SESSION['editing'] = false;
-
+                    // Redirecione para a página da tarefa atualizada
+                    if ($tarefaid !== null) {
                         // Redirecione para a página da tarefa atualizada
-                        if ($tarefaid !== null) {
-                            // Redirecione para a página da tarefa atualizada
-                            header("Location: Dtarefa.php?id_tarefa=$tarefaid");
-                            exit();
-                        }
-                    } else {
-                        // Ocorreu um erro ao atualizar os dados na base de dados
-                        // Exiba uma mensagem de erro ou realize outra ação apropriada
-                        echo "Erro ao atualizar as informações da tarefa: " . mysqli_error($conn);
+                        header("Location: Dtarefa.php?id_tarefa=$tarefaid");
+                        exit();
                     }
+                } else {
+                    // Ocorreu um erro ao atualizar os dados na base de dados
+                    // Exiba uma mensagem de erro ou realize outra ação apropriada
+                    echo "Erro ao atualizar as informações da tarefa: " . mysqli_error($conn);
                 }
             }
         }
@@ -225,6 +215,21 @@ if (isset($_POST['edit'])) {
                                 </div>
                             </div>
 
+                            <?php
+
+                                // Verificar se o formulário foi submetido
+                                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['finish'])) {
+
+                                    // Atualizar o campo 'estado' para 'Concluída'
+                                    $sql = "UPDATE tarefas SET estado = 'Concluída' WHERE id_tarefa = $tarefaid";
+                                    if ($conn->query($sql) === TRUE) {
+                                        echo '<script>window.location.href = "tarefas.php";</script>';
+                                    }
+
+                                }
+
+                            ?>
+
                             <div class="profile-card-ctr">
                                 <?php if (isset($_SESSION['editing']) && $_SESSION['editing'] == true): ?>
                                     <form method="POST" action="">
@@ -232,10 +237,12 @@ if (isset($_POST['edit'])) {
                                         <button class="profile-card__button button--orange" onclick="cancelEditing()">Cancelar</button>
                                     </form>
                                 <?php else: ?>
-                                    <button class="profile-card__button button--blue js-message-btn" onclick="myhref('tarefas.php');">Voltar</button>
+                                    <form method="POST" action="">
+                                        <button class="profile-card__button button--green" name="finish" type="submit">Finalizar</button>
+                                    </form>
                                     <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                                     <form method="POST" action="">
-                                        <button class="profile-card__button button--orange" type="submit" name="edit">Editar</button>
+                                        <button class="profile-card__button button--orange" type="submit" name="edit" style="margin-left: 55px;">Editar</button>
                                     </form>
                                     <?php } ?>
                                 <?php endif; ?>

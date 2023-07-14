@@ -136,55 +136,55 @@ if (isset($_POST["action"])) {
             </form> 
 
             <?php
-               // Verifica se o usuário possui classificação 'func' (funcionário)
-               if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] == 'Func') {
-                   // Obtém o ID do usuário logado
-                   $user_id = $_SESSION["user_id"];
-               
-                   $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE() AND utilizador = $user_id";
-               
-                   if (isset($_POST['data_pesquisa'])) {
-                       $data_pesquisa = $_POST['data_pesquisa'];
-                       $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
-                   }
-               
-                   $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
-               } else {
-                   $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE()";
-               
-                   if (isset($_POST['data_pesquisa'])) {
-                       $data_pesquisa = $_POST['data_pesquisa'];
-                       $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
-                   }
-               
-                   $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
-               }
-               
-               if ($res = mysqli_query($conn, $sql)) {
-                   if (mysqli_num_rows($res) > 0) {
-                       while ($reg = mysqli_fetch_assoc($res)) {
-                           $id_tarefa = $reg['id_tarefa'];
-                           $utilizador_id = $reg['utilizador'];
-        
-                    // Consulta SQL para obter o nome do utilizador correspondente
-                    $sql_utilizador = "SELECT nome_user FROM users WHERE id_user = $utilizador_id";
-                    $res_utilizador = mysqli_query($conn, $sql_utilizador);
-                    $row_utilizador = mysqli_fetch_assoc($res_utilizador);
-                    $utilizador_nome = $row_utilizador['nome_user'];
-        
-                    $material_id = $reg['material'];
-        
-                    // Consulta SQL para obter o nome do material correspondente
-                    $sql_material = "SELECT nome_material FROM material WHERE id_material = $material_id";
-                    $res_material = mysqli_query($conn, $sql_material);
-                    
-                    if ($res_material && mysqli_num_rows($res_material) > 0) {
-                        $row_material = mysqli_fetch_assoc($res_material);
-                        $material_nome = $row_material['nome_material'];
-                    } else {
-                        $material_nome = "Nenhum material necessário";
-                    }
-                    ?>
+// Verifica se o usuário possui classificação 'func' (funcionário)
+if (isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] == 'Func') {
+    // Obtém o ID do usuário logado
+    $user_id = $_SESSION["user_id"];
+
+    $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE() AND utilizador = $user_id";
+
+    if (isset($_POST['data_pesquisa'])) {
+        $data_pesquisa = $_POST['data_pesquisa'];
+        $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
+    }
+
+    $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
+} else {
+    $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE()";
+
+    if (isset($_POST['data_pesquisa'])) {
+        $data_pesquisa = $_POST['data_pesquisa'];
+        $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
+    }
+
+    $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
+}
+
+if ($res = mysqli_query($conn, $sql)) {
+    if (mysqli_num_rows($res) > 0) {
+        while ($reg = mysqli_fetch_assoc($res)) {
+            $id_tarefa = $reg['id_tarefa'];
+            $utilizador_id = $reg['utilizador'];
+
+            // Consulta SQL para obter o nome do utilizador correspondente
+            $sql_utilizador = "SELECT nome_user FROM users WHERE id_user = $utilizador_id";
+            $res_utilizador = mysqli_query($conn, $sql_utilizador);
+            $row_utilizador = mysqli_fetch_assoc($res_utilizador);
+            $utilizador_nome = $row_utilizador['nome_user'];
+
+            $material_id = $reg['material'];
+
+            // Consulta SQL para obter o nome do material correspondente
+            $sql_material = "SELECT nome_material FROM material WHERE id_material = $material_id";
+            $res_material = mysqli_query($conn, $sql_material);
+
+            if ($res_material && mysqli_num_rows($res_material) > 0) {
+                $row_material = mysqli_fetch_assoc($res_material);
+                $material_nome = $row_material['nome_material'];
+            } else {
+                $material_nome = "Nenhum material necessário";
+            }
+            ?>
             
             <div class="recent-orders">
                 <table>
@@ -193,6 +193,7 @@ if (isset($_POST["action"])) {
                             <th>Nome da tarefa</th>
                             <th>Data da tarefa</th>
                             <th>Responsável</th>
+                            <th>Estado</th>
                         </tr>
                     </thead>
                 
@@ -201,6 +202,9 @@ if (isset($_POST["action"])) {
                             <td style="width: 260px; max-width: 260px;"><?php echo $reg['nome_tarefa']; ?></td>
                             <td style="width: 260px; max-width: 260px;"><?php echo $reg['data_tarefa']; ?></td>
                             <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $utilizador_nome; ?></td>
+                            <td style="width: 260px; max-width: 260px;" class="<?php echo $reg['estado'] === 'Concluída' ? 'success' : 'danger'; ?>">
+                                <?php echo $reg['estado']; ?>
+                            </td>
                             <td class="primary pointer" style="padding-right: 15px;">
                                 <a style="color: #007bff; padding: 10px;" href="Dtarefa.php?id=<?php echo $id_tarefa; ?>">Detalhes</a>
                             </td>

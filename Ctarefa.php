@@ -49,7 +49,7 @@ if (isset($_POST["signup"])) {
             if ($email_exists > 0) {
                 echo "<script>alert('Email já existe.');</script>";
             } else {
-                $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador, material) VALUES ('$full_name', '$tel', '$email', '$uti', '$kit')";
+                $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador, material, estado) VALUES ('$full_name', '$tel', '$email', '$uti', '$kit', 'Em Desenvolvimento')";
                 $result = mysqli_query($conn, $sql);
                 if ($result) {
                     $_POST["signup_nome_user"] = "";
@@ -57,6 +57,7 @@ if (isset($_POST["signup"])) {
                     $_POST["signup_tel_user"] = "";
                     $_POST["signup_pass"] = "";
                     $_POST["material"] = "";
+                    $_POST["estado"] = "";
 
                     // Redirecionamento após a inserção da nova tarefa
                     header("Location: tarefas.php");
