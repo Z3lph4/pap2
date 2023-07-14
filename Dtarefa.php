@@ -240,9 +240,10 @@ if (isset($_POST['edit'])) { // Verifique se o botão "Editar" foi clicado
                                     <form method="POST" action="">
                                         <button class="profile-card__button button--green" name="finish" type="submit">Finalizar</button>
                                     </form>
+                                    <button class="profile-card__button button--blue js-message-btn" onclick="myhref('tarefas.php');">Voltar</button>
                                     <?php if(isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] != 'Func') { ?>
                                     <form method="POST" action="">
-                                        <button class="profile-card__button button--orange" type="submit" name="edit" style="margin-left: 55px;">Editar</button>
+                                        <button class="profile-card__button button--orange" type="submit" name="edit" >Editar</button>
                                     </form>
                                     <?php } ?>
                                 <?php endif; ?>
