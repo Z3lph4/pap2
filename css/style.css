@@ -2120,3 +2120,348 @@ main .recent-orders a {
     max-width: 700px;
     position: relative;
   }
+
+  /* Select */
+
+  .customHtmlClass {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  .customSelectMultiple-container {
+    font-family: Roboto, Arial;
+    color: #ADAFB6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .customSelectMultiple {
+    position: relative;
+  }
+  
+  .customSelectMultiple select {
+    display: none;
+  }
+  
+  .customSelectMultiple > div {
+    width: 350px;
+    height: 40px;
+    margin: 4px 0;
+    padding-left: 25px;
+    font-size: 13px;
+    letter-spacing: 0.15px;
+    border: none;
+    outline: none;
+    font-family: "Montserrat", sans-serif;
+    background-color: #ecf0f3;
+    transition: 0.25s ease;
+    border-radius: 8px;
+    box-shadow: inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #f9f9f9;
+  }
+
+  .customSelectMultiple > div .customArrow {
+    right: 25px;
+    top: 0;
+    bottom: 0;
+    cursor: pointer;
+    width: 23px;
+    height: 40px;
+    position: absolute;
+  }
+  
+  .customSelectMultiple > div .customArrow:before,
+  .customSelectMultiple > div .customArrow:after {
+    content: "";
+    position: absolute;
+    display: block;
+    width: 2px;
+    height: 8px;
+    border-bottom: 8px solid #99A3BA;
+    top: 43%;
+    transition: all 0.3s ease;
+  }
+  
+  .customSelectMultiple > div .customArrow:before {
+    right: 12px;
+    transform: rotate(-130deg);
+  }
+  
+  .customSelectMultiple > div .customArrow:after {
+    left: 9px;
+    transform: rotate(130deg);
+  }
+  
+  .customSelectMultiple > div span {
+    color: #99A3BA;
+    display: block;
+    position: absolute;
+    left: 12px;
+    padding-left: 13px;
+    cursor: pointer;
+    top: 8px;
+    line-height: 28px;
+    transition: all 0.3s ease;
+  }
+  
+  .customSelectMultiple > div span.hide {
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-4px, 0);
+  }
+  
+  .customSelectMultiple > div a {
+    position: relative;
+    padding: 6px 24px 6px 8px;
+    line-height: 28px;
+    color: #1E2330;
+    display: inline-block;
+    vertical-align: top;
+    margin: 2px 6px 2px 0;
+    height: 35px;
+    border-radius: 10%;
+    background: #fff;
+  }
+  
+  .customSelectMultiple > div a em {
+    font-style: normal;
+    display: block;
+    white-space: nowrap;
+  }
+  
+  .customSelectMultiple > div a i {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 24px;
+    height: 38px;
+    display: block;
+  }
+  
+  .customSelectMultiple > div a i:before,
+  .customSelectMultiple > div a i:after {
+    content: "";
+    display: block;
+    width: 2px;
+    height: 10px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: #4D18FF;
+    border-radius: 1px;
+  }
+  
+  .customSelectMultiple > div a i:before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  
+  .customSelectMultiple > div a i:after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+  
+  .customSelectMultiple > div a.notShown {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .customSelectMultiple > div a.notShown:before {
+    width: 28px;
+    transition: width 0.45s cubic-bezier(0.87, -0.41, 0.19, 1.44) 0.2s;
+  }
+  
+  .customSelectMultiple > div a.notShown i {
+    opacity: 0;
+    transition: all 0.3s ease 0.3s;
+  }
+  
+  .customSelectMultiple > div a.notShown em {
+    opacity: 0;
+    transform: translate(-6px, 0);
+    transition: all 0.4s ease 0.3s;
+  }
+  
+  .customSelectMultiple > div a.notShown.shown {
+    opacity: 1;
+  }
+  
+  .customSelectMultiple > div a.notShown.shown:before {
+    width: 100%;
+  }
+  
+  .customSelectMultiple > div a.notShown.shown i {
+    opacity: 1;
+  }
+  
+  .customSelectMultiple > div a.notShown.shown em {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  
+  .customSelectMultiple > div a.remove:before {
+    width: 28px;
+    transition: width 0.4s cubic-bezier(0.87, -0.41, 0.19, 1.44) 0s;
+  }
+  
+  .customSelectMultiple > div a.remove i {
+    opacity: 0;
+    transition: all 0.3s ease 0s;
+  }
+  
+  .customSelectMultiple > div a.remove em {
+    opacity: 0;
+    transform: translate(-12px, 0);
+    transition: all 0.4s ease 0s;
+  }
+  
+  .customSelectMultiple > div a.remove.disappear {
+    opacity: 0;
+    transition: opacity 0.5s ease 0s;
+  }
+  
+  .customSelectMultiple > ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 16px;
+    z-index: 1;
+    position: absolute;
+    top: 70%;
+    left: 0;
+    right: 0;
+    visibility: hidden;
+    opacity: 0;
+    border-radius: 8px;
+    transform: translate(0, 20px) scale(0.8);
+    transform-origin: 0 0;
+    filter: drop-shadow(0 12px 20px rgba(22, 42, 90, 0.08));
+    transition: all 0.4s ease, transform 0.4s cubic-bezier(0.87, -0.41, 0.19, 1.44), filter 0.3s ease 0.2s;
+  }
+  
+  .customSelectMultiple > ul li {
+    color: #1E2330;
+    background: #fff;
+    padding: 12px 16px;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    transition: 0.3s ease, color 0.3s ease, transform 0.3s ease 0.3s, opacity 0.5s ease 0.3s, border-radius 0.3s ease 0.3s;
+  }
+  
+  .customSelectMultiple > ul li:first-child {
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .customSelectMultiple > ul li:first-child:last-child {
+    border-radius: 8px;
+  }
+  
+  .customSelectMultiple > ul li:last-child {
+    border-radius: 0 0 8px 8px;
+  }
+  
+  .customSelectMultiple > ul li:last-child:first-child {
+    border-radius: 8px;
+  }
+  
+  .customSelectMultiple > ul li:hover {
+    background: #4D18FF;
+    color: #fff;
+  }
+  
+  .customSelectMultiple > ul li:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+  }
+  
+  .customSelectMultiple > ul li.beforeRemove {
+    border-radius: 0 0 8px 8px;
+  }
+  
+  .customSelectMultiple > ul li.beforeRemove:first-child {
+    border-radius: 8px;
+  }
+  
+  .customSelectMultiple > ul li.afterRemove {
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .customSelectMultiple > ul li.afterRemove:last-child {
+    border-radius: 8px;
+  }
+  
+  .customSelectMultiple > ul li.remove {
+    transform: scale(0);
+    opacity: 0;
+  }
+  
+  .customSelectMultiple > ul li.remove:after {
+    animation: customRipple 0.4s ease-out;
+  }
+  
+  .customSelectMultiple > ul li.notShown {
+    display: none;
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.35s ease, opacity 0.4s ease;
+  }
+  
+  .customSelectMultiple > ul li.notShown.show {
+    transform: scale(1);
+    opacity: 1;
+  }
+  
+  .customSelectMultiple.open > div .customArrow:before {
+    transform: rotate(-50deg);
+  }
+  
+  .customSelectMultiple.open > div .customArrow:after {
+    transform: rotate(50deg);
+  }
+  
+  .customSelectMultiple.open > ul {
+    transform: translate(0, 12px) scale(1);
+    opacity: 1;
+    visibility: visible;
+    filter: drop-shadow(0 16px 24px rgba(22, 42, 90, 0.16));
+  }
+  
+  @-webkit-keyframes customRipple {
+    0% {
+      transform: scale(0, 0);
+      opacity: 1;
+    }
+    25% {
+      transform: scale(30, 30);
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(50, 50);
+    }
+  }
+  
+  @keyframes customRipple {
+    0% {
+      transform: scale(0, 0);
+      opacity: 1;
+    }
+    25% {
+      transform: scale(30, 30);
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(50, 50);
+    }
+  }
+  

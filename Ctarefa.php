@@ -9,8 +9,7 @@ if (isset($_POST["signup"])) {
     $full_name = mysqli_real_escape_string($conn, $_POST["signup_nome_user"]);
     $email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
     $tel = mysqli_real_escape_string($conn, $_POST["signup_tel_user"]);
-    $uti = mysqli_real_escape_string($conn, $_POST["signup_pass"]);
-    $kit = mysqli_real_escape_string($conn, $_POST["material"]);
+    //$kit = mysqli_real_escape_string($conn, $_POST["material"]);
 
     $material_id = $_POST["material"];
 
@@ -27,18 +26,18 @@ if (isset($_POST["signup"])) {
     $qnt_tarefas_utilizando_material = $row_contagem_tarefas["qnt_tarefas"];
 
     // Consulta SQL para verificar se o usuário já tem uma tarefa para a data especificada
-    $sql_verificar_tarefa = "SELECT COUNT(*) AS tarefa_exists FROM tarefas WHERE utilizador = '$uti' AND data_tarefa = '$tel'";
-    $result_verificar_tarefa = mysqli_query($conn, $sql_verificar_tarefa);
-    $row_verificar_tarefa = mysqli_fetch_assoc($result_verificar_tarefa);
-    $tarefa_exists = $row_verificar_tarefa["tarefa_exists"];
-
-    if ($tarefa_exists > 0) {
-        echo "<script>alert('O responsável selecionado já tem tarefas atribuídas para esse dia!');</script>";    
-    } elseif ($qnt_tarefas_utilizando_material >= $qnt_material_disponivel) {
-        echo "<script>alert('Material indisponível ou fora de estoque!');</script>";
+    //$sql_verificar_tarefa = "SELECT COUNT(*) AS tarefa_exists FROM tarefas WHERE utilizador = '$uti' AND data_tarefa = '$tel'";
+    //$result_verificar_tarefa = mysqli_query($conn, $sql_verificar_tarefa);
+    //$row_verificar_tarefa = mysqli_fetch_assoc($result_verificar_tarefa);
+    //$tarefa_exists = $row_verificar_tarefa["tarefa_exists"];
+    $tarefa_exists = 0;
+    $qnt_material_disponivel = 20;
+    $qnt_tarefas_utilizando_material = 2;
+    if ($qnt_tarefas_utilizando_material >= $qnt_material_disponivel) {
+        echo "<script>alert('Material indisponível ou fora de stock!');</script>";
     } else {
-        if ($uti !== $_POST["cpass"]) {
-            $email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
+        //if ($uti !== $_POST["cpass"]) {
+            //$email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
 
             // Consulta SQL para verificar se o email já existe na tabela de usuários
             $sql_check_email = "SELECT COUNT(*) AS email_exists FROM users WHERE email = '$email'";
@@ -49,9 +48,41 @@ if (isset($_POST["signup"])) {
             if ($email_exists > 0) {
                 echo "<script>alert('Email já existe.');</script>";
             } else {
-                $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, utilizador, material, estado) VALUES ('$full_name', '$tel', '$email', '$uti', '$kit', 'Em Desenvolvimento')";
+                $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, material, estado) 
+                VALUES ('$full_name', '$tel', '$email', '$material_id', 'Em Desenvolvimento')";
+
                 $result = mysqli_query($conn, $sql);
+
+                echo "<script>alert('TAREFA INSERIDA');</script>";
+
                 if ($result) {
+
+                    echo "<script>alert('RESULT OK');</script>";
+
+                    $id_tarefa = mysqli_insert_id($conn);
+
+                    echo "<script>alert('".$id_tarefa."');</script>";
+
+                    $uti = $_POST["signup_pass"];
+
+                    foreach ($uti as $idUti) {
+
+                        $sql_verificar_tarefa = "SELECT COUNT(*) AS tarefa_exists FROM tarefas WHERE utilizador = '$uti' AND data_tarefa = '$tel'";
+                        $result_verificar_tarefa = mysqli_query($conn, $sql_verificar_tarefa);
+                        $row_verificar_tarefa = mysqli_fetch_assoc($result_verificar_tarefa);
+                        $tarefa_exists = $row_verificar_tarefa["tarefa_exists"];
+                        
+                        if (!$tarefa_exists)
+                        {
+                            $sqlUtils = "INSERT INTO user_tarefas (id_user, id_tarefas) values ('$idUti', '$id_tarefa')";
+
+                            mysqli_query($conn, $sqlUtils);
+                        }
+
+                        else
+                            echo "<script>alert('Um dos responsáveis selecionados já tem tarefas atribuídas para esse dia!');</script>";    
+                    }          
+
                     $_POST["signup_nome_user"] = "";
                     $_POST["signup_email"] = "";
                     $_POST["signup_tel_user"] = "";
@@ -63,8 +94,18 @@ if (isset($_POST["signup"])) {
                     header("Location: tarefas.php");
                     exit();
                 }
+
+                else
+                {
+                    $aux = mysqli_error($conn);
+
+                    echo "<script>alert('ERRO: ".$aux."');</script>";
+
+                                $sqlTeste = "INSERT INTO teste (teste) values ('$aux')";
+                                mysqli_query($conn, $sqlTeste);
+                }
             }
-        }
+        //}
     }
 }
 ?>
@@ -192,8 +233,10 @@ if (isset($_POST["signup"])) {
           <input class="form__inputprof" type="date" placeholder="Data de Conclusão" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
           <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
 
-          <div class="form__select-container">
-            <select id="inserir" name="signup_pass" class="form__selectprof">
+          <div class="customSelectMultiple-container">
+
+                <select id="inserir" name="signup_pass[]" class="customSelectMultiple" multiple data-placeholder="Adicione Funcionários">
+
                 <?php
                 // Estabelecer conexão com a Base de dados
                 $conn = mysqli_connect("localhost", "root", "", "pap2");
@@ -209,13 +252,12 @@ if (isset($_POST["signup"])) {
                 // Executa a consulta SQL e armazena o resultado em uma variável
                 $result = mysqli_query($conn, $sql);
 
-                // Exibe a opção padrão e as opções do banco de dados
-                echo '<option value="" disabled selected hidden>Selecione um responsável</option>';
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo '<option value="' . $row['id_user'] . '">' . $row['nome_user'] . '</option>';
                 }
                 ?>
             </select>
+
             <i class="fa fa-chevron-down form__select-icon" aria-hidden="true"></i>
         </div>
 
@@ -444,6 +486,8 @@ if (isset($_POST["signup"])) {
         </script>
 
     <script src="js/index.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+    <script  src="js/select.js"></script>
 
 </body>
 </html>

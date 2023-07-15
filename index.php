@@ -142,7 +142,7 @@ session_start();
             // Obtém o ID do usuário logado
             $user_id = $_SESSION["user_id"];
         
-            $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE() AND utilizador = $user_id";
+            $sql = "SELECT t.* FROM tarefas AS t INNER JOIN user_tarefas AS ut ON t.id_tarefa = ut.id_tarefas WHERE ut.id_user = $user_id AND DATE(t.data_tarefa) > CURDATE()";
         
             if (isset($_POST['data_pesquisa'])) {
                 $data_pesquisa = $_POST['data_pesquisa'];
@@ -167,14 +167,6 @@ session_start();
                     $nome_tarefa = $reg['nome_tarefa'];
                     $data_tarefa = $reg['data_tarefa'];
                     $desc_tarefa = $reg['desc_tarefa'];
-                    $utilizador_id = $reg['utilizador'];
-
-                    // Consulta SQL para obter o nome do utilizador correspondente
-                    $sql_utilizador = "SELECT nome_user FROM users WHERE id_user = $utilizador_id";
-                    $res_utilizador = mysqli_query($conn, $sql_utilizador);
-                    $row_utilizador = mysqli_fetch_assoc($res_utilizador);
-                    $utilizador_nome = $row_utilizador['nome_user'];
-
                     
             ?>
 
@@ -184,16 +176,16 @@ session_start();
                                 <tr>
                                     <th>Nome da tarefa</th>
                                     <th>Data da tarefa</th>
-                                    <th>Responsável</th>
-                                    <th>Descrição</th>
+                                    <th>Estado</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td style="width: 230px; max-width: 230px;"><?php echo $nome_tarefa; ?></td>
                                     <td style="width: 230px; max-width: 230px;"><?php echo $data_tarefa; ?></td>
-                                    <td style="width: 230px; max-width: 230px;" class="warning"><?php echo $utilizador_nome; ?></td>
-                                    <td style="width: 230px; max-width: 230px;"><?php echo $desc_tarefa; ?></td>
+                                    <td style="width: 260px; max-width: 260px;" class="<?php echo $reg['estado'] === 'Concluída' ? 'success' : 'danger'; ?>">
+                                        <?php echo $reg['estado']; ?>
+                                    </td>
                                     <td class="primary pointer" onclick="redirectTo('tarefas.php')">Detalhes</td>
                                 </tr>
                             </tbody>

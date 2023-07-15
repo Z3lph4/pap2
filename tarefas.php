@@ -141,7 +141,7 @@ if (isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] == 'Func') {
     // Obtém o ID do usuário logado
     $user_id = $_SESSION["user_id"];
 
-    $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE() AND utilizador = $user_id";
+    $sql = "SELECT t.* FROM tarefas AS t INNER JOIN user_tarefas AS ut ON t.id_tarefa = ut.id_tarefas WHERE ut.id_user = $user_id AND DATE(t.data_tarefa) > CURDATE()";
 
     if (isset($_POST['data_pesquisa'])) {
         $data_pesquisa = $_POST['data_pesquisa'];
@@ -164,14 +164,7 @@ if ($res = mysqli_query($conn, $sql)) {
     if (mysqli_num_rows($res) > 0) {
         while ($reg = mysqli_fetch_assoc($res)) {
             $id_tarefa = $reg['id_tarefa'];
-            $utilizador_id = $reg['utilizador'];
-
-            // Consulta SQL para obter o nome do utilizador correspondente
-            $sql_utilizador = "SELECT nome_user FROM users WHERE id_user = $utilizador_id";
-            $res_utilizador = mysqli_query($conn, $sql_utilizador);
-            $row_utilizador = mysqli_fetch_assoc($res_utilizador);
-            $utilizador_nome = $row_utilizador['nome_user'];
-
+           
             $material_id = $reg['material'];
 
             // Consulta SQL para obter o nome do material correspondente
@@ -192,7 +185,6 @@ if ($res = mysqli_query($conn, $sql)) {
                         <tr>
                             <th>Nome da tarefa</th>
                             <th>Data da tarefa</th>
-                            <th>Responsável</th>
                             <th>Estado</th>
                         </tr>
                     </thead>
@@ -201,7 +193,6 @@ if ($res = mysqli_query($conn, $sql)) {
                         <tr>
                             <td style="width: 260px; max-width: 260px;"><?php echo $reg['nome_tarefa']; ?></td>
                             <td style="width: 260px; max-width: 260px;"><?php echo $reg['data_tarefa']; ?></td>
-                            <td style="width: 260px; max-width: 260px;" class="warning"><?php echo $utilizador_nome; ?></td>
                             <td style="width: 260px; max-width: 260px;" class="<?php echo $reg['estado'] === 'Concluída' ? 'success' : 'danger'; ?>">
                                 <?php echo $reg['estado']; ?>
                             </td>

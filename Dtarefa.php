@@ -169,16 +169,7 @@ if (isset($_POST['edit'])) { // Verifique se o botão "Editar" foi clicado
                         $nome_tarefa = $reg['nome_tarefa'];
                         $data = $reg['data_tarefa'];
                         $desc = $reg['desc_tarefa'];
-                        $utilizador = $reg['utilizador'];
                         $material = $reg['material'];
-
-                        $sql_user = "SELECT nome_user FROM users WHERE id_user = $utilizador";
-
-                        if ($res_user = mysqli_query($conn, $sql_user)) {
-                            while ($reg_user = mysqli_fetch_assoc($res_user)) {
-                                $nome_user = $reg_user['nome_user'];
-                            }
-                        }
 
                         $sql_material = "SELECT nome_material FROM material WHERE id_material = $material";
 
@@ -187,6 +178,19 @@ if (isset($_POST['edit'])) { // Verifique se o botão "Editar" foi clicado
                                 $nome_material = $reg_material['nome_material'];
                             }
                         }
+                    ?>
+
+                    <?php
+
+                        $sql_users = "SELECT users.nome_user FROM users INNER JOIN user_tarefas ON users.id_user = user_tarefas.id_user WHERE user_tarefas.id_tarefas = $tarefaid";
+
+                        if ($res_users = mysqli_query($conn, $sql_users)) {
+                            $nomes_funcionarios = array();
+                            while ($reg_users = mysqli_fetch_assoc($res_users)) {
+                                $nomes_funcionarios[] = $reg_users['nome_user'];
+                            }
+                        }
+
                     ?>
 
                         <div class="profile-card__name"><?php echo $nome_tarefa; ?></div>
@@ -203,11 +207,18 @@ if (isset($_POST['edit'])) { // Verifique se o botão "Editar" foi clicado
                                 <div class="profile-card-inf__txt">Data de finalização</div>
                             </div>
 
-                            <div class="profile-card-inf">
-                                <div class="profile-card-inf__item">
-                                    <div class="profile-card-inf__title warning"><?php echo $nome_user; ?></div>
-                                    <div class="profile-card-inf__txt">Responsável</div>
-                                </div>
+                            <div class="profile-card-inf__item">
+                            <div class="profile-card-inf__title">
+                                <?php
+                                if (!empty($nomes_funcionarios)) {
+                                    echo implode(', ', $nomes_funcionarios);
+                                } else {
+                                    echo 'Nenhum funcionário associado a esta tarefa';
+                                }
+                                ?>
+                            </div>
+                            <div class="profile-card-inf__txt">Funcionários associados</div>
+                        </div>
 
                                 <div class="profile-card-inf__item">
                                     <div class="profile-card-inf__title"><?php echo $material !== null ? $nome_material : 'Sem material associado a esta tarefa'; ?></div>
