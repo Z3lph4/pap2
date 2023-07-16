@@ -30,38 +30,24 @@ if (isset($_POST["signup"])) {
     //$result_verificar_tarefa = mysqli_query($conn, $sql_verificar_tarefa);
     //$row_verificar_tarefa = mysqli_fetch_assoc($result_verificar_tarefa);
     //$tarefa_exists = $row_verificar_tarefa["tarefa_exists"];
-    $tarefa_exists = 0;
+    
+    /* $tarefa_exists = 0;
     $qnt_material_disponivel = 20;
-    $qnt_tarefas_utilizando_material = 2;
+    $qnt_tarefas_utilizando_material = 2; */
+
     if ($qnt_tarefas_utilizando_material >= $qnt_material_disponivel) {
         echo "<script>alert('Material indisponível ou fora de stock!');</script>";
     } else {
-        //if ($uti !== $_POST["cpass"]) {
-            //$email = mysqli_real_escape_string($conn, $_POST["signup_email"]);
-
-            // Consulta SQL para verificar se o email já existe na tabela de usuários
-            $sql_check_email = "SELECT COUNT(*) AS email_exists FROM users WHERE email = '$email'";
-            $result_check_email = mysqli_query($conn, $sql_check_email);
-            $row_check_email = mysqli_fetch_assoc($result_check_email);
-            $email_exists = $row_check_email["email_exists"];
-
-            if ($email_exists > 0) {
-                echo "<script>alert('Email já existe.');</script>";
-            } else {
                 $sql = "INSERT INTO tarefas (nome_tarefa, data_tarefa, desc_tarefa, material, estado) 
                 VALUES ('$full_name', '$tel', '$email', '$material_id', 'Em Desenvolvimento')";
 
                 $result = mysqli_query($conn, $sql);
 
-                echo "<script>alert('TAREFA INSERIDA');</script>";
-
                 if ($result) {
 
-                    echo "<script>alert('RESULT OK');</script>";
 
                     $id_tarefa = mysqli_insert_id($conn);
 
-                    echo "<script>alert('".$id_tarefa."');</script>";
 
                     $uti = $_POST["signup_pass"];
 
@@ -94,20 +80,9 @@ if (isset($_POST["signup"])) {
                     header("Location: tarefas.php");
                     exit();
                 }
-
-                else
-                {
-                    $aux = mysqli_error($conn);
-
-                    echo "<script>alert('ERRO: ".$aux."');</script>";
-
-                                $sqlTeste = "INSERT INTO teste (teste) values ('$aux')";
-                                mysqli_query($conn, $sqlTeste);
-                }
             }
         //}
     }
-}
 ?>
 
 <!DOCTYPE html>
@@ -446,7 +421,29 @@ if (isset($_POST["signup"])) {
 
             <?php
 
-                $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) > CURDATE() LIMIT 2";
+                // Verifica se o usuário possui classificação 'func' (funcionário)
+    if (isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] == 'Func') {
+        // Obtém o ID do usuário logado
+        $user_id = $_SESSION["user_id"];
+
+        $sql = "SELECT t.* FROM reunioes AS t INNER JOIN user_reunioes AS ut ON t.id_reuniao = ut.id_reuniao WHERE ut.id_user = $user_id AND DATE(t.data_reuniao) >= CURDATE()";
+
+        if (isset($_POST['data_pesquisa'])) {
+            $data_pesquisa = $_POST['data_pesquisa'];
+            $sql .= " AND DATE(data_reuniao) = '$data_pesquisa'";
+        }
+
+        $sql .= " ORDER BY data_reuniao ASC LIMIT 4";
+    } else {
+        $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) >= CURDATE()";
+
+        if (isset($_POST['data_pesquisa'])) {
+            $data_pesquisa = $_POST['data_pesquisa'];
+            $sql .= " AND DATE(data_reuniao) = '$data_pesquisa'";
+        }
+
+        $sql .= " ORDER BY data_reuniao ASC LIMIT 4";
+    }
 
                 if($res=mysqli_query($conn,$sql)){
 

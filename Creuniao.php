@@ -22,7 +22,23 @@ if (isset($_POST["signup"])) {
     } else {
         $sql = "INSERT INTO reunioes (nome_reuniao, desc_reuniao, data_reuniao, hora_reuniao) VALUES ('$full_name', '$email', '$tel', '$hora')";
         $result = mysqli_query($conn, $sql);
-        
+
+                if ($result) {
+
+
+                    $id_reuniao = mysqli_insert_id($conn);
+
+
+                    $uti = $_POST["signup_pass"];
+
+                    foreach ($uti as $idUti) {
+
+                        
+                          $sqlUtils = "INSERT INTO user_reunioes (id_user, id_reuniao) values ('$idUti', '$id_reuniao')";
+
+                            mysqli_query($conn, $sqlUtils);
+                    }
+
         if ($result) {
             $_POST["signup_nome_user"] = "";
             $_POST["signup_email"] = "";
@@ -34,7 +50,7 @@ if (isset($_POST["signup"])) {
             exit();
         }
     }
-}
+}}
 ?>
 
 <!DOCTYPE html>
@@ -154,6 +170,30 @@ if (isset($_POST["signup"])) {
           <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
           <input class="form__inputprof" type="date" placeholder="Data" name="signup_tel_user" value="<?php echo $_POST["signup_tel_user"]; ?>" required/>
           <input class="form__inputprof" type="time" placeholder="Hora" name="signup_hora_reuniao" value="<?php echo $_POST["signup_hora_reuniao"]; ?>" required/>
+
+          <select id="inserir" name="signup_pass[]" class="customSelectMultiple" multiple data-placeholder="Adicione Funcionários">
+
+                <?php
+                // Estabelecer conexão com a Base de dados
+                $conn = mysqli_connect("localhost", "root", "", "pap2");
+
+                // Verificar se a conexão foi estabelecida com sucesso
+                if (!$conn) {
+                    die("Falha na conexão: " . mysqli_connect_error());
+                }
+
+                // Consulta SQL para selecionar os utilizadores na tabela "users"
+                $sql = "SELECT id_user, nome_user FROM users";
+
+                // Executa a consulta SQL e armazena o resultado em uma variável
+                $result = mysqli_query($conn, $sql);
+
+                while ($row = mysqli_fetch_assoc($result)) {
+                    echo '<option value="' . $row['id_user'] . '">' . $row['nome_user'] . '</option>';
+                }
+                ?>
+                </select>
+
           <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" />
         </form>
       </div>
@@ -291,7 +331,29 @@ if (isset($_POST["signup"])) {
 
             <?php
 
-                $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) > CURDATE() LIMIT 2";
+                // Verifica se o usuário possui classificação 'func' (funcionário)
+    if (isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] == 'Func') {
+        // Obtém o ID do usuário logado
+        $user_id = $_SESSION["user_id"];
+
+        $sql = "SELECT t.* FROM reunioes AS t INNER JOIN user_reunioes AS ut ON t.id_reuniao = ut.id_reuniao WHERE ut.id_user = $user_id AND DATE(t.data_reuniao) >= CURDATE()";
+
+        if (isset($_POST['data_pesquisa'])) {
+            $data_pesquisa = $_POST['data_pesquisa'];
+            $sql .= " AND DATE(data_reuniao) = '$data_pesquisa'";
+        }
+
+        $sql .= " ORDER BY data_reuniao ASC LIMIT 4";
+    } else {
+        $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) >= CURDATE()";
+
+        if (isset($_POST['data_pesquisa'])) {
+            $data_pesquisa = $_POST['data_pesquisa'];
+            $sql .= " AND DATE(data_reuniao) = '$data_pesquisa'";
+        }
+
+        $sql .= " ORDER BY data_reuniao ASC LIMIT 4";
+    }
 
                 if($res=mysqli_query($conn,$sql)){
 
@@ -331,6 +393,8 @@ if (isset($_POST["signup"])) {
         </script>
 
     <script src="js/index.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+    <script  src="js/select.js"></script>
 
 </body>
 </html>

@@ -303,7 +303,29 @@ if (isset($_POST["signup"])) {
 
             <?php
 
-                $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) > CURDATE() LIMIT 2";
+                // Verifica se o usuário possui classificação 'func' (funcionário)
+                if (isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] == 'Func') {
+                    // Obtém o ID do usuário logado
+                    $user_id = $_SESSION["user_id"];
+
+                    $sql = "SELECT t.* FROM reunioes AS t INNER JOIN user_reunioes AS ut ON t.id_reuniao = ut.id_reuniao WHERE ut.id_user = $user_id AND DATE(t.data_reuniao) >= CURDATE()";
+
+                    if (isset($_POST['data_pesquisa'])) {
+                        $data_pesquisa = $_POST['data_pesquisa'];
+                        $sql .= " AND DATE(data_reuniao) = '$data_pesquisa'";
+                    }
+
+                    $sql .= " ORDER BY data_reuniao ASC LIMIT 4";
+                } else {
+                    $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) >= CURDATE()";
+
+                    if (isset($_POST['data_pesquisa'])) {
+                        $data_pesquisa = $_POST['data_pesquisa'];
+                        $sql .= " AND DATE(data_reuniao) = '$data_pesquisa'";
+                    }
+
+                    $sql .= " ORDER BY data_reuniao ASC LIMIT 4";
+                }
 
                 if($res=mysqli_query($conn,$sql)){
 

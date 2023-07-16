@@ -136,47 +136,47 @@ if (isset($_POST["action"])) {
             </form> 
 
             <?php
-// Verifica se o usuário possui classificação 'func' (funcionário)
-if (isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] == 'Func') {
-    // Obtém o ID do usuário logado
-    $user_id = $_SESSION["user_id"];
+                // Verifica se o usuário possui classificação 'func' (funcionário)
+                if (isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] == 'Func') {
+                    // Obtém o ID do usuário logado
+                    $user_id = $_SESSION["user_id"];
 
-    $sql = "SELECT t.* FROM tarefas AS t INNER JOIN user_tarefas AS ut ON t.id_tarefa = ut.id_tarefas WHERE ut.id_user = $user_id AND DATE(t.data_tarefa) > CURDATE()";
+                    $sql = "SELECT t.* FROM tarefas AS t INNER JOIN user_tarefas AS ut ON t.id_tarefa = ut.id_tarefas WHERE ut.id_user = $user_id AND DATE(t.data_tarefa) >= CURDATE()";
 
-    if (isset($_POST['data_pesquisa'])) {
-        $data_pesquisa = $_POST['data_pesquisa'];
-        $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
-    }
+                    if (isset($_POST['data_pesquisa'])) {
+                        $data_pesquisa = $_POST['data_pesquisa'];
+                        $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
+                    }
 
-    $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
-} else {
-    $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) > CURDATE()";
+                    $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
+                } else {
+                    $sql = "SELECT * FROM tarefas WHERE DATE(data_tarefa) >= CURDATE()";
 
-    if (isset($_POST['data_pesquisa'])) {
-        $data_pesquisa = $_POST['data_pesquisa'];
-        $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
-    }
+                    if (isset($_POST['data_pesquisa'])) {
+                        $data_pesquisa = $_POST['data_pesquisa'];
+                        $sql .= " AND DATE(data_tarefa) = '$data_pesquisa'";
+                    }
 
-    $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
-}
+                    $sql .= " ORDER BY data_tarefa ASC LIMIT 4";
+                }
 
-if ($res = mysqli_query($conn, $sql)) {
-    if (mysqli_num_rows($res) > 0) {
-        while ($reg = mysqli_fetch_assoc($res)) {
-            $id_tarefa = $reg['id_tarefa'];
-           
-            $material_id = $reg['material'];
+                if ($res = mysqli_query($conn, $sql)) {
+                    if (mysqli_num_rows($res) > 0) {
+                        while ($reg = mysqli_fetch_assoc($res)) {
+                            $id_tarefa = $reg['id_tarefa'];
+                        
+                            $material_id = $reg['material'];
 
-            // Consulta SQL para obter o nome do material correspondente
-            $sql_material = "SELECT nome_material FROM material WHERE id_material = $material_id";
-            $res_material = mysqli_query($conn, $sql_material);
+                            // Consulta SQL para obter o nome do material correspondente
+                            $sql_material = "SELECT nome_material FROM material WHERE id_material = $material_id";
+                            $res_material = mysqli_query($conn, $sql_material);
 
-            if ($res_material && mysqli_num_rows($res_material) > 0) {
-                $row_material = mysqli_fetch_assoc($res_material);
-                $material_nome = $row_material['nome_material'];
-            } else {
-                $material_nome = "Nenhum material necessário";
-            }
+                            if ($res_material && mysqli_num_rows($res_material) > 0) {
+                                $row_material = mysqli_fetch_assoc($res_material);
+                                $material_nome = $row_material['nome_material'];
+                            } else {
+                                $material_nome = "Nenhum material necessário";
+                            }
             ?>
             
             <div class="recent-orders">
@@ -377,7 +377,29 @@ if ($res = mysqli_query($conn, $sql)) {
 
             <?php
 
-                $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) > CURDATE() LIMIT 2";
+               // Verifica se o usuário possui classificação 'func' (funcionário)
+                if (isset($_COOKIE['rank_user']) && $_COOKIE['rank_user'] == 'Func') {
+                    // Obtém o ID do usuário logado
+                    $user_id = $_SESSION["user_id"];
+
+                    $sql = "SELECT t.* FROM reunioes AS t INNER JOIN user_reunioes AS ut ON t.id_reuniao = ut.id_reuniao WHERE ut.id_user = $user_id AND DATE(t.data_reuniao) >= CURDATE()";
+
+                    if (isset($_POST['data_pesquisa'])) {
+                        $data_pesquisa = $_POST['data_pesquisa'];
+                        $sql .= " AND DATE(data_reuniao) = '$data_pesquisa'";
+                    }
+
+                    $sql .= " ORDER BY data_reuniao ASC LIMIT 4";
+                } else {
+                    $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) >= CURDATE()";
+
+                    if (isset($_POST['data_pesquisa'])) {
+                        $data_pesquisa = $_POST['data_pesquisa'];
+                        $sql .= " AND DATE(data_reuniao) = '$data_pesquisa'";
+                    }
+
+                    $sql .= " ORDER BY data_reuniao ASC LIMIT 4";
+                }
 
                 if($res=mysqli_query($conn,$sql)){
 
