@@ -310,21 +310,15 @@ if (isset($_POST["signup"])) {
 
                     $sql = "SELECT t.* FROM reunioes AS t INNER JOIN user_reunioes AS ut ON t.id_reuniao = ut.id_reuniao WHERE ut.id_user = $user_id AND DATE(t.data_reuniao) >= CURDATE()";
 
-                    if (isset($_POST['data_pesquisa'])) {
-                        $data_pesquisa = $_POST['data_pesquisa'];
-                        $sql .= " AND DATE(data_reuniao) = '$data_pesquisa'";
-                    }
+                   
 
-                    $sql .= " ORDER BY data_reuniao ASC LIMIT 4";
+                    $sql .= " ORDER BY data_reuniao ASC LIMIT 2";
                 } else {
                     $sql = "SELECT * FROM reunioes WHERE DATE(data_reuniao) >= CURDATE()";
 
-                    if (isset($_POST['data_pesquisa'])) {
-                        $data_pesquisa = $_POST['data_pesquisa'];
-                        $sql .= " AND DATE(data_reuniao) = '$data_pesquisa'";
-                    }
+                   
 
-                    $sql .= " ORDER BY data_reuniao ASC LIMIT 4";
+                    $sql .= " ORDER BY data_reuniao ASC LIMIT 2";
                 }
 
                 if($res=mysqli_query($conn,$sql)){
