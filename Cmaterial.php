@@ -155,7 +155,7 @@ if (isset($_POST["signup"])) {
             <input class="form__inputprof" type="text" placeholder="Material" name="signup_nome_user" value="<?php echo $_POST["signup_nome_user"]; ?>" required/>
             <input class="form__inputprof" type="number" placeholder="Quantidade" name="quantidade" value="<?php echo $_POST["quantidade"]; ?>" required/>
             <input class="form__inputprof" type="text" placeholder="Descrição" name="signup_email" value="<?php echo $_POST["signup_email"]; ?>" required/>
-                <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter" onclick="myhref('material.php');"/>
+                <input type="submit" class="form__buttonprof buttonprof submitprof" name="signup" value="Submeter"/>
             </form>
         </div>
         </div>
